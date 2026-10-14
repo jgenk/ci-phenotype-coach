@@ -281,6 +281,43 @@ table.t td.num{font-family:var(--f-mono);text-align:center;white-space:nowrap}
 .rp-empty{color:#8a979d;font-style:italic}
 svg.profile text{font-family:var(--f-mono)}
 @media (max-width:700px){.rp-meta{grid-template-columns:repeat(2,minmax(0,1fr))}.rp-two,.rp-foot{grid-template-columns:minmax(0,1fr)}}
+/* phenotype glyphs (visual test): blue = the phenotype (neutral information), ink = you, orange = grow */
+.glyph{--g-acc:var(--accent);--g-ink:var(--ink);--g-warn:var(--warn);--g-rule:var(--rule);display:block;flex:none;overflow:visible}
+.report .glyph{--g-acc:#1d6a83;--g-ink:#14212a;--g-warn:#a5650f;--g-rule:#cfd8d8}
+.g-ring{fill:none;stroke:var(--g-rule);stroke-width:.8;stroke-dasharray:2 3}
+.g-group{fill:none;stroke:var(--g-rule);stroke-width:2.5;stroke-linecap:round}
+.g-petal{fill:var(--g-acc);fill-opacity:calc(.28 + var(--v) * .13);stroke:var(--g-acc);stroke-width:.6}
+.g-petal.faint{fill-opacity:calc(.10 + var(--v) * .05);stroke-opacity:.55}
+.g-zero{fill:var(--g-rule)}
+.g-you{fill:none;stroke:var(--g-ink);stroke-width:1.3;stroke-linejoin:round;opacity:.8}
+.g-dot{fill:var(--g-ink)}
+.g-gap{stroke:var(--g-warn);stroke-linecap:round;stroke-width:3.2}
+.g-gap.big{stroke-width:5}
+.glyph.mini .g-petal{stroke-width:0}
+.glyph.mini .g-you{stroke-width:2.2}
+.g-legend{display:flex;flex-wrap:wrap;gap:6px 18px;color:var(--muted)}
+.g-legend span{display:inline-flex;align-items:center;gap:6px}
+.g-legend i{display:inline-block;width:14px;height:10px;border-radius:2px}
+.k-petal{background:var(--accent);opacity:.55} .k-you{background:var(--ink);height:3px!important} .k-gap{background:var(--warn);height:5px!important}
+/* illustrations (img/<slug>.jpg, made by tools/illustrate.py) and glyph placement */
+.art{margin:0;overflow:hidden;background:var(--paper)}
+.art img{display:block;width:100%;height:100%;object-fit:cover}
+.art.hero{aspect-ratio:3/1;border-radius:var(--r);border:1px solid var(--rule)}
+.art.banner{aspect-ratio:5/2;margin:0 -12px}
+.art.thumb{aspect-ratio:4/3;border-radius:4px;border:1px solid var(--rule)}
+.art-card{padding-top:0;overflow:hidden;gap:8px}
+.ph-head{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start}
+.ph-head b{padding-top:4px;line-height:1.25}
+.art + .ph-head .glyph{margin-top:-30px;background:var(--sheet);border-radius:50%;box-shadow:0 0 0 3px var(--sheet),var(--shadow);position:relative}
+.match.has-art{grid-template-columns:112px minmax(0,1fr);column-gap:16px;align-items:start}
+.match-body{display:grid;gap:5px;min-width:0}
+.match-art{position:relative;padding-bottom:12px}
+.match-art .glyph{position:absolute;right:-10px;bottom:0;background:var(--sheet);border-radius:50%;box-shadow:0 0 0 2px var(--sheet),var(--shadow)}
+.sbs-glyph{justify-self:center}
+.sbs-glyph .glyph{max-width:100%;height:auto}
+.rp-glyphs{display:flex;align-items:center;gap:4px;color:#4d5d66;font-size:9pt}
+@media (max-width:560px){.match.has-art{grid-template-columns:76px minmax(0,1fr);column-gap:14px}.match-art .glyph{width:38px;height:38px}}
+
 @media print{
   .buildtag{display:none}
   @page{size:letter;margin:0}
@@ -318,6 +355,7 @@ svg.profile text{font-family:var(--f-mono)}
 
 <!-- HOME -->
 <section class="page" id="home">
+  <figure class="art hero"><img src="img/home.jpg" alt="" onerror="this.parentNode.remove()"></figure>
   <div class="head">
     <span class="eyebrow">Clinical informatics career planning</span>
     <h1 tabindex="-1">Plan your next move in clinical informatics.</h1>
@@ -559,6 +597,7 @@ svg.profile text{font-family:var(--f-mono)}
   </div>
   <div class="card">
     <h2>The 20 phenotypes</h2>
+    <p class="small muted">Each phenotype has a signature drawn from its typical mix of work: one petal for each of the 20 kinds of work, clockwise from the top in five groups. A longer petal means more of that kind of work.</p>
     <div class="picker" id="lib-phenos"></div>
   </div>
   <div class="card">
@@ -632,7 +671,7 @@ svg.profile text{font-family:var(--f-mono)}
   </div>
 </section>
 <!-- BUILD TAG: bump on every deploy so you can tell which build people are seeing. -->
-<footer class="buildtag">Prototype · build v0.6.0 (2026-10-14)</footer>
+<footer class="buildtag">Prototype · build v0.7.0 (2026-10-14)</footer>
 </main>
 </div>
 
@@ -1241,6 +1280,44 @@ function renderRecaps(){
 }
 function updatePrompts(){ const P=prompts(); STEPS.forEach(([k])=>{ const el=document.getElementById("prompt-"+k); if(el) el.textContent=P[k]; }); $("#prompt-full").textContent=fullPrompt(); }
 
+/* =====================================================================
+   GLYPH (visual test): a phenotype's "signature", computed from its 20 weights. Never hand-drawn.
+   One petal per kind of work, clockwise from the top in DISPLAY order, with a gap between the 5
+   groups. Petal length = weight (0–5). Optional overlays for a person:
+     you   = their ratings (ink dots joined by a thin outline)
+     goal  = the goal's weights scaled to their average (the gap rule's comparison level)
+     gaps  = orange segments from their rating up to the goal level, where the gap rule says grow
+   ===================================================================== */
+const GLYPH_POS = (()=>{ const pos=[]; let s=0; DISPLAY.forEach((i,j)=>{ if(j>0 && ATTR[i].g!==ATTR[DISPLAY[j-1]].g) s++; pos[i]=s++; }); return {pos, slots:s+1}; })();
+function glyph(w, o={}){
+  const C=100, mini=!!o.mini, R0=mini?12:18, R=mini?96:84, unit=2*Math.PI/GLYPH_POS.slots, hw=unit*(mini?.42:.36);
+  const ang = i => -Math.PI/2 + (GLYPH_POS.pos[i]+1)*unit;
+  const rad = v => R0 + (R-R0)*Math.max(0,Math.min(5,v))/5;
+  const P = (a,r) => `${(C+r*Math.cos(a)).toFixed(2)},${(C+r*Math.sin(a)).toFixed(2)}`;
+  const petal = (i,v) => { const a=ang(i), r=rad(v);
+    return `M${P(a-hw,R0)} L${P(a-hw,r)} A${r.toFixed(2)},${r.toFixed(2)} 0 0 1 ${P(a+hw,r)} L${P(a+hw,R0)} A${R0},${R0} 0 0 0 ${P(a-hw,R0)}Z`; };
+  const over = !!o.you;
+  let g = `<circle class="g-ring" cx="${C}" cy="${C}" r="${R}"/>`;
+  if(!mini) GROUPS.forEach((_,gi)=>{ const ks=DISPLAY.filter(i=>ATTR[i].g===gi), a0=ang(ks[0])-unit*.45, a1=ang(ks[ks.length-1])+unit*.45, r=R+7;
+    g += `<path class="g-group" d="M${P(a0,r)} A${r},${r} 0 ${a1-a0>Math.PI?1:0} 1 ${P(a1,r)}"/>`; });
+  DISPLAY.forEach(i=>{ const v=w[i]; if(v>0) g += `<path class="g-petal${over?" faint":""}" style="--v:${v}" d="${petal(i,v)}"/>`; else g += `<circle class="g-zero" cx="${P(ang(i),R0+3).split(",")[0]}" cy="${P(ang(i),R0+3).split(",")[1]}" r="1.4"/>`; });
+  if(over){
+    if(o.gaps) DISPLAY.forEach(i=>{ const gp=o.gaps[i]; if(gp!=="big" && gp!=="small") return; const a=ang(i);
+      g += `<path class="g-gap ${gp}" d="M${P(a,rad(o.you[i]))} L${P(a,rad(o.goal[i]))}"/>`; });
+    const pts = DISPLAY.filter(i=>o.you[i]!=null).map(i=>P(ang(i),rad(o.you[i])));
+    g += `<polygon class="g-you" points="${pts.join(" ")}"/>` + pts.map(p=>`<circle class="g-dot" cx="${p.split(",")[0]}" cy="${p.split(",")[1]}" r="${mini?3.2:2.6}"/>`).join("");
+  }
+  const top = w.map((v,k)=>({v,k})).sort((a,b)=>b.v-a.v).slice(0,3).map(x=>ATTR[x.k].n.toLowerCase()).join(", ");
+  const label = o.label || `Signature of ${o.name||"this phenotype"}: most of the work is ${top}.`;
+  return `<svg class="glyph${mini?" mini":""}" viewBox="0 0 200 200" width="${o.size||160}" height="${o.size||160}" role="img" aria-label="${esc(label)}"><title>${esc(label)}</title>${g}</svg>`;
+}
+
+// Illustrations: img/<slug>.jpg next to this page, one per phenotype (see illustrations.json and tools/illustrate.py).
+// A missing image (a new or renamed phenotype) quietly drops out; the glyph still shows.
+const slug = n => n.toLowerCase().replace(/\(.*?\)/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,""); // must match tools/illustrate.py
+const art = (n, cls) => `<figure class="art ${cls}"><img src="img/${slug(n)}.jpg" alt="" loading="lazy" onerror="this.parentNode.remove()"></figure>`;
+const pglyph = (i, size) => glyph(PHENO[i].w,{size,mini:size<100,name:PHENO[i].n});
+const GLYPH_LEGEND = `<div class="g-legend small"><span><i class="k-petal"></i>Phenotype (typical mix of work)</span><span><i class="k-you"></i>Your work now</span><span><i class="k-gap"></i>Gap to grow</span></div>`;
 // Builds the parts of the page that come from the data lists. Runs once.
 function renderStatic(){
   $$("[data-options]").forEach(sel=>{ sel.innerHTML='<option value="">Choose…</option>'+OPTION_LISTS[sel.dataset.options].map(o=>`<option>${esc(o)}</option>`).join(""); });
@@ -1271,8 +1348,8 @@ function renderStatic(){
      <label for="st${i}h">Who can help<input type="text" id="st${i}h" data-bind="steps.${i}.who"></label>
    </div>`).join("");
   STEPS.forEach(([id])=>document.querySelector(`#${id} .head`).insertAdjacentHTML("afterend",`<div class="stepbar"><button type="button" class="tiny" data-example="${id}">Fill with an example</button><button type="button" class="tiny" data-clearstep="${id}">Clear this step</button></div>`));
-  $("#lib-phenos").innerHTML = PHENO.map(p=>{ const top=p.w.map((v,k)=>({v,k})).sort((a,b)=>b.v-a.v).slice(0,4).map(x=>ATTR[x.k].n.toLowerCase());
-    return `<div class="pcard"><b>${esc(p.n)}</b><p>${esc(p.d)}</p><p><b>Most of the work:</b> ${top.map(esc).join(", ")}.</p>${p.o!==p.n?`<p class="small"><i>Original name: ${esc(p.o)}</i></p>`:""}</div>`; }).join("");
+  $("#lib-phenos").innerHTML = PHENO.map((p,i)=>{ const top=p.w.map((v,k)=>({v,k})).sort((a,b)=>b.v-a.v).slice(0,4).map(x=>ATTR[x.k].n.toLowerCase());
+    return `<div class="pcard art-card">${art(p.n,"banner")}<div class="ph-head">${pglyph(i,56)}<b>${esc(p.n)}</b></div><p>${esc(p.d)}</p><p><b>Most of the work:</b> ${top.map(esc).join(", ")}.</p>${p.o!==p.n?`<p class="small"><i>Original name: ${esc(p.o)}</i></p>`:""}</div>`; }).join("");
   $("#lib-attrs").innerHTML = `<thead><tr><th>Kind of work</th><th>What it covers</th><th>Domain</th></tr></thead><tbody>${DISPLAY.map(i=>`<tr><td>${esc(ATTR[i].n)}</td><td>${esc(ATTR[i].d)}</td><td class="num">${ATTR[i].dop}</td></tr>`).join("")}</tbody>`;
 }
 // Puts state values into the form controls.
@@ -1291,9 +1368,9 @@ function renderMatches(){
   const m=matches();
   el.innerHTML = SCORE_NOTE("match") + LEGEND + `<p class="small"><b>Tick the ones that fit you, up to 2.</b> They'll show as your current phenotype in step 4 and on your report. If you tick none, your top match is used.</p>`
    + m.slice(0,3).map((x,j)=>{ const p=PHENO[x.i];
-    return `<div class="match"><div class="match-top"><span class="match-name">${j+1}. ${esc(p.n)}</span><span class="spacer"></span>${meter(x.r)}<span class="tag">${strength(x.r)}</span></div>
+    return `<div class="match has-art"><div class="match-art">${art(p.n,"thumb")}${pglyph(x.i,48)}</div><div class="match-body"><div class="match-top"><span class="match-name">${j+1}. ${esc(p.n)}</span><span class="spacer"></span>${meter(x.r)}<span class="tag">${strength(x.r)}</span></div>
     <p class="small muted">${esc(p.d)}</p>${chips(x.i)}
-    <label class="pick" for="ch${x.i}"><input type="checkbox" id="ch${x.i}" data-choose="${esc(p.n)}" ${S.chosen.includes(p.n)?"checked":""}>This fits me</label></div>`; }).join("")
+    <label class="pick" for="ch${x.i}"><input type="checkbox" id="ch${x.i}" data-choose="${esc(p.n)}" ${S.chosen.includes(p.n)?"checked":""}>This fits me</label></div></div>`; }).join("")
    + `<div class="match"><p class="small"><b>Also close:</b></p><ul class="near">${m.slice(3,7).map(x=>`<li><span>${esc(PHENO[x.i].n)}</span>${meter(x.r)}</li>`).join("")}</ul></div>`;
 }
 
@@ -1309,16 +1386,16 @@ function renderFit(){
   const has=wanted()>=8, f=has?fits():PHENO.map((_,i)=>({i,r:null})), cur=curName();
   $("#fit-list").innerHTML = !has ? '<p class="small muted">Answer at least 8 of the 20 to see which phenotypes fit.</p>'
     : SCORE_NOTE("fit") + LEGEND + f.slice(0,3).map((x,j)=>{ const p=PHENO[x.i];
-    return `<div class="match"><div class="match-top"><span class="match-name">${j+1}. ${esc(p.n)}</span><span class="spacer"></span>${meter(x.r)}<span class="tag">${strength(x.r,"fit")}</span></div>
+    return `<div class="match has-art"><div class="match-art">${art(p.n,"thumb")}${pglyph(x.i,48)}</div><div class="match-body"><div class="match-top"><span class="match-name">${j+1}. ${esc(p.n)}</span><span class="spacer"></span>${meter(x.r)}<span class="tag">${strength(x.r,"fit")}</span></div>
       <div class="row">${p.n===cur?'<span class="tag">Same as your current phenotype</span>':""}${settingTag(x.i)}</div>
       <p class="small muted">${esc(p.d)}</p>${chips(x.i)}
-      <div class="row">${goalButtons(p.n)}</div></div>`; }).join("");
+      <div class="row">${goalButtons(p.n)}</div></div></div>`; }).join("");
   const g=S.target.filter(Boolean);
   $("#goal-now").innerHTML = g.length ? `<p>${g.map(n=>`<b>${esc(n)}</b>${has?` (fit ${score(pearson(S.want,PHENO[pIndex(n)].w))})`:""}`).join(" and ")}</p>`
     : has ? `<p class="small">Suggested: <b>${esc(PHENO[f[0].i].n)}</b>, your closest fit. Choose "Make this my goal" above, or pick another below.</p>` : "";
   $("#picker-note").innerHTML = has ? `Sorted by fit with the work you want.${LEGEND}` : "Answer the questions above to sort these by fit.";
   $("#picker").innerHTML = f.map(x=>{ const p=PHENO[x.i];
-    return `<div class="pcard ${S.target.includes(p.n)?"sel":""}"><b>${esc(p.n)}</b>${has?`<div class="row">${meter(x.r)}${settingTag(x.i)}</div>`:""}
+    return `<div class="pcard ${S.target.includes(p.n)?"sel":""}"><div class="ph-head">${pglyph(x.i,40)}<b>${esc(p.n)}</b></div>${has?`<div class="row">${meter(x.r)}${settingTag(x.i)}</div>`:""}
       <p>${esc(p.d)}</p>${has?chips(x.i,2,1):""}<div class="row">${goalButtons(p.n)}</div></div>`; }).join("");
 }
 
@@ -1328,8 +1405,11 @@ function compareTable(rows){
 function renderComparison(){
   const cur=currentPhenos(), g=S.target.filter(Boolean), rows=compareRows();
   if(!cur.length||!g.length||!rows){ $("#side-by-side").innerHTML='<p class="small muted">Finish steps 2 and 3 to see this.</p>'; $("#compare").innerHTML=""; return; }
-  const box=(title,names,vec,lbl)=>`<div class="sbs-col"><span class="eyebrow">${title}</span>${names.map(n=>`<div class="pbox"><b>${esc(n)}</b><div class="row">${meter(pearson(vec,PHENO[pIndex(n)].w))}<span class="small muted">${lbl}</span></div></div>`).join("")}</div>`;
-  $("#side-by-side").innerHTML = `<div class="sbs">${box("Current phenotype",cur,S.ratings,"match with your work now")}<div class="sbs-arrow" aria-hidden="true">→</div>${box("Goal phenotype",g,S.want,"fit with the work you want")}</div>`;
+  const you=S.ratings, goal=rows.map(x=>x.t), gaps=rows.map(x=>x.gap), curW=scaled(PHENO[pIndex(cur[0])].w,you);
+  const gl={cur:glyph(curW,{size:150,you,label:`Your work now over the typical mix for ${cur[0]}`}),
+            goal:glyph(goal,{size:150,you,goal,gaps,label:"Your work now against your goal; orange marks gaps to grow"})};
+  const box=(title,names,vec,lbl)=>`<div class="sbs-col"><span class="eyebrow">${title}</span><div class="sbs-glyph">${gl[title.startsWith("Goal")?"goal":"cur"]}</div>${names.map(n=>`<div class="pbox"><b>${esc(n)}</b><div class="row">${meter(pearson(vec,PHENO[pIndex(n)].w))}<span class="small muted">${lbl}</span></div></div>`).join("")}</div>`;
+  $("#side-by-side").innerHTML = `<div class="sbs">${box("Current phenotype",cur,S.ratings,"match with your work now")}<div class="sbs-arrow" aria-hidden="true">→</div>${box("Goal phenotype",g,S.want,"fit with the work you want")}</div>${GLYPH_LEGEND}<p class="small muted">Both are scaled to your overall level, so they compare the mix of work, not how busy you are. Dots are your step 2 ratings.</p>`;
   const c=gapCounts(rows), ti=targetIdx(), r=goalR(), top=growRows().slice(0,5);
   $("#compare").innerHTML = `<div class="summary"><div class="row"><b>Match with your work now</b>${meter(r)}<span class="tag">${strength(r)}</span></div>
      <div class="chips"><span class="chip">On track: ${c.ok}</span><span class="chip up">Small gap: ${c.small}</span><span class="chip up">Big gap: ${c.big}</span><span class="chip neutral">More than the goal needs: ${c.more}</span></div>
@@ -1365,10 +1445,11 @@ function renderReport(){
   if(!S.made){ const d=new Date(); S.made=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; save(); }
   const date=new Date(S.made+"T12:00:00").toLocaleDateString(undefined,{year:"numeric",month:"long",day:"numeric"});
   const method = STEPS.some(([s])=>modeFor(s)==="ai") ? "Self-assessment with AI coaching" : "Self-assessment";
-  const fit=goalFit(), gr=goalR();
+  const fit=goalFit(), gr=goalR(), rpRows=compareRows();
+  const rpGlyphs = cur.length&&rpRows&&rated()>=8 ? `<div class="rp-glyphs">${glyph(scaled(PHENO[pIndex(cur[0])].w,S.ratings),{size:58,mini:true,you:S.ratings,label:"Signature now"})}<span aria-hidden="true">→</span>${glyph(rpRows.map(x=>x.t),{size:58,mini:true,you:S.ratings,goal:rpRows.map(x=>x.t),gaps:rpRows.map(x=>x.gap),label:"Signature of your goal, with gaps to grow"})}</div>` : "";
   $("#report-page").innerHTML = `
-   <div class="rp-head"><div><div class="sub">Clinical informatics career plan</div><h2>${esc(p.name)||"My informatics career plan"}</h2></div>
-     <div class="rp-date">${esc(date)}<br>${method}</div></div>
+   <div class="rp-head" ${rpGlyphs?'style="grid-template-columns:minmax(0,1fr) auto auto"':""}><div><div class="sub">Clinical informatics career plan</div><h2>${esc(p.name)||"My informatics career plan"}</h2></div>
+     ${rpGlyphs}<div class="rp-date">${esc(date)}<br>${method}</div></div>
    <div class="rp-meta">
      <div><span>Profession</span>${esc(p.profession)||"–"}</div><div><span>Specialty and setting</span>${esc(p.setting)||"–"}</div>
      <div><span>Career stage</span>${esc(p.stage)||"–"}</div><div><span>Informatics share of work</span>${esc(p.time)||"–"}</div>
