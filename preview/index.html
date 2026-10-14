@@ -166,6 +166,14 @@ label.need input,label.need select,label.need textarea{border-color:var(--warn);
 .choice button{flex-direction:column;align-items:flex-start;text-align:left;padding:12px 14px;gap:2px;font-weight:700}
 .choice button span{font-weight:400;font-size:.84rem;color:var(--muted)}
 .choice button[aria-pressed="true"]{border:2px solid var(--accent);background:var(--accent-soft)}
+/* purple marks every place you choose AI */
+.choice button[data-pref="ai"]{border-color:var(--coach-rule);color:var(--coach)}
+.choice button[data-pref="ai"][aria-pressed="true"]{border:2px solid var(--coach);background:var(--coach-band)}
+#pref-tool{color:var(--coach)}
+#pref-tool select{border-color:var(--coach)}
+.ai-link{color:var(--coach)!important}
+.btn.ai-btn{border-color:var(--coach);color:var(--coach);background:var(--coach-soft)}
+.btn.ai-btn:hover{background:var(--coach-band)}
 
 /* AI coaching panels (purple) and manual section headers */
 .fork{display:grid;gap:10px}
@@ -386,7 +394,7 @@ svg.profile text{font-family:var(--f-mono)}
     </ol>
     <p class="small muted">About 45–90 minutes. Your answers save in this browser, so you can stop and come back. Use AI or not, as you prefer, for any step.</p>
     <p class="small muted">If you use AI: tools that remember your past chats will bring that context into the coaching. For a blank slate, use a temporary or incognito chat.</p>
-    <div class="row"><a class="btn primary" href="#s1" data-go="s1">Start step 1</a><a class="linkbtn small" href="#coach" data-go="coach">Or do it all in one AI conversation</a></div>
+    <div class="row"><a class="btn primary" href="#s1" data-go="s1">Start step 1</a><a class="btn ai-btn" href="#coach" data-go="coach">Or do it all in one AI conversation</a></div>
   </div>
 </section>
 
@@ -621,7 +629,7 @@ svg.profile text{font-family:var(--f-mono)}
   </div>
   <div class="card">
     <h2>Full AI coach</h2>
-    <p class="small">Prefer one conversation? The <a href="#coach" data-go="coach">full AI coach</a> runs the whole session in any AI tool from a single prompt.</p>
+    <p class="small">Prefer one conversation? The <a class="ai-link" href="#coach" data-go="coach">full AI coach</a> runs the whole session in any AI tool from a single prompt.</p>
   </div>
   <div class="card">
     <h2>What informaticians do</h2>
@@ -685,7 +693,7 @@ svg.profile text{font-family:var(--f-mono)}
   </div>
 </section>
 <!-- BUILD TAG: bump on every deploy so you can tell which build people are seeing. -->
-<footer class="buildtag">PREVIEW · build v0.7.6 (2026-10-14)</footer>
+<footer class="buildtag">PREVIEW · build v0.7.7 (2026-10-14)</footer>
 </main>
 </div>
 
@@ -1262,7 +1270,7 @@ function renderPref(){ $$("[data-pref]").forEach(b=>b.setAttribute("aria-pressed
 function renderFork(step){
   const el=document.querySelector(`[data-fork="${step}"]`), m=modeFor(step), tk=toolFor(step);
   if(!m) el.innerHTML="";
-  else if(m==="self") el.innerHTML=`<div class="manualhead"><h2>${SECTION[step]}</h2><button type="button" class="linkbtn" data-mode="ai" data-step="${step}">Use AI for this step instead</button></div>`;
+  else if(m==="self") el.innerHTML=`<div class="manualhead"><h2>${SECTION[step]}</h2><button type="button" class="linkbtn ai-link" data-mode="ai" data-step="${step}">Use AI for this step instead</button></div>`;
   else el.innerHTML=`<div class="ai">
     <div class="ai-band"><span class="ai-badge">AI coaching</span><h2>${SECTION[step]}</h2></div>
     <div class="ai-body">
