@@ -707,7 +707,7 @@ svg.profile text{font-family:var(--f-mono)}
   </div>
 </section>
 <!-- BUILD TAG: bump on every deploy so you can tell which build people are seeing. -->
-<footer class="buildtag">PREVIEW · build v0.7.12 (2026-10-14)</footer>
+<footer class="buildtag">PREVIEW · build v0.7.13 (2026-10-14)</footer>
 </main>
 </div>
 
@@ -933,7 +933,7 @@ const chips = (pi,nShared=3,nGrow=2,ctx="") => { const d=drivers(pi), key=ctx+pi
   const row=(label,ks,cls)=>ks.length?`<div class="why-row"><span class="why-label">${label}</span><div class="chips">${ks.map(i=>`<span class="chip ${cls}">${esc(ATTR[i].n)}</span>`).join("")}</div></div>`:"";
   // Step 2 asks "does this describe my work?" (no goal yet), so differences are neutral, not gaps to grow.
   const fit = ctx==="m";
-  return `<details class="why" data-why="${key}" ${WHY_OPEN.has(key)?"open":""}><summary>${fit?"How it fits your work":"What you have and what you'd build"}</summary>${row(fit?"Fits well":"Already do",d.shared.slice(0,nShared),"")}${row(fit?"Fits less well":"Need to grow",d.miss.slice(0,nGrow),fit?"neutral":"up")}</details>`; };
+  return `<details class="why" data-why="${key}" ${WHY_OPEN.has(key)?"open":""}><summary>More details</summary>${row(fit?"Fits well":"Already do",d.shared.slice(0,nShared),"")}${row(fit?"Fits less well":"Need to grow",d.miss.slice(0,nGrow),fit?"neutral":"up")}</details>`; };
 document.addEventListener("toggle", e=>{ const d=e.target; if(d.matches && d.matches("details[data-why]")) d.open ? WHY_OPEN.add(d.dataset.why) : WHY_OPEN.delete(d.dataset.why); }, true);
 const SCORE_NOTE = what => `<p class="small muted">${what==="fit"?"Fit score (0–100) shows how similar the work you want is":"Match score (0–100) shows how similar the mix of your work is"} to each phenotype's typical mix. 60 or more is close.</p>`;
 
