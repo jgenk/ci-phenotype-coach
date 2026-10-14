@@ -186,6 +186,7 @@ label.need input,label.need select,label.need textarea{border-color:var(--warn);
 .ai li::marker{font-weight:700;color:var(--coach)}
 .ai .primary{background:var(--coach);border-color:var(--coach);color:var(--coach-ink)}
 .ai .linkbtn,.ai a:not(.btn){color:var(--coach)}
+.ai .linkbtn[data-mode="self"]{color:var(--accent)} /* leaving AI is navigation, so it stays blue */
 .ai textarea,.ai select,.ai .prompt{background:var(--sheet)}
 .modebar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .modebar label{display:flex;gap:8px;align-items:center;font-weight:600}
@@ -693,7 +694,7 @@ svg.profile text{font-family:var(--f-mono)}
   </div>
 </section>
 <!-- BUILD TAG: bump on every deploy so you can tell which build people are seeing. -->
-<footer class="buildtag">PREVIEW · build v0.7.7 (2026-10-14)</footer>
+<footer class="buildtag">PREVIEW · build v0.7.8 (2026-10-14)</footer>
 </main>
 </div>
 
