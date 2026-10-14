@@ -1,0 +1,1571 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CI Career Phenotype Coach</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,500;7..72,650&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Color meaning, used everywhere:
+   accent (blue)  = navigation, neutral information
+   ok (green)     = work you already do / on track
+   warn (orange)  = work to grow / gaps / missing required items
+   coach (purple) = AI coaching only
+   rule (grey)    = neutral, "more than the goal needs" */
+:root{
+  --paper:#f6f8f7; --sheet:#ffffff; --ink:#15232c; --muted:#56656e; --rule:#d9e1e0;
+  --accent:#1d6a83; --accent-ink:#ffffff; --accent-soft:#e3f0f3;
+  --warn:#a5650f; --warn-soft:#fbf0dc; --ok:#2f7a4b; --ok-soft:#e2f2e7;
+  --coach:#65559a; --coach-ink:#ffffff; --coach-soft:#f9f8fc; --coach-rule:#ddd6ee; --coach-band:#f0ecf8; --coach-band-ink:#4b3f78;
+  --shadow:0 1px 2px rgba(21,35,44,.06),0 4px 16px rgba(21,35,44,.05);
+  --f-display:"Literata",Georgia,"Times New Roman",serif;
+  --f-body:"Public Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --r:6px; color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0f171c; --sheet:#16222a; --ink:#e4ecee; --muted:#9fb0b7; --rule:#2a3a43;
+  --accent:#6cbcd4; --accent-ink:#0b1418; --accent-soft:#17323c;
+  --warn:#e3a64a; --warn-soft:#3a2b14; --ok:#7fcf9c; --ok-soft:#183324;
+  --coach:#b9a2f2; --coach-ink:#160f26; --coach-soft:#1d1729; --coach-rule:#3d3260; --coach-band:#2c2343; --coach-band-ink:#d2c3f7;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.25); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0f171c; --sheet:#16222a; --ink:#e4ecee; --muted:#9fb0b7; --rule:#2a3a43;
+  --accent:#6cbcd4; --accent-ink:#0b1418; --accent-soft:#17323c;
+  --warn:#e3a64a; --warn-soft:#3a2b14; --ok:#7fcf9c; --ok-soft:#183324;
+  --coach:#b9a2f2; --coach-ink:#160f26; --coach-soft:#1d1729; --coach-rule:#3d3260; --coach-band:#2c2343; --coach-band-ink:#d2c3f7;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.25); color-scheme:dark}
+
+/* base */
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font:16px/1.55 var(--f-body)}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+h1,h2,h3{font-family:var(--f-display);font-weight:650;line-height:1.2;text-wrap:balance;margin:0}
+h1{font-size:1.85rem} h2{font-size:1.3rem} h3{font-size:1.05rem}
+h1:focus{outline:none}
+p{margin:0}
+[hidden]{display:none!important}
+.muted{color:var(--muted)} .small{font-size:.88rem}
+.eyebrow{font:500 .74rem/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.subhead{font:600 .76rem var(--f-mono);letter-spacing:.07em;text-transform:uppercase;color:var(--accent)}
+.spacer{flex:1}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.stack{display:grid;gap:14px}
+
+/* header */
+.topbar{position:sticky;top:0;z-index:10;background:var(--sheet);border-bottom:1px solid var(--rule)}
+.topbar-in{max-width:1160px;margin:0 auto;padding:10px 16px;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
+.brand{font-family:var(--f-display);font-weight:650;font-size:1.05rem;text-decoration:none;color:var(--ink)}
+.hlink{font-size:.88rem;font-weight:600;text-decoration:none;padding:4px 8px;border-radius:4px}
+.hlink[aria-current="page"]{background:var(--accent-soft)}
+details.menu{position:relative}
+details.menu summary{list-style:none;cursor:pointer;font-size:.88rem;font-weight:600;padding:4px 10px;border:1px solid var(--rule);border-radius:4px}
+details.menu summary::-webkit-details-marker{display:none}
+.menu-list{position:absolute;right:0;top:calc(100% + 6px);background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r);box-shadow:var(--shadow);padding:6px;display:grid;min-width:220px;z-index:20}
+.menu-list button{justify-content:flex-start;border:0;background:transparent;font-weight:500;padding:8px 10px}
+.menu-list button:hover{background:var(--accent-soft)}
+
+/* layout: sidebar steps on desktop, chip row on narrow screens */
+.layout{max-width:1160px;margin:0 auto;padding:0 16px;display:grid;grid-template-columns:190px minmax(0,1fr);gap:32px;justify-content:center}
+footer.buildtag{margin:40px 0 0;padding-top:12px;border-top:1px solid var(--rule);font:500 .75rem/1.4 var(--f-mono);color:var(--muted)}
+main{max-width:880px;width:100%;margin:0;padding:24px 0 120px;min-width:0}
+.rail{position:sticky;top:var(--hdr,56px);align-self:start;display:flex;flex-direction:column;gap:4px;padding:24px 0 96px;min-height:calc(100vh - var(--hdr,56px))}
+.rail a{display:flex;gap:8px;align-items:center;padding:7px 10px;border:1px solid transparent;border-radius:6px;color:var(--ink);text-decoration:none;font-size:.88rem}
+.rail a:hover{background:var(--sheet);border-color:var(--rule)}
+.rail a .n{font:600 .74rem var(--f-mono);color:var(--muted);min-width:1.1em;text-align:center}
+.rail a.done .n::after{content:"✓";color:var(--ok);margin-left:2px}
+.rail a.locked{opacity:.5}
+.rail a[aria-current="page"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.rail a[aria-current="page"] .n{color:var(--accent-ink)}
+.rail a svg{display:block}
+.rail a.coachchip{border-color:var(--coach);color:var(--coach);background:var(--coach-soft)}
+.rail a.coachchip[aria-current="page"]{background:var(--coach);border-color:var(--coach);color:var(--coach-ink)}
+.rail-div{height:1px;background:var(--rule);margin:auto 4px 8px}
+@media (max-width:900px){
+  .layout{display:block}
+  .rail{top:var(--hdr,52px);z-index:9;flex-direction:row;overflow-x:auto;min-height:0;margin:0 -16px;padding:8px 16px;background:var(--paper);border-bottom:1px solid var(--rule);scrollbar-width:thin}
+  .rail a{flex:0 0 auto;border-color:var(--rule);border-radius:999px;background:var(--sheet);padding:5px 10px;font-size:.82rem;white-space:nowrap}
+  .rail a .lbl{display:none}
+  .rail-div{height:auto;width:1px;margin:4px 2px;flex:0 0 1px}
+}
+
+/* page building blocks */
+.page{display:grid;gap:20px}
+.head{display:grid;gap:8px}
+.lede{font-size:1.05rem;color:var(--muted);max-width:68ch}
+.card{background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r);padding:18px;display:grid;gap:14px;min-width:0}
+.card.hi{box-shadow:var(--shadow)}
+.stepbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.note{border-left:3px solid var(--accent);background:var(--accent-soft);padding:10px 12px;border-radius:0 4px 4px 0;font-size:.9rem}
+.note.warn{border-color:var(--warn);background:var(--warn-soft)}
+#storage-warn{margin-bottom:16px}
+.tickler{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;padding:12px 16px;border:1px solid var(--coach-rule);border-radius:var(--r);background:var(--coach-soft);font-size:.92rem}
+.tickler .btn{border-color:var(--coach-rule);color:var(--coach)}
+.recap{border:1px solid var(--rule);border-radius:var(--r);background:var(--paper);padding:8px 14px;font-size:.88rem}
+.recap summary{cursor:pointer;font-weight:600;color:var(--muted)}
+.recap dl{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:4px 14px;margin:8px 0 4px}
+.recap dt{color:var(--muted)} .recap dd{margin:0;white-space:pre-line}
+.carry{border:1px solid var(--rule);border-left:3px solid var(--muted);border-radius:var(--r);background:var(--paper);padding:12px 16px;font-size:.92rem}
+.carry h2{font-size:.95rem;margin:0 0 8px}
+.carry dl{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:6px 16px;margin:0}
+.carry dt{color:var(--muted)} .carry dd{margin:0;white-space:pre-line}
+@media (max-width:560px){ .carry dl{grid-template-columns:1fr;gap:2px} .carry dd{margin-bottom:6px} }
+
+/* forms */
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.grid-project{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)}
+.grid-gap{grid-template-columns:minmax(0,1.6fr) minmax(0,.8fr)}
+.grid-step{grid-template-columns:minmax(0,1.6fr) minmax(0,.7fr) minmax(0,1fr)}
+.span-all{grid-column:1/-1}
+@media (max-width:640px){.grid2{grid-template-columns:minmax(0,1fr)}}
+label{display:grid;gap:4px;font-size:.92rem;font-weight:600}
+.hint{font-weight:400;color:var(--muted);font-size:.84rem}
+input[type=text],select,textarea{width:100%;font:inherit;font-size:.95rem;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:8px 10px}
+textarea{min-height:130px;resize:vertical}
+textarea.tall{min-height:200px}
+textarea.paste{min-height:180px}
+fieldset{border:1px solid var(--rule);border-radius:var(--r);padding:12px 14px;margin:0;display:grid;gap:10px;min-width:0}
+legend{font-weight:600;font-size:.92rem;padding:0 4px}
+.checks{display:flex;flex-wrap:wrap;gap:6px 16px}
+.checks label{display:flex;gap:6px;align-items:center;font-weight:400}
+button,.btn{font:600 .9rem var(--f-body);display:inline-flex;gap:6px;align-items:center;justify-content:center;padding:9px 15px;border-radius:4px;border:1px solid var(--rule);background:var(--sheet);color:var(--ink);cursor:pointer;text-decoration:none}
+button:hover,.btn:hover{border-color:var(--accent)}
+.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.tiny{padding:4px 10px;font-size:.8rem}
+.linkbtn{border:0;background:none;padding:0;color:var(--accent);font-weight:600;text-decoration:underline;cursor:pointer}
+
+/* required items */
+.req{font:500 .66rem var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-left:6px;white-space:nowrap}
+h2 .req{vertical-align:middle}
+.card.need{border-color:var(--warn)}
+.card.need h2 .req,label.need .req{color:var(--warn);font-weight:700}
+label.need input,label.need select,label.need textarea{border-color:var(--warn);box-shadow:0 0 0 1px var(--warn)}
+.needmsg{font-size:.85rem;color:var(--warn);font-weight:600}
+
+/* step 1 choice */
+.choice{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (max-width:560px){.choice{grid-template-columns:minmax(0,1fr)}}
+.choice button{flex-direction:column;align-items:flex-start;text-align:left;padding:12px 14px;gap:2px;font-weight:700}
+.choice button span{font-weight:400;font-size:.84rem;color:var(--muted)}
+.choice button[aria-pressed="true"]{border:2px solid var(--accent);background:var(--accent-soft)}
+
+/* AI coaching panels (purple) and manual section headers */
+.fork{display:grid;gap:10px}
+.ai{border:1px solid var(--coach-rule);border-radius:var(--r);background:var(--coach-soft);overflow:hidden}
+.ai-band{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:var(--coach-band);color:var(--coach-band-ink);padding:10px 16px;border-bottom:1px solid var(--coach-rule)}
+.ai-band h2{font-size:1.15rem;color:var(--coach-band-ink)}
+.ai-badge{font:600 .68rem var(--f-mono);letter-spacing:.08em;text-transform:uppercase;border:1px solid currentColor;border-radius:3px;padding:2px 6px}
+.ai-body{display:grid;gap:12px;padding:16px}
+.ai ol{margin:0;padding-left:1.3em;display:grid;gap:10px}
+.ai li::marker{font-weight:700;color:var(--coach)}
+.ai .primary{background:var(--coach);border-color:var(--coach);color:var(--coach-ink)}
+.ai .linkbtn,.ai a:not(.btn){color:var(--coach)}
+.ai textarea,.ai select,.ai .prompt{background:var(--sheet)}
+.modebar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.modebar label{display:flex;gap:8px;align-items:center;font-weight:600}
+select.toolsel{width:auto;font-size:.88rem;padding:5px 8px}
+.manualhead{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:baseline;justify-content:space-between;padding:4px 2px 2px;border-bottom:1px solid var(--rule)}
+.manualhead h2{font-size:1.25rem}
+.prompt{font:400 .8rem/1.5 var(--f-mono);white-space:pre-wrap;background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:10px 12px;max-height:240px;overflow:auto;margin:6px 0 0}
+details.peek summary{cursor:pointer;font-size:.85rem;color:var(--muted)}
+.fillmsg{font-size:.88rem}
+.checklist{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:4px;font-size:.88rem}
+.checklist li::before{content:"✓ ";color:var(--ok);font-weight:700}
+.checklist li.no::before{content:"✗ ";color:var(--warn)}
+.checklist li.opt::before{content:"– ";color:var(--muted)}
+
+/* ratings */
+.scale-key{font-size:.84rem;color:var(--muted)}
+.count{font:500 .8rem var(--f-mono);color:var(--muted)}
+.group{display:grid;gap:2px}
+.group h3{font:600 .76rem var(--f-mono);letter-spacing:.07em;text-transform:uppercase;color:var(--accent);padding:18px 0 6px}
+fieldset.rate{border:0;border-top:1px dashed var(--rule);border-radius:0;padding:10px 0;gap:6px}
+.rate legend{padding:0;font-size:.94rem}
+.rate legend span{display:block;font-weight:400;font-size:.82rem;color:var(--muted)}
+.rate legend .nowval{display:inline-block;margin-left:8px;font:500 .74rem var(--f-mono);color:var(--accent)}
+.seg{display:flex;flex-wrap:wrap;gap:4px}
+.seg label{display:block;font-weight:500;font-size:.8rem}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg span{display:block;padding:5px 9px;border:1px solid var(--rule);border-radius:4px;background:var(--paper);cursor:pointer;white-space:nowrap}
+.seg input:checked+span{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.seg input:focus-visible+span{outline:2px solid var(--accent);outline-offset:2px}
+
+/* matches, scores, chips */
+.match{display:grid;gap:5px;padding:12px 0;border-top:1px solid var(--rule)}
+.match:first-child{border-top:0;padding-top:0}
+.match-top{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.match-name{font-weight:700}
+.tag{font:600 .72rem var(--f-mono);padding:2px 7px;border-radius:999px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.tag.ok{background:var(--ok-soft);color:var(--ok)} .tag.warn{background:var(--warn-soft);color:var(--warn)} .tag.neutral{background:var(--rule);color:var(--muted)}
+.pick{display:flex;gap:6px;align-items:center;font-weight:400;font-size:.9rem}
+.score{display:inline-flex;gap:6px;align-items:center;font:500 .85rem var(--f-mono);white-space:nowrap}
+.meter{display:inline-block;width:84px;height:7px;background:var(--rule);border-radius:4px;overflow:hidden}
+.meter i{display:block;height:100%;background:var(--accent)}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{font-size:.76rem;padding:2px 8px;border-radius:999px;background:var(--ok-soft);color:var(--ok)}
+.chip.up{background:var(--warn-soft);color:var(--warn)}
+.chip.neutral{background:var(--rule);color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.82rem;color:var(--muted);align-items:center}
+.legend>span{display:inline-flex;gap:6px;align-items:center}
+ul.near{list-style:none;margin:4px 0 0;padding:0;display:grid;gap:4px;font-size:.88rem}
+ul.near li{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.picker{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+.pcard{border:1px solid var(--rule);border-radius:var(--r);padding:12px;display:grid;gap:6px;background:var(--sheet);align-content:start}
+.pcard.sel{border:2px solid var(--accent);background:var(--accent-soft)}
+.pcard b{font-size:.95rem}
+.pcard p{font-size:.84rem;color:var(--muted)}
+.pcard .row{gap:6px}
+
+/* step 4 comparison */
+.sbs{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:14px;align-items:start}
+.sbs-col{display:grid;gap:8px;padding:12px;border:1px solid var(--rule);border-radius:var(--r);background:var(--paper)}
+.sbs-arrow{font-size:1.6rem;color:var(--muted);align-self:center}
+@media (max-width:640px){.sbs{grid-template-columns:minmax(0,1fr)}.sbs-arrow{transform:rotate(90deg);justify-self:center}}
+.pbox{display:grid;gap:6px;padding:12px;border:1px solid var(--rule);border-radius:var(--r);background:var(--sheet)}
+.pbox b{font-family:var(--f-display);font-size:1.05rem}
+#compare{display:grid;gap:10px;margin-top:4px}
+.summary{display:grid;gap:8px;padding:12px;border:1px solid var(--rule);border-radius:var(--r);background:var(--paper)}
+.idea-group{display:grid;gap:6px}
+.idea-group+.idea-group{border-top:1px solid var(--rule);padding-top:10px}
+.idea-group h3{font:600 .76rem var(--f-mono);letter-spacing:.07em;text-transform:uppercase;color:var(--accent)}
+.ideas{margin:0;padding-left:1.1em;display:grid;gap:4px;font-size:.88rem}
+.addbtn{margin-left:6px}
+
+/* tables and lists */
+.tablewrap{overflow-x:auto}
+table.t{width:100%;border-collapse:collapse;font-size:.9rem}
+table.t th,table.t td{padding:7px 8px;border-bottom:1px solid var(--rule);text-align:left;vertical-align:top}
+table.t th{font:600 .72rem var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+table.t td.num{font-family:var(--f-mono);text-align:center;white-space:nowrap}
+.links{margin:0;padding-left:1.1em;display:grid;gap:7px;font-size:.92rem}
+.refs{margin:0;padding-left:1.4em;display:grid;gap:7px;font-size:.88rem}
+
+/* bottom navigation */
+.navbar{position:fixed;left:0;right:0;bottom:0;z-index:10;background:var(--sheet);border-top:1px solid var(--rule);padding-bottom:env(safe-area-inset-bottom,0px)}
+.navbar-in{max-width:880px;margin:0 auto;padding:10px 16px;display:flex;gap:10px;align-items:center}
+.navbar .where{flex:1;text-align:center;font-size:.85rem;color:var(--muted)}
+@media (max-width:560px){.navbar .where{display:none}.navbar #nav-next{flex:1}.navbar .btn{font-size:.85rem;padding:9px 12px}}
+.toast{position:fixed;left:50%;bottom:calc(76px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:8px 14px;border-radius:4px;font-size:.88rem;opacity:0;transition:opacity .2s;pointer-events:none;z-index:30}
+.toast.on{opacity:1}
+@media (prefers-reduced-motion:reduce){.toast{transition:none}}
+.card,.fork,.ai,fieldset.rate{scroll-margin-top:150px;scroll-margin-bottom:90px}
+
+/* one-page report (fixed light colors so it prints the same in dark mode) */
+.report-actions{display:flex;flex-wrap:wrap;gap:8px}
+.report{background:#fff;color:#14212a;border:1px solid #cfd8d8;box-shadow:var(--shadow);width:100%;max-width:8.5in;margin:0 auto;padding:.38in .5in;display:grid;gap:9px;font-size:9pt;line-height:1.34}
+.report a{color:#1d6a83}
+.rp-head{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:end;border-bottom:2px solid #1d6a83;padding-bottom:8px}
+.rp-head h2{font-size:17pt;color:#14212a}
+.rp-head .sub{font:500 7.5pt var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:#4d5d66}
+.rp-date{font:400 7.5pt/1.5 var(--f-mono);text-align:right;color:#4d5d66}
+.rp-meta{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px 14px;font-size:8.2pt;border-bottom:1px solid #d6dede;padding-bottom:8px}
+.rp-meta span{display:block;font:500 6.8pt var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:#5c6b73}
+.rp-sec{display:grid;gap:5px;align-content:start}
+.rp-sec h4{margin:0;font:600 7.6pt var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:#1d6a83;border-bottom:1px solid #d6dede;padding-bottom:2px}
+.rp-two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+.rp-big{font-family:var(--f-display);font-size:12.5pt;font-weight:650;line-height:1.25}
+.rp-quote{font-family:var(--f-display);font-style:italic;font-size:10pt;border-left:2px solid #1d6a83;padding-left:8px}
+.rp-score{font:500 7.6pt var(--f-mono);color:#4d5d66}
+.rp-score b{color:#1d6a83}
+.report table{width:100%;border-collapse:collapse;font-size:8.2pt}
+.report th,.report td{text-align:left;padding:3px 5px;border-bottom:1px solid #e1e7e7;vertical-align:top}
+.report th{font:600 6.8pt var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:#5c6b73}
+.report td.num{font-family:var(--f-mono);text-align:center}
+.report .tag{background:#fbf0dc;color:#8a530a}
+.rp-foot{border-top:1px solid #d6dede;padding-top:6px;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:14px;font-size:7.4pt;color:#4d5d66}
+.rp-foot ul{margin:0;padding-left:1em}
+.rp-empty{color:#8a979d;font-style:italic}
+svg.profile text{font-family:var(--f-mono)}
+@media (max-width:700px){.rp-meta{grid-template-columns:repeat(2,minmax(0,1fr))}.rp-two,.rp-foot{grid-template-columns:minmax(0,1fr)}}
+@media print{
+  .buildtag{display:none}
+  @page{size:letter;margin:0}
+  body{background:#fff}
+  .topbar,.navbar,.toast,.rail,main>.page:not(#report),#report>:not(.report){display:none!important}
+  .layout{display:block;padding:0;max-width:none}
+  main{padding:0;max-width:none}
+  #report{display:block!important}
+  .report{border:0;box-shadow:none;max-width:none;width:8.5in;min-height:11in}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="brand" href="#home" data-go="home">CI Career Phenotype Coach</a>
+    <span class="spacer"></span>
+    <a class="hlink" href="#resources" data-go="resources" id="hdr-resources">Resources</a>
+    <details class="menu"><summary><span aria-hidden="true">≡</span> Menu</summary>
+      <div class="menu-list">
+        <button type="button" id="m-save">Save my answers to a file</button>
+        <button type="button" id="m-load">Open a saved file</button>
+        <button type="button" id="m-clear">Start over</button>
+      </div>
+    </details>
+    <input type="file" id="file-load" accept=".json,application/json" hidden>
+  </div>
+</header>
+
+<div class="layout">
+<nav class="rail" aria-label="Steps" id="rail"></nav>
+<main>
+<p class="note warn" id="storage-warn" hidden>This browser isn't saving your answers. Use Menu → "Save my answers to a file" before you close the page.</p>
+
+<!-- HOME -->
+<section class="page" id="home">
+  <div class="head">
+    <span class="eyebrow">Clinical informatics career planning</span>
+    <h1 tabindex="-1">Plan your next move in clinical informatics.</h1>
+    <p class="lede">Describe your work now, see which informatics roles it resembles, choose one to aim for, and plan how to get there. You finish with a one-page report to share with a mentor.</p>
+  </div>
+  <div class="card">
+    <ol class="links">
+      <li><b>Where you are now.</b> Your projects and your setting.</li>
+      <li><b>Your current phenotype.</b> Rate 20 kinds of work to see the roles yours resembles.</li>
+      <li><b>Your goal phenotype.</b> Describe the work you want in 3–5 years and choose a goal.</li>
+      <li><b>Gaps and plan.</b> See what's different, then plan 2–3 next steps.</li>
+    </ol>
+    <p class="small muted">About 45–90 minutes. Your answers save in this browser, so you can stop and come back. Use AI or not, as you prefer, for any step.</p>
+    <p class="small muted">If you use AI: tools that remember your past chats will bring that context into the coaching. For a blank slate, use a temporary or incognito chat.</p>
+    <div class="row"><a class="btn primary" href="#s1" data-go="s1">Start step 1</a><a class="linkbtn small" href="#coach" data-go="coach">Or do it all in one AI conversation</a></div>
+  </div>
+</section>
+
+<!-- STEP 1 -->
+<section class="page" id="s1" hidden>
+  <div class="head">
+    <span class="eyebrow">Step 1 of 4</span>
+    <h1 tabindex="-1">Where you are now</h1>
+    <p class="lede">Describe what you actually do. If you're new to informatics, start with your clinical work and the problems you notice.</p>
+  </div>
+  <div class="card" id="pref-card">
+    <h2>How do you want to work? <span class="req">Required</span></h2>
+    <p class="small muted">This sets the default for all four steps. You can switch, or change the AI tool, in any step.</p>
+    <div class="choice">
+      <button type="button" data-pref="ai">With an AI tool<span>The AI asks you questions and drafts your answers. You paste them back here and edit.</span></button>
+      <button type="button" data-pref="self">On my own<span>Fill in each step yourself. No AI needed.</span></button>
+    </div>
+    <label for="aiTool" id="pref-tool" hidden>Which AI tool? <span class="hint">Use the one your organization allows.</span>
+      <select id="aiTool" data-bind="aiTool" data-tools></select></label>
+    <ul class="links small">
+      <li>Don't enter patient information or confidential details, here or in an AI tool.</li>
+      <li>Nothing is sent from this page. With AI, you copy a prompt into the AI tool yourself. Check its privacy settings: <a href="https://privacy.claude.com/" target="_blank" rel="noopener">Claude</a> · <a href="https://help.openai.com/en/articles/7730893-data-controls-faq" target="_blank" rel="noopener">ChatGPT</a> · <a href="https://support.google.com/gemini/answer/13594961" target="_blank" rel="noopener">Gemini</a>.</li>
+      <li>Treat what the AI says as a draft. Change anything that doesn't fit you.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h2>About you</h2>
+    <div class="grid2">
+      <label for="p-name">Name <span class="hint">Optional. Only appears on your report.</span><input type="text" id="p-name" data-bind="profile.name"></label>
+      <label for="p-prof"><span>Profession <span class="req">Required</span></span>
+        <select id="p-prof" data-bind="profile.profession" data-options="PROFESSIONS"></select></label>
+      <label for="p-spec">Specialty and setting <span class="hint">For example: pediatric hospitalist, academic children's hospital</span><input type="text" id="p-spec" data-bind="profile.setting"></label>
+      <label for="p-stage"><span>Career stage <span class="req">Required</span></span>
+        <select id="p-stage" data-bind="profile.stage" data-options="STAGES"></select></label>
+      <label for="p-exp"><span>Informatics experience <span class="req">Required</span></span>
+        <select id="p-exp" data-bind="profile.experience" data-options="EXPERIENCE"></select></label>
+      <label for="p-time">Share of your work that is informatics now
+        <select id="p-time" data-bind="profile.time" data-options="SHARES"></select></label>
+    </div>
+  </div>
+  <div class="fork" data-fork="s1"></div>
+  <div class="card">
+    <h2>Projects that mattered to you <span class="req">At least one required</span></h2>
+    <p class="small muted">Up to three. Clinical, operational, research, teaching, or informatics.</p>
+    <div id="projects" class="stack"></div>
+  </div>
+  <div class="card">
+    <h2>Something you wanted to do but didn't</h2>
+    <label for="unreal">What was it?<textarea id="unreal" data-bind="unrealized.text"></textarea></label>
+    <fieldset><legend>What got in the way?</legend><div class="checks" id="reasons"></div></fieldset>
+    <label for="env">Your setting <span class="hint">What does your workplace make easy or hard? Who makes informatics decisions?</span><textarea id="env" data-bind="environment"></textarea></label>
+  </div>
+  <div class="card">
+    <h2>Summary of where you are now <span class="req">Required</span></h2>
+    <p class="small muted">4–6 sentences in your own words. The AI can draft this for you.</p>
+    <textarea id="snap" class="tall" data-bind="snapshot" aria-label="Summary of where you are now"></textarea>
+  </div>
+</section>
+
+<!-- STEP 2 -->
+<section class="page" id="s2" hidden>
+  <div class="head">
+    <span class="eyebrow">Step 2 of 4</span>
+    <h1 tabindex="-1">Your current phenotype</h1>
+    <p class="lede">A phenotype is a common pattern of informatics work, such as "clinician builder" or "informatics researcher." Most people match more than one. It describes your work; it isn't a test result.</p>
+    <details class="peek"><summary>How the matching works</summary><p class="small" style="margin-top:6px">You rate how often your work involves 20 kinds of activity. The tool compares your ratings with the typical mix for each of the 20 phenotypes and lists the closest. It compares the mix of your work, not how busy you are. <a href="#resources" data-go="resources">See all 20 phenotypes</a>.</p></details>
+  </div>
+  <div class="carry" data-recap="s2" hidden></div>
+  <div class="fork" data-fork="s2"></div>
+  <div class="card">
+    <h2>Describe yourself in a sentence or two</h2>
+    <label for="identity"><span>Who are you now, based on what you do? <span class="req">Required</span></span> <span class="hint">For example: "A hospitalist who fixes clinical workflows by building EHR tools." You can revise it after you see your results.</span><textarea id="identity" data-bind="identity"></textarea></label>
+  </div>
+  <div class="card">
+    <div class="row"><h2>Rate your work over the last 6–12 months <span class="req">All 20 required</span></h2><span class="spacer"></span><span class="count" id="rate-count"></span></div>
+    <p class="scale-key">0 Never · 1 About once a year · 2 About monthly · 3 About weekly · 4 A few times a week · 5 Daily. Choose "Not sure" to leave one out.</p>
+    <div id="ratings"></div>
+  </div>
+  <div class="card hi" id="results">
+    <h2>Your closest phenotypes</h2>
+    <div id="matches"></div>
+  </div>
+</section>
+
+<!-- STEP 3 -->
+<section class="page" id="s3" hidden>
+  <div class="head">
+    <span class="eyebrow">Step 3 of 4</span>
+    <h1 tabindex="-1">Your goal phenotype</h1>
+    <p class="lede">Describe the work you want to be doing in 3–5 years. The tool finds the phenotypes that fit that work and suggests one as your goal. You can change it.</p>
+  </div>
+  <div class="carry" data-recap="s3" hidden></div>
+  <div class="fork" data-fork="s3"></div>
+  <details class="recap" id="explore">
+    <summary>Not sure what you want yet?</summary>
+    <p class="small" style="margin-top:8px">That's common, and it's fine to explore first. Start from the work you enjoy, not a job title. <a href="#resources" data-go="resources">Browse the 20 phenotypes</a> to see what exists, then rate how much of each kind of work you'd like. If you're torn between a few, pick the closest and revisit it at your next check-in. Your goal can change as you learn.</p>
+  </details>
+  <div class="card">
+    <label for="dream">A project you'd love to lead <span class="hint">If you could do anything in informatics in the next 3–5 years, what would it be?</span><textarea id="dream" data-bind="dream"></textarea></label>
+    <fieldset><legend>Where would you like to work? <span class="hint">Choose any that appeal to you.</span></legend><div class="checks" id="settings"></div></fieldset>
+  </div>
+  <div class="card">
+    <div class="row"><h2>The work you want in 3–5 years <span class="req">All 20 required</span></h2><span class="spacer"></span><span class="count" id="want-count"></span></div>
+    <p class="small">These start at your current ratings. Move up anything you want more of, and down anything you want less of.</p>
+    <p class="scale-key">0 Never · 1 About once a year · 2 About monthly · 3 About weekly · 4 A few times a week · 5 Daily</p>
+    <div id="wants"></div>
+  </div>
+  <div class="card hi" id="fit">
+    <h2>Phenotypes that fit the work you want</h2>
+    <div id="fit-list"></div>
+  </div>
+  <div class="card">
+    <div class="row"><h2>Your goal <span class="req">Required</span></h2><span class="spacer"></span><span class="small muted">Use the suggestion, or pick another. Add a second if you're torn.</span></div>
+    <div id="goal-now"></div>
+    <details class="peek"><summary>See all 20 phenotypes, sorted by fit</summary><div class="stack" style="margin-top:8px"><div class="small muted" id="picker-note"></div><div class="picker" id="picker"></div></div></details>
+  </div>
+</section>
+
+<!-- STEP 4 -->
+<section class="page" id="s4" hidden>
+  <div class="head">
+    <span class="eyebrow">Step 4 of 4</span>
+    <h1 tabindex="-1">Gaps and action plan</h1>
+    <p class="lede">See your current and goal phenotypes side by side, look at what's different, and plan 2–3 next steps to close the gap.</p>
+  </div>
+  <div class="card hi">
+    <h2>Your work now compared with your goal</h2>
+    <div id="side-by-side"></div>
+    <div id="compare"></div>
+  </div>
+  <div class="carry" data-recap="s4" hidden></div>
+  <div class="fork" data-fork="s4"></div>
+  <div class="card">
+    <h2>Name your gaps <span class="req">At least one required</span></h2>
+    <p class="small muted">Fill in the ones that apply. For each, is it possible where you work now?</p>
+    <div id="gapdims" class="stack"></div>
+  </div>
+  <div class="card">
+    <h2>Ideas for next steps</h2>
+    <p class="small muted">Pick any that fit and add them to your steps. You can edit them after.</p>
+    <div id="ideas"></div>
+  </div>
+  <div class="card">
+    <h2>Next steps <span class="req">At least two required</span></h2>
+    <p class="small muted">2–3 steps you can start in the next 6 months. Be specific about when and who can help.</p>
+    <div id="nextsteps" class="stack"></div>
+  </div>
+  <div class="card">
+    <h2>Your ask</h2>
+    <label for="ask"><span>Who will you ask for help, and for what? <span class="req">Required</span></span> <span class="hint">For example: "Ask our CMIO for a seat on the CDS committee this spring."</span><textarea id="ask" data-bind="ask"></textarea></label>
+  </div>
+  <div class="card">
+    <h2>Check in on this plan</h2>
+    <label for="checkin">How often will you review it? <span class="hint">Ask: is my time building the skills, credibility, and network I need? Has my goal changed as I've learned more?</span>
+      <select id="checkin" data-bind="checkin"><option value="">Choose…</option><option>Every month</option><option>Every 3 months</option><option>Every 6 months</option></select></label>
+  </div>
+  <div class="card">
+    <h2>Your pitch</h2>
+    <label for="pitch"><span>About 30 seconds out loud: who you are now, where you're headed, and what you need. <span class="req">Optional</span></span><textarea id="pitch" class="tall" data-bind="pitch"></textarea></label>
+  </div>
+</section>
+
+<!-- REPORT -->
+<section class="page" id="report" hidden>
+  <div class="head">
+    <span class="eyebrow">Your report</span>
+    <h1 tabindex="-1">Your one-page plan</h1>
+    <p class="lede">Print it or save it as a PDF. In the print window, choose "Save as PDF" and turn off headers and footers. It updates when you change earlier steps.</p>
+  </div>
+  <div class="report-actions">
+    <button type="button" class="primary" id="btn-print">Print or save as PDF</button>
+    <button type="button" id="btn-copy-report">Copy as text</button>
+    <button type="button" data-savefile>Save my answers to a file</button>
+  </div>
+  <article class="report" id="report-page"></article>
+</section>
+
+<!-- FULL AI COACH -->
+<section class="page" id="coach" hidden>
+  <div class="head">
+    <span class="eyebrow">Full AI coach</span>
+    <h1 tabindex="-1">Do it all in one AI conversation</h1>
+    <p class="lede">A more flexible, conversational version of the same four steps. One prompt starts a coaching conversation in the AI tool you use. You can share your CV or other files, talk through what matters to you, and go deeper where you want. The AI checks in after each step and finishes by writing your one-page plan.</p>
+  </div>
+  <div class="ai">
+    <div class="ai-band"><span class="ai-badge">AI coaching</span><h2>Full session</h2></div>
+    <div class="ai-body">
+      <div class="modebar"><label for="tool-full">Working with <select class="toolsel" id="tool-full" data-bind="aiTool" data-tools></select></label></div>
+      <ol>
+        <li><div class="row" id="full-go"></div>
+          <details class="peek"><summary>See the prompt</summary><pre class="prompt" id="prompt-full"></pre></details></li>
+        <li>In the AI tool, paste (Ctrl+V or ⌘V) and answer one question at a time. Plan on 45–90 minutes. The AI tells you which step you're on and checks with you before moving on.</li>
+        <li>At the end, the AI writes your one-page career plan in the chat. Copy it, save it, or print it from there.</li>
+      </ol>
+      <ul class="links small">
+        <li>You can upload or paste your CV, a portfolio, or a job description you're curious about. Remove anything sensitive first.</li>
+        <li>Don't enter patient information or confidential details. Use the AI tool your organization allows.</li>
+        <li>If your AI tool remembers past chats, it will use what it knows about you. For a blank slate, use a temporary or incognito chat.</li>
+        <li>Need to stop partway? Ask the AI for "the export block so far." Paste it below to save your progress here.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Optional: bring your results back</h2>
+    <p class="small">The AI ends with an export block. Paste it here, then click <b>Fill in the worksheet</b>. That fills in all four steps, so you can check exact match scores and print the formatted one-page report. The AI's own matches are estimates. This page calculates them exactly.</p>
+    <label for="paste-full">Export block from the AI<textarea id="paste-full" class="paste" placeholder="Paste everything after “Copy everything below into the coach”"></textarea></label>
+    <div class="row"><button type="button" class="primary" data-fillfull>Fill in the worksheet</button></div>
+    <div class="fillmsg" id="fillmsg-full" role="status"></div>
+  </div>
+</section>
+
+<!-- RESOURCES -->
+<section class="page" id="resources" hidden>
+  <div class="head">
+    <span class="eyebrow">Resources</span>
+    <h1 tabindex="-1">Resources</h1>
+    <p class="lede">The phenotypes, the 20 kinds of work, competency frameworks, training and certification options, communities, and references. Links go to publicly available pages.</p>
+  </div>
+  <div class="card">
+    <h2>About the phenotypes</h2>
+    <p>A phenotype is a common pattern of informatics work: the activities, skills, setting, and way of contributing that tend to go together. Phenotypes overlap. They aren't personality types or validated categories. Use them to reflect, talk with mentors, and plan.</p>
+    <p class="small muted">How they were made: a group of informatics faculty and fellows drafted them from experience across several fellowship programs and from earlier work describing informatics roles (KOI Pond, the CI Domains of Practice, #MyInformaticsProfile). About 100 informaticians answered a survey through Physicians in AMIA, a regional informatics group, and academic faculty groups (90 usable responses). The weights for each phenotype came from the survey and were adjusted by expert review. This supports using them for reflection, not for classifying people.</p>
+    <p class="note warn small">Prototype limits: the survey and phenotypes come from physicians. Role names here are written for all clinicians, but there are no nurse-, APP-, or pharmacist-specific phenotypes yet.</p>
+  </div>
+  <div class="card">
+    <h2>The 20 phenotypes</h2>
+    <div class="picker" id="lib-phenos"></div>
+  </div>
+  <div class="card">
+    <h2>The 20 kinds of work</h2>
+    <p class="small muted">"Domain" is the matching area of the Clinical Informatics Domains of Practice: D1 fundamentals, D2 improving care delivery and outcomes, D3 enterprise information systems, D4 data governance and analytics, D5 leadership and professionalism.</p>
+    <div class="tablewrap"><table class="t" id="lib-attrs"></table></div>
+  </div>
+  <div class="card">
+    <h2>Full AI coach</h2>
+    <p class="small">Prefer one conversation? The <a href="#coach" data-go="coach">full AI coach</a> runs the whole session in any AI tool from a single prompt.</p>
+  </div>
+  <div class="card">
+    <h2>What informaticians do</h2>
+    <ul class="links">
+      <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7647208/" target="_blank" rel="noopener">Clinical Informatics Domains of Practice</a> (physician subspecialty, 2019): 5 domains, 42 tasks, 139 knowledge and skill statements. The basis of the board exam.</li>
+      <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7647284/" target="_blank" rel="noopener">Health Informatics Domains of Practice</a> (all professions, 2020). The basis of AMIA's AHIC certification.</li>
+      <li><a href="https://www.theabpm.org/become-certified/exam-content/clinical-informatics-content-outline/" target="_blank" rel="noopener">Clinical Informatics board exam content outline</a> (ABPM)</li>
+      <li><a href="https://www.acgme.org/globalassets/pdfs/milestones/clinicalinformaticsmilestones.pdf" target="_blank" rel="noopener">ACGME Clinical Informatics Milestones</a> (how fellows are assessed)</li>
+      <li><a href="https://doi.org/10.1055/s-0039-1701021" target="_blank" rel="noopener">KOI Pond</a>: describe your work by setting (internal, external, policy) and focus (knowledge, operations, innovation).</li>
+      <li><a href="https://www.aaronneinstein.com/post/myinformaticsprofile" target="_blank" rel="noopener">#MyInformaticsProfile</a>: show where your time goes across areas of informatics.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h2>AI in clinical informatics</h2>
+    <p class="small">Clinical AI is a growing part of informatics work: choosing, evaluating, putting into use, and governing AI tools in care.</p>
+    <ul class="links">
+      <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC12925513/" target="_blank" rel="noopener">Cultivating AI leaders: the role of clinical informatics fellowship in transforming healthcare</a> (Lingam et al., 2026; free full text)</li>
+      <li><a href="https://amia.org/education-events/10x10-virtual-courses/introduction-biomedical-informatics-ai/course-overview" target="_blank" rel="noopener">AMIA 10x10: Introduction to Biomedical Informatics and AI</a> (short online course)</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h2>Training and certification</h2>
+    <ul class="links">
+      <li><a href="https://www.theabpm.org/become-certified/subspecialties/clinical-informatics/" target="_blank" rel="noopener">Clinical Informatics board certification</a> (physicians, ABPM). Requires an ACGME-accredited fellowship. The practice pathway is closed.</li>
+      <li><a href="https://apps.acgme.org/ads/Public/Programs/Search" target="_blank" rel="noopener">Find an accredited fellowship</a> (ACGME program search; choose Clinical Informatics) and the <a href="https://amia.org/membership/academic-forum/amia-clinical-informatics-fellowship-match" target="_blank" rel="noopener">AMIA fellowship match</a>.</li>
+      <li><a href="https://amia.org/careers-certifications/amia-health-informatics-certification-ahic" target="_blank" rel="noopener">AMIA Health Informatics Certification (AHIC)</a> for nurses, pharmacists, other clinicians, and physicians who aren't board-certified in informatics.</li>
+      <li><a href="https://www.nursingworld.org/our-certifications/informatics-nurse/" target="_blank" rel="noopener">Informatics Nursing certification</a> (ANCC)</li>
+      <li><a href="https://amia.org/education-events/amia-10x10-virtual-courses" target="_blank" rel="noopener">AMIA 10x10 courses</a>: short online courses, a common starting point.</li>
+      <li><a href="https://amia.org/careers-certifications/informatics-academic-programs" target="_blank" rel="noopener">Informatics degree and certificate programs</a> (AMIA directory)</li>
+      <li>Also useful: Lean or Six Sigma training, project management training, and your EHR vendor's builder training.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h2>Communities</h2>
+    <ul class="links">
+      <li><a href="https://amia.org/communities/physicians-amia" target="_blank" rel="noopener">Physicians in AMIA (PINA)</a></li>
+      <li><a href="https://amia.org/communities/nursing-informatics" target="_blank" rel="noopener">AMIA Nursing Informatics</a></li>
+      <li><a href="https://www.ania.org/" target="_blank" rel="noopener">American Nursing Informatics Association (ANIA)</a></li>
+      <li><a href="https://amdis.org/" target="_blank" rel="noopener">AMDIS</a> (physician informatics leaders)</li>
+      <li><a href="https://www.amia.org/career-development" target="_blank" rel="noopener">AMIA career development</a> (includes the AMIA job board)</li>
+      <li><a href="https://myidp.sciencecareers.org/" target="_blank" rel="noopener">myIDP</a>: a free career-planning tool for scientists. It uses a similar self-assessment approach.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h2>References</h2>
+    <ol class="refs">
+      <li>Silverman HD, Steen EB, Carpenito JN, et al. Domains, tasks, and knowledge for clinical informatics subspecialty practice: results of a practice analysis. <i>JAMIA</i>. 2019;26(7):586-593. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7647208/" target="_blank" rel="noopener">Free full text</a></li>
+      <li>Gadd CS, Steen EB, Caro CM, et al. Domains, tasks, and knowledge for health informatics practice: results of a practice analysis. <i>JAMIA</i>. 2020;27(6):845-852. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7647284/" target="_blank" rel="noopener">Free full text</a></li>
+      <li>Kim E, Van Cain M, Hron JD. Job search strategies and early careers of clinical informatics fellowship alumni (2016-2022). <i>JAMIA</i>. 2024;31(4):884-892. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10990520/" target="_blank" rel="noopener">Free full text</a></li>
+      <li>Lingham V, Chandwarkar A, Miller M, et al. A systematic approach to the design and implementation of clinical informatics fellowship programs. <i>Appl Clin Inform</i>. 2023;14(5):951-960. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10700146/" target="_blank" rel="noopener">Free full text</a></li>
+      <li>Kannry J, Sengstack P, Thyvalikakath TP, et al. The Chief Clinical Informatics Officer (CCIO): AMIA task force report on CCIO knowledge, education, and skillset requirements. <i>Appl Clin Inform</i>. 2016;7(1):143-176. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4817341/" target="_blank" rel="noopener">Free full text</a></li>
+      <li>Hersh W. Who are the informaticians? What we know and should know. <i>JAMIA</i>. 2006;13(2):166-170. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC1447543/" target="_blank" rel="noopener">Free full text</a></li>
+      <li>Manning JD, et al. KOI Pond: the "elevator pitch" that adapts to describe the breadth and variety of clinical informatics practice. <i>ACI Open</i>. 2020;4:e22-e29. <a href="https://doi.org/10.1055/s-0039-1701021" target="_blank" rel="noopener">Free full text</a></li>
+      <li>Neinstein A. #MyInformaticsProfile. 2020. <a href="https://www.aaronneinstein.com/post/myinformaticsprofile" target="_blank" rel="noopener">Link</a></li>
+      <li>Cruess RL, Cruess SR, Boudreau JD, Snell L, Steinert Y. Reframing medical education to support professional identity formation. <i>Acad Med</i>. 2014;89(11):1446-1451. <a href="https://doi.org/10.1097/ACM.0000000000000427" target="_blank" rel="noopener">Publisher (subscription)</a></li>
+      <li>Chang CN, Hui J, Justus-Smith C, Wang TW. Navigating STEM careers with AI mentors: a new IDP journey. <i>Front Artif Intell</i>. 2024;7:1461137. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11493768/" target="_blank" rel="noopener">Free full text</a></li>
+      <li>Lingam V, Kannry J, Khanna R, et al. Cultivating AI leaders: the role of clinical informatics fellowship in transforming healthcare. <i>Lancet Reg Health Am</i>. 2026;56:101407. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC12925513/" target="_blank" rel="noopener">Free full text</a></li>
+      <li>Genkins J. Clinical informatics phenotypes, portfolios, and elevator pitch. AMIA Clinical Informatics Conference (CIC) Fellows Retreat; 2023. Presentation.</li>
+      <li>Mieso B, Lingam V, Genkins J. CI physician phenotypes and portfolios. AMIA CIC 2025 Fellows Retreat; May 19, 2025. Presentation.</li>
+    </ol>
+  </div>
+</section>
+<!-- BUILD TAG: bump on every deploy so you can tell which build people are seeing. -->
+<footer class="buildtag">Prototype · build v0.6.0 (2026-10-14)</footer>
+</main>
+</div>
+
+<nav class="navbar" id="navbar" aria-label="Step navigation" hidden>
+  <div class="navbar-in">
+    <a class="btn" id="nav-back" href="#">← Back</a>
+    <span class="where" id="nav-where"></span>
+    <a class="btn primary" id="nav-next" href="#">Next →</a>
+  </div>
+</nav>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* =====================================================================
+   DATA
+   ===================================================================== */
+const GROUPS = ["Clinical care and teaching","Leadership, business, and policy","Operations and quality","Building and design","Data, systems, and research"];
+// The 20 kinds of work. n name, g group, d description, dop CI Domain of Practice, o ideas for growing it.
+// Index order = codes A01–A20 = weight order. DISPLAY sets the order people see.
+const ATTR = [
+ {n:"Clinical work",g:0,d:"Direct patient care",dop:"—",o:["Keep enough clinical time to stay credible","Choose clinical work close to the workflows you want to improve"]},
+ {n:"Teaching",g:0,d:"Clinical teaching, curriculum design, teaching informatics",dop:"D5",o:["Teach an informatics topic to residents, students, or staff","Join a curriculum or faculty development group"]},
+ {n:"Diversity, equity, and inclusion",g:0,d:"Equity work, inclusive teams, equity in systems",dop:"D2",o:["Add an equity analysis to a current project","Join an equity committee that uses data"]},
+ {n:"Health policy and public health",g:1,d:"Policy, public health informatics, advocacy",dop:"D1",o:["Get involved in AMIA public policy work","Work with your public health department on a data project"]},
+ {n:"External consulting",g:1,d:"Advising organizations other than your employer",dop:"D5",o:["Advise a startup or another health system on a defined question","Write up an advising project for your portfolio"]},
+ {n:"Strategy, business development, entrepreneurship",g:1,d:"Strategy, business cases, starting ventures",dop:"D5",o:["Write the business case for a project you care about","Take a short business or innovation course"]},
+ {n:"Leadership, change management, communication",g:1,d:"Leading people and change",dop:"D5",o:["Chair a committee or take a governance role","Join a leadership development program","Lead the change management plan on your next project"]},
+ {n:"Health IT operations",g:2,d:"Keeping clinical systems running and improving them (e.g., superuser work, reporting EHR problems, go-live support)",dop:"D3",o:["Join an EHR optimization or governance team","Spend a month with your informatics operations team"]},
+ {n:"Quality and process improvement",g:2,d:"Improving care with QI methods (e.g., a QI project or PDSA cycle)",dop:"D2",o:["Take Lean or Six Sigma training","Run a QI project with a measurable aim"]},
+ {n:"Project management",g:2,d:"Planning scope, timelines, and teams (e.g., organizing a change in your clinic or unit)",dop:"D5",o:["Take project management training","Run a small project from start to finish with a charter"]},
+ {n:"Developing products",g:3,d:"Building products for the market or wide use",dop:"D2",o:["Do an industry elective or join a product team","Enter a hackathon or innovation challenge"]},
+ {n:"Design, UX, human factors",g:3,d:"Usability and workflow design (e.g., redesigning a form, template, or workflow)",dop:"D2",o:["Run usability testing on a build you care about","Take a human factors or design course"]},
+ {n:"Non-academic writing and media",g:3,d:"Blogs, newsletters, podcasts, social media",dop:"D5",o:["Write about a project for your internal newsletter","Start writing publicly on a regular schedule"]},
+ {n:"EHR build (no-code)",g:3,d:"Building order sets, alerts, and templates in the EHR (including your own templates or smart phrases)",dop:"D3",o:["Take your EHR vendor's builder training","Build in a test environment with an analyst"]},
+ {n:"Software development",g:3,d:"Writing code",dop:"D3",o:["Take an introductory Python or SQL course","Automate one small task in your own work"]},
+ {n:"Architecture, security, infrastructure",g:4,d:"Connecting systems and keeping data secure (e.g., data exchange between systems)",dop:"D3",o:["Learn interoperability basics (HL7 FHIR)","Join an integration or security governance group"]},
+ {n:"Analytics and data governance",g:4,d:"Reports, dashboards, statistics, data stewardship (e.g., using a registry or dashboard to find patients)",dop:"D4",o:["Learn SQL and dashboard tools","Join your data governance committee"]},
+ {n:"Clinical AI",g:4,d:"Choosing, evaluating, putting into use, or governing predictive or generative AI in care (e.g., piloting an AI scribe, reviewing a model for bias, serving on an AI governance group)",dop:"D2",o:["Join an AI governance or model review group","Evaluate an AI tool already in use where you work"]},
+ {n:"Basic or methods research",g:4,d:"Developing new methods, years from practice",dop:"D4",o:["Find a research mentor in biomedical informatics","Consider a research degree or research fellowship"]},
+ {n:"Applied research",g:4,d:"Studying informatics in practice (e.g., evaluating whether a tool helped)",dop:"D2",o:["Turn a QI project into an abstract","Partner with an informatics researcher on an evaluation"]}
+];
+const DISPLAY = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,17,15,16,18,19]; // Clinical AI (A18) first in its group
+// The 20 phenotypes. n clinician-wide name, o original survey name, d description, w weights 0–5 in ATTR order.
+// Source: CI phenotype matrix, Library sheet of "CI Fellows Phenotype Survey - Results" (all weights verified 2026-10-05; each row adds up to 35–36).
+const PHENO = [
+ {n:"Informatics executive, academic health system",o:"Leader (CMIO, CIO, etc.) at large academic medical center",d:"Sets informatics strategy and governance for a large academic system, including governance of AI tools. Leads people and change.",w:[2,3,5,1,0,2,4,4,2,1,1,2,1,0,0,1,3,1,0,2]},
+ {n:"Informatics executive, community or regional system",o:"Leader (CMIO, CIO, etc.) at non-academic regional/local small medical center",d:"Leads informatics for a smaller system. Hands-on with operations and QI, often still seeing patients.",w:[4,2,4,1,0,3,4,4,3,2,0,1,1,1,0,2,2,0,0,1]},
+ {n:"Specialty informatics director",o:"Informatics Chief/Director, specialty-specific",d:"Leads informatics for one clinical specialty: workflows, QI, projects, and bringing AI tools into the specialty. Stays clinically active.",w:[4,3,2,0,0,1,3,3,4,3,1,3,1,2,1,0,2,1,0,1]},
+ {n:"Informatics program director (e.g., digital health)",o:"Informatics Chief/Director, informatics-area-specific",d:"Runs one informatics program across the system, such as digital health, virtual care, decision support, or clinical AI.",w:[3,3,2,1,1,2,3,2,3,3,1,1,2,0,0,0,2,3,1,2]},
+ {n:"Clinician builder",o:"Physician Builder",d:"Builds EHR tools such as order sets, alerts, and templates, or leads other builders, close to clinical practice. Strong in QI and design.",w:[5,3,1,0,0,0,3,3,4,3,2,3,1,5,0,0,2,0,0,1]},
+ {n:"Population and public health informatician",o:"Population and Public Health Informatician",d:"Uses data and systems to improve population and public health. Policy, equity, and analytics.",w:[3,2,4,4,0,2,3,0,2,4,0,3,0,0,1,2,3,0,3,0]},
+ {n:"Policy and regulatory informatician",o:"Policy and Regulatory-focused Clinical Informatician",d:"Shapes health IT policy and regulation. Heavy on leadership and communication.",w:[3,1,4,5,2,2,4,0,0,2,0,0,4,0,0,0,2,3,3,0]},
+ {n:"Health IT venture investor",o:"Venture Capital Manager for Health IT-focused fund",d:"Evaluates and funds health IT companies. Strategy, leadership, and product judgment.",w:[1,2,1,2,3,5,5,1,1,1,3,5,3,0,0,0,0,3,0,0]},
+ {n:"Early-stage health IT founder",o:"Health IT Start-up founder, early stage",d:"Starts a company. Strategy, leadership, and running projects.",w:[2,2,2,0,0,5,5,1,3,5,3,2,2,0,1,1,0,1,0,0]},
+ {n:"Clinical leader at an established health IT company",o:"Leadership (ex. CMO, VP) of Health IT Start-up, established",d:"The clinical leader in a company's leadership team (CMO, CNO, VP). Teaching, strategy, and communication.",w:[1,4,4,0,0,4,4,1,2,0,3,2,0,2,2,0,2,2,2,0]},
+ {n:"Clinician at a health IT vendor",o:"Physician working with a Health IT vendor",d:"Brings clinical expertise to a vendor's product, design, and policy work, including AI products.",w:[0,1,0,4,0,3,3,2,1,2,4,4,3,2,2,2,0,3,0,0]},
+ {n:"Clinical informatician in a large tech company",o:"Clinical Informatician within large tech organization",d:"Brings clinical expertise to a large technology company. Product (including AI products), strategy, and leadership.",w:[0,2,1,4,2,3,4,3,2,0,4,4,1,2,0,0,2,2,0,0]},
+ {n:"Health IT program or product manager",o:"Program Manager for Health IT company",d:"Runs programs and products. QI, project management, and operations.",w:[0,2,1,0,0,3,2,4,5,5,5,2,0,0,0,1,3,1,1,1]},
+ {n:"Clinical informatics consultant",o:"Clinical Informatics Consultant",d:"Advises organizations on implementation, strategy, and products, on their own or with a firm.",w:[4,1,0,3,5,4,0,0,2,1,5,5,2,0,0,0,1,3,0,0]},
+ {n:"Applied informatics researcher",o:"Clinical Informatics Researcher (Translational/Applied)",d:"Studies informatics tools in real care settings, including evaluating AI tools. Analytics and research.",w:[3,4,1,0,3,1,2,2,1,0,1,2,0,0,0,0,5,3,3,5]},
+ {n:"Methods informatics researcher",o:"Basic Science Informatics Researcher",d:"Develops new methods and tools that are years from practice. Computing, data, and AI.",w:[2,4,1,2,2,1,2,0,0,1,0,0,0,0,2,3,4,4,5,3]},
+ {n:"Informatics educator",o:"Educator/Trainer of Clinical Informatics & Systems",d:"Teaches clinicians and trainees informatics and how to use systems, including AI literacy for clinicians.",w:[4,5,4,0,1,3,3,3,2,2,2,2,0,2,0,0,0,0,0,2]},
+ {n:"Informatics training program director",o:"Clinical Informatics Program Director",d:"Leads an informatics training program. Teaching, leadership, and accreditation.",w:[4,5,5,3,1,2,4,2,2,0,0,0,3,0,0,0,2,0,0,2]},
+ {n:"Clinical data scientist",o:"Clinical/Biomedical Data Scientist",d:"Works with health data in industry or academia. Analytics, data systems, and building and validating AI models.",w:[0,0,0,0,3,0,0,0,1,1,4,2,2,0,4,5,5,5,3,0]},
+ {n:"Health IT software engineer",o:"Software engineer for start-up or established HIT company",d:"Writes software. Systems architecture, data, and AI.",w:[0,1,0,0,0,0,0,0,1,2,5,5,0,0,5,5,5,5,0,2]}
+];
+const SETTINGS = ["Academic health system","Community or regional health system","Health IT company or startup","Large tech company","Government, policy, or public health","Research","Education and training","Independent or consulting"];
+const SETTING_WORDS = [["academic"],["community","regional"],["health it","startup","start-up","vendor"],["tech company","large tech","big tech"],["government","policy","public health"],["research"],["education","training","teaching"],["independent","consult"]];
+const PSET = [[0],[1],[0,1],[0,1],[0,1],[4,0],[4],[2],[2],[2],[2],[3],[2,3],[7],[5,0],[5],[6,0],[6,0],[5,2,3],[2,3]]; // usual settings per phenotype
+const PROFESSIONS = ["Physician","Nurse practitioner","Physician assistant","Registered nurse","Pharmacist","Other clinician"];
+const STAGES = ["Trainee","Informatics fellow","Early career","Mid career","Senior or executive"];
+const EXPERIENCE = ["None yet","Some, unpaid or informal (committees, superuser, projects)","Some paid or protected time","A formal informatics role"];
+const SHARES = ["None","Under 10%","10–25%","25–50%","50–75%","Over 75%"];
+const OPTION_LISTS = {PROFESSIONS, STAGES, EXPERIENCE, SHARES}; // fills the About you menus (data-options)
+const ROLES = ["I led it","I did the work","I advised","I was kept informed"];
+const REASONS = ["Time","No sponsor","Too big in scope","Skills","Not an organizational priority","Funding","Didn't know how to start","Other"];
+const GAPDIMS = [
+ ["skills","Skills","What would you need to know or be able to do?"],
+ ["projects","Experience","What kind or size of project haven't you done yet?"],
+ ["leadership","Leadership","What would you need to lead, not just join?"],
+ ["mentorship","Mentors and sponsors","Who could guide you? Who could open a door?"],
+ ["environment","Your setting","Does this work exist where you are? Who decides?"]
+];
+const POSSIBLE = ["Yes","With changes","Not likely"];
+const STARTERS = ["Join an EHR, quality, or informatics committee","Volunteer as a superuser for an EHR change or go-live","Ask someone on your informatics team for 20 minutes to learn what they do","Take an AMIA 10x10 course","Join AMIA or an AMIA community for your profession","Find a mentor who has the role you want","Join or observe your organization's AI governance or evaluation group","Take a course in clinical AI, such as AMIA 10x10 Introduction to Biomedical Informatics and AI","Present or write up a project you led","Write up one workflow problem from your own work, with a proposed fix"];
+const SCALE = ["Never","Yearly","Monthly","Weekly","Few times a week","Daily"];
+const TOOLS = {
+ chatgpt:{n:"ChatGPT",u:"https://chatgpt.com/"},
+ claude:{n:"Claude",u:"https://claude.ai/new"},
+ gemini:{n:"Gemini",u:"https://gemini.google.com/app"},
+ copilot:{n:"Copilot",u:"https://copilot.microsoft.com/"},
+ other:{n:"your AI tool",u:""}
+};
+const TOOL_LABEL = k => ({copilot:"Microsoft Copilot (including your organization's version)",other:"Another tool (copy the prompt)"}[k] || TOOLS[k].n);
+const STEPS = [["s1","Where you are now"],["s2","Current phenotype"],["s3","Goal phenotype"],["s4","Gaps and plan"]];
+const SECTION = {s1:"Step 1: Describe where you are now",s2:"Step 2: Describe yourself and rate your work",s3:"Step 3: Describe the work you want",s4:"Step 4: Identify gaps and name next steps"};
+const AI_INTRO = {
+  s1:"The AI asks you about your work and drafts your answers.",
+  s2:"The AI helps you describe yourself, then asks about your work and suggests ratings you can change.",
+  s3:"The AI asks about the work you want, your priorities, and where you'd like to work, then suggests ratings you can change.",
+  s4:"The AI helps you name gaps and drafts your steps, ask, and pitch."
+};
+const AI_RETURNS = {s1:"your projects, setting, and summary",s2:"a short description of you and your ratings",s3:"ratings for the work you want, the settings you'd consider, and a dream project",s4:"your gaps, next steps, ask, and pitch"};
+
+/* =====================================================================
+   STATE (saved in this browser; can be saved to and loaded from a file)
+   ===================================================================== */
+const KEY = "ciPhenotypeCoach.v2";
+const blank = () => ({
+  pref:"", aiTool:"chatgpt", mode:{s1:"",s2:"",s3:"",s4:""}, stepTool:{s1:"",s2:"",s3:"",s4:""},
+  profile:{name:"",profession:"",setting:"",stage:"",experience:"",time:""},
+  projects:[{title:"",role:"",why:""},{title:"",role:"",why:""},{title:"",role:"",why:""}],
+  unrealized:{text:"",reasons:[]}, environment:"", snapshot:"",
+  identity:"", ratings:Array(20).fill(null), unsure:Array(20).fill(false), chosen:[],
+  dream:"", settings:[], want:Array(20).fill(null), wantUnsure:Array(20).fill(false), target:["",""],
+  gaps:Object.fromEntries(GAPDIMS.map(g=>[g[0],{t:"",p:""}])),
+  steps:[{what:"",when:"",who:""},{what:"",when:"",who:""},{what:"",when:"",who:""}],
+  ask:"", checkin:"", pitch:"", made:""
+});
+// Worked example (a fictional nurse practitioner), used by "Fill with an example" one step at a time.
+const EXAMPLE = () => Object.assign(blank(), {
+  profile:{name:"Jordan Rivera, NP (example)",profession:"Nurse practitioner",setting:"Adult primary care, community health system",stage:"Mid career",experience:EXPERIENCE[1],time:"10–25%"},
+  projects:[
+    {title:"Redesigned the refill protocol and its EHR order panel",role:"I led it",why:"Cut refill turnaround from 3 days to 1 and freed up nursing time"},
+    {title:"EHR superuser for the clinic's go-live",role:"I did the work",why:"I liked translating between clinicians and the build team"},
+    {title:"Diabetes registry outreach pilot",role:"I advised",why:"First time using data to find patients we were missing"}],
+  unrealized:{text:"Lead a clinic-wide inbox redesign",reasons:["No sponsor","Too big in scope","Didn't know how to start"]},
+  environment:"Supportive manager. Informatics decisions sit with a central IT team I rarely see. No formal informatics roles for APPs yet.",
+  snapshot:"I'm a primary care NP who keeps getting pulled into EHR fixes because I can see both the clinical problem and the build. My best work has been workflow redesign that saves staff time, mostly as a superuser. I'm good at translating between clinicians and analysts. I haven't led anything at the system level or had a formal informatics title.",
+  identity:"A primary care NP who improves care by redesigning workflows and EHR tools from the front line.",
+  ratings:[4,2,2,1,0,1,3,3,4,3,0,3,1,3,0,0,2,1,0,1],
+  chosen:["Specialty informatics director","Clinician builder"],
+  dream:"Lead a system-wide program to improve clinicians' EHR experience, starting with an inbox redesign that measurably cuts after-hours EHR time.",
+  settings:["Academic health system","Community or regional health system"],
+  want:[2,3,2,1,1,2,4,2,3,4,1,1,2,1,0,0,3,3,1,2],
+  target:["Informatics program director (e.g., digital health)",""],
+  gaps:{skills:{t:"Project management and measurement; basic analytics",p:"Yes"},projects:{t:"A system-level project with a formal aim and evaluation",p:"With changes"},leadership:{t:"Haven't chaired a committee or led a cross-site team",p:"With changes"},mentorship:{t:"No informatics mentor; need a sponsor in central IT",p:"Yes"},environment:{t:"No APP informatics role exists yet",p:"Not likely"}},
+  steps:[{what:"Ask the CMIO to sponsor me on the inbox optimization workgroup",when:"Next 30 days",who:"Clinic medical director"},{what:"Complete the AMIA 10x10 introductory course",when:"By spring",who:"Education funds"},{what:"Run one measured inbox pilot in my clinic",when:"6 months",who:"Analyst partner"}],
+  ask:"Ask our CNIO for 30 minutes to discuss an APP informatics role and a seat on the EHR governance committee.",
+  checkin:"Every 3 months",
+  pitch:"I'm a primary care NP who redesigns workflows and EHR tools from the front line. I cut refill turnaround from three days to one and helped lead our clinic's go-live. Next, I want to lead a system-wide inbox redesign that gives clinicians their evenings back. I'm looking for a sponsor who can get me a seat at the governance table."
+});
+// Which parts of the state belong to each step (for "Fill with an example" and "Clear this step").
+const STEPFIELDS = {s1:["profile","projects","unrealized","environment","snapshot"],s2:["identity","ratings","unsure","chosen"],s3:["dream","settings","want","wantUnsure","target"],s4:["gaps","steps","ask","checkin","pitch"]};
+
+function merge(o){ const b=blank(); const s=Object.assign(b, o, {mode:Object.assign(blank().mode,o.mode||{}), stepTool:Object.assign(blank().stepTool,o.stepTool||{})});
+  if(s.aiTool==="none"){ s.aiTool="chatgpt"; if(!s.pref) s.pref="self"; } // files saved by v0.2
+  return s; }
+function load(){ try{ const t=localStorage.getItem(KEY); if(t) return merge(JSON.parse(t)); }catch(e){} return blank(); }
+let S = load(), storageOK = true, saveT;
+function save(){ clearTimeout(saveT); saveT=setTimeout(()=>{ try{ localStorage.setItem(KEY, JSON.stringify(S)); storageOK=true; }catch(e){ storageOK=false; } $("#storage-warn").hidden=storageOK; },250); }
+
+/* helpers */
+const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+const esc = s => String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const clone = o => JSON.parse(JSON.stringify(o));
+const code = i => "A"+String(i+1).padStart(2,"0");
+const attrLabel = i => `${ATTR[i].n} (${code(i)})`;
+const pIndex = n => PHENO.findIndex(p=>p.n===n);
+const plural = (n,w) => `${n} ${w}${n===1?"":"s"}`;
+function getPath(o,p){ return p.split(".").reduce((a,k)=>a==null?a:a[k],o); }
+function setPath(o,p,v){ const ks=p.split("."); const last=ks.pop(); ks.reduce((a,k)=>a[k],o)[last]=v; }
+function toast(t){ const el=$("#toast"); el.textContent=t; el.classList.add("on"); clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove("on"),2200); }
+const smooth = () => matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+function scrollToEl(el, block="start"){ if(el) el.scrollIntoView({behavior:smooth(), block}); }
+function copyText(txt){ // synchronous copy, so a link can still open in the same click
+  let ok=false; const ta=document.createElement("textarea"); ta.value=txt; ta.setAttribute("readonly",""); ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta); ta.select();
+  try{ ok=document.execCommand("copy"); }catch(err){} ta.remove();
+  try{ if(navigator.clipboard){ navigator.clipboard.writeText(txt).catch(()=>{}); ok=true; } }catch(err){}
+  return ok; }
+
+/* =====================================================================
+   SCORING
+   Match score = Pearson correlation between a set of ratings and a phenotype's
+   weights, shown 0–100. It compares the mix of work, not how much. Gaps compare
+   current ratings with the goal's weights scaled to the person's average level.
+   ===================================================================== */
+const count = (arr, uns) => ({rated:arr.filter(v=>v!==null).length, answered:arr.filter((v,i)=>v!==null||uns[i]).length});
+const rated = () => count(S.ratings,S.unsure).rated;
+const answered = () => count(S.ratings,S.unsure).answered;
+const wanted = () => count(S.want,S.wantUnsure).rated;
+const wantAnswered = () => count(S.want,S.wantUnsure).answered;
+function pearson(a,b){ const idx=a.map((v,i)=>v===null?-1:i).filter(i=>i>=0); const n=idx.length; if(n<3) return 0;
+  const ma=idx.reduce((s,i)=>s+a[i],0)/n, mb=idx.reduce((s,i)=>s+b[i],0)/n;
+  let num=0,da=0,db=0; idx.forEach(i=>{const x=a[i]-ma,y=b[i]-mb;num+=x*y;da+=x*x;db+=y*y;});
+  return (da&&db)? num/Math.sqrt(da*db) : 0; }
+const matches = (v=S.ratings) => PHENO.map((p,i)=>({i,r:pearson(v,p.w)})).sort((x,y)=>y.r-x.r);
+const fits = () => matches(S.want);
+const score = r => Math.max(0, Math.round((r||0)*100));
+const strength = (r, word="match") => (r>=.6?"Close ":r>=.4?"Good ":r>=.2?"Partial ":"Weak ")+word;
+// Current phenotype(s): the ones ticked "This fits me" (up to 2), otherwise the top match.
+const currentPhenos = () => S.chosen.length ? S.chosen.slice(0,2) : (rated()>=8 ? [PHENO[matches()[0].i].n] : []);
+const curName = () => currentPhenos()[0] || "";
+const targetIdx = () => S.target.filter(Boolean).map(pIndex).filter(i=>i>=0);
+function targetVec(){ const t=targetIdx(); return t.length ? ATTR.map((_,k)=>t.reduce((s,i)=>s+PHENO[i].w[k],0)/t.length) : null; }
+const goalR = () => { const tv=targetVec(); return tv ? pearson(S.ratings,tv) : null; };
+const goalFit = () => { const tv=targetVec(); return tv && wanted()>=8 ? pearson(S.want,tv) : null; };
+// Scale a weight vector to the person's average rating, so comparisons are about mix, not workload.
+function scaled(w, u){ const um=u.filter(v=>v!==null); const uMean=um.length? um.reduce((a,b)=>a+b,0)/um.length : 2.5;
+  const wMean=w.reduce((a,b)=>a+b,0)/w.length; const sc=wMean? uMean/wMean : 1; return w.map(x=>Math.min(5,x*sc)); }
+const GAP_SMALL=0.9, GAP_BIG=1.5, GAP_MORE=-1.75;
+function compareRows(){ const tv=targetVec(); if(!tv) return null; const t=scaled(tv,S.ratings);
+  return ATTR.map((a,k)=>{ const you=S.ratings[k]; const g= you===null?null: t[k]-you;
+    const gap= g===null?"": g>=GAP_BIG?"big": g>=GAP_SMALL?"small": g<=GAP_MORE?"more":"ok"; return {k,a,you,t:t[k],g,gap}; }); }
+const GAPLABEL = {big:["Big gap","warn"],small:["Small gap","warn"],ok:["On track","ok"],more:["More than the goal needs","neutral"],"":["Not rated","neutral"]};
+const growRows = () => (compareRows()||[]).filter(x=>x.gap==="big"||x.gap==="small").sort((a,b)=>b.g-a.g);
+function gapCounts(rows){ const c={ok:0,small:0,big:0,more:0}; rows.forEach(r=>{ if(r.gap in c) c[r.gap]++; }); return c; }
+// Chips always compare a role with current work, using the same gap rule as the table:
+// green ✓ shared strengths (above average for both, no gap), orange ↑ gaps.
+function drivers(pi){ const u=S.ratings, w=PHENO[pi].w; const idx=u.map((v,i)=>v===null?-1:i).filter(i=>i>=0); if(!idx.length) return {shared:[],miss:[]};
+  const mu=idx.reduce((s,i)=>s+u[i],0)/idx.length, mw=idx.reduce((s,i)=>s+w[i],0)/idx.length, t=scaled(w,u), gap=i=>t[i]-u[i];
+  return {shared:idx.filter(i=>u[i]>=mu&&w[i]>=mw&&gap(i)<GAP_SMALL).sort((a,b)=>(u[b]-mu)*(w[b]-mw)-(u[a]-mu)*(w[a]-mw)).slice(0,3),
+          miss:idx.filter(i=>gap(i)>=GAP_SMALL).sort((a,b)=>gap(b)-gap(a)).slice(0,3)}; }
+
+/* shared display pieces */
+const meter = r => { const s=score(r); return `<span class="score" title="Score ${s} out of 100"><span class="meter" aria-hidden="true"><i style="width:${s}%"></i></span><b>${s}</b></span>`; };
+const chips = (pi,nShared=3,nGrow=2) => { const d=drivers(pi); return `<div class="chips">${d.shared.slice(0,nShared).map(i=>`<span class="chip">✓ ${esc(ATTR[i].n)}</span>`).join("")}${d.miss.slice(0,nGrow).map(i=>`<span class="chip up">↑ ${esc(ATTR[i].n)}</span>`).join("")}</div>`; };
+const LEGEND = `<div class="legend"><span><span class="chip">✓</span> Work you already do, little development needed</span><span><span class="chip up">↑</span> Work you'd need to grow for this role</span></div>`;
+const SCORE_NOTE = what => `<p class="small muted">${what==="fit"?"Fit score (0–100) shows how similar the work you want is":"Match score (0–100) shows how similar the mix of your work is"} to each phenotype's typical mix. 60 or more is close.</p>`;
+
+/* =====================================================================
+   PROMPTS
+   Per-step prompts share RULES and end with a labeled answer block the page reads.
+   The full-coach prompt runs everything conversationally and ends with an export block.
+   ===================================================================== */
+const isNew = () => { const p=S.profile; return p.experience===EXPERIENCE[0]||p.experience===EXPERIENCE[1]||p.stage==="Trainee"; };
+// Prompts are briefs, not scripts: a coaching style, the step's purpose, a checklist of what's needed by
+// the end (any order), and a fixed finish (summarize, confirm, then the answer block the page reads).
+const COACH_STYLE = `Think of a trusted senior colleague over coffee: curious, warm, direct, and on my side.`;
+const TALK = `- Have a conversation, not an interview. Respond to what I said before you ask the next thing: reflect it back, name a theme or tension you notice, or offer a short observation or example when it helps.
+- Ask one or two questions at a time, whatever feels natural. Most replies should be a few sentences; go longer when I've shared something worth unpacking.
+- Follow my lead. If I go somewhere useful, go with me, then steer us back when it's time.`;
+const MEMORY = `- If you remember things about me from other conversations, ask before you use them.`;
+const SAFETY = `- Don't ask for patient information or confidential details. If I share any, ask me to remove it.`;
+function rules(){ return `You're my career coach for clinical informatics. I'm a clinician (physician, nurse, advanced practice provider, pharmacist, or other). ${COACH_STYLE}
+
+How to coach me:
+${TALK}
+- Share hunches and options, not verdicts ("Here's what I'm hearing. Does that fit?").
+- Use plain language. Explain informatics terms simply. Count unpaid and informal work, such as committees, superuser work, QI projects, and teaching.${isNew()?" I'm new to informatics, so start from my clinical work and the problems I notice.":""}
+- Call each kind of work by its name. Codes like (A01) are only for the answer block at the end.
+${MEMORY}
+- If it would save time, invite me to paste or upload a CV, role description, or job posting. Remind me to remove anything sensitive first.
+${SAFETY}`; }
+const NEED = "What you need by the end (cover these in whatever order fits our conversation, and skip anything I've already told you):";
+const finish = what => `When you have enough, tell me in a few sentences ${what}, and ask whether it's right. Once I confirm, write "Copy everything below into the coach" and then the answer block below, exactly in this format: labels in capitals, one item per line, no extra formatting. If anything is missing, ask me instead of guessing.`;
+const draftRatings = fromNow => `Don't go through the 20 kinds of work one at a time. Once we've talked, draft ratings for all 20 in one message, grouped as they're listed${fromNow?", starting from my current ratings and changing only what should change":""}, and mark the few you're least sure of. Ask me to correct them, then ask about only the ones you couldn't judge.`;
+const ratingsFormat = label => `${label}:
+Clinical work (A01) = 3
+(one line for each of the 20 kinds of work, in the order listed above, each with its name and code; write "not sure" instead of a number if I'm not sure)`;
+const SCALE_TEXT = "0 never, 1 about once a year, 2 about monthly, 3 about weekly, 4 a few times a week, 5 daily";
+const IDEAS_TEXT = "reshaping my current role, committee or governance seats, superuser roles, AI governance or evaluation groups, AMIA 10x10 courses, Lean or Six Sigma training, AHIC or nursing informatics certification, a clinical informatics fellowship, or finding a mentor who has the role I want";
+const PRIORITIES = "how much clinical work to keep, leadership, building, working with AI, research, teaching, income, and flexibility";
+const CONTRAST = "describe 4–5 contrasting kinds of informatics work in plain language (what a typical week looks like, not job titles) and ask which sounds energizing and which sounds draining";
+const PURPOSE = {
+  s1:"a clear, honest picture of the work I do now and what shapes it, so later steps start from reality rather than a job title",
+  s2:"naming the kind of informatics work I do now, so we can compare it with where I want to go",
+  s3:"picturing the work I'd find most meaningful in 3–5 years, before we worry about how to get there",
+  s4:"turning the gap between now and my goal into a few next steps I'll actually take"
+};
+const attrList = () => DISPLAY.map(i=>`- ${ATTR[i].n} (${code(i)}): ${ATTR[i].d}`).join("\n");
+function profileLine(){ const p=S.profile; return [p.profession,p.setting,p.stage&&("career stage: "+p.stage),p.experience&&("informatics experience: "+p.experience),p.time&&("share of work that is informatics: "+p.time)].filter(Boolean).join("; ")||"(not given)"; }
+function projectsText(){ const ps=S.projects.filter(p=>p.title); return ps.map((p,i)=>`${i+1}. ${p.title}${p.role?` (${p.role})`:""}${p.why?`: ${p.why}`:""}`).join("\n"); }
+function prompts(){
+ const hasProj=S.projects.some(p=>p.title);
+ const s1 = `${rules()}
+
+STEP 1: WHERE I AM NOW
+What this step is for: ${PURPOSE.s1}. Don't suggest a career direction yet.
+
+About me: ${profileLine()}
+${hasProj?`Projects I've listed so far:\n${projectsText()}\n`:""}
+${NEED}
+- 1–3 projects that mattered to me, my role in each, and why each mattered (projects can be clinical, quality improvement, teaching, research, informatics, or work with AI tools)
+- something I wanted to do but didn't, and what got in the way
+- what my workplace makes easy or hard, and who makes informatics decisions
+
+${finish("what you're hearing about where I am now")}
+PROJECTS:
+1. project title | my role (I led it / I did the work / I advised / I was kept informed) | why it mattered
+WANTED TO DO: one sentence
+WHAT GOT IN THE WAY: from ${REASONS.join(", ")}
+MY SETTING: 1–2 sentences
+SUMMARY: 4–6 first-person sentences about who I am now, based on what I do`;
+ const s2 = `${rules()}
+
+STEP 2: THE WORK I DO NOW
+What this step is for: ${PURPOSE.s2}. Don't name career types; the coach page does the matching.
+
+${S.snapshot?`Summary of where I am now: ${S.snapshot}\n`:""}${hasProj?`My projects:\n${projectsText()}\n`:""}${S.identity?`How I describe myself now: ${S.identity}\n`:""}
+${NEED}
+- 1–2 first-person sentences about who I am now, based on what I do (${S.identity?"start from my description above and help me sharpen it":"draft them from what I've shared and ask me to correct them"})
+- how often my work over the last 6–12 months involves each of these 20 kinds of work (${SCALE_TEXT}):
+${attrList()}
+
+${draftRatings(false)}
+
+${finish("who you think I am now and which kinds of work stand out")}
+IDENTITY: 1–2 sentences
+${ratingsFormat("RATINGS")}`;
+ const curLines = DISPLAY.map(i=>`- ${ATTR[i].n} (${code(i)}): now ${S.ratings[i]??"not sure"}`).join("\n");
+ const s3 = `${rules()}
+
+STEP 3: THE WORK I WANT
+What this step is for: ${PURPOSE.s3}. Don't suggest career types or job titles; the coach page matches my answers to career types.
+
+Who I am now: ${S.identity||S.snapshot||"(not written yet)"}
+How often my work involves each of these 20 kinds of work now (${SCALE_TEXT}):
+${curLines}
+
+If I don't know what I want yet, start there: ${CONTRAST}.
+
+${NEED}
+- what energizes me and what drains me
+- a project I'd love to lead or build
+- my priorities, such as ${PRIORITIES}
+- the settings I'd consider: ${SETTINGS.join(", ")}
+- how much of each of the 20 kinds of work I want
+
+${draftRatings(true)}
+
+${finish("the work you hear me wanting")}
+${ratingsFormat("WANT RATINGS")}
+SETTING: the settings I'd consider, from the list above
+DREAM PROJECT: one sentence`;
+ const grows = growRows().slice(0,5).map(r=>`- ${r.a.n}: I rated ${r.you}; my goal is around ${r.t.toFixed(1)}`).join("\n");
+ const s4 = `${rules()}
+
+STEP 4: GAPS AND ACTION PLAN
+What this step is for: ${PURPOSE.s4}.
+
+Who I am now: ${S.identity||S.snapshot||"(not written yet)"}
+My current phenotype: ${curName()||"(not scored yet)"}
+My goal phenotype: ${S.target.filter(Boolean).join(" and ")||"(not chosen yet)"}${S.dream?`\nA project I'd love to lead: ${S.dream}`:""}${S.settings.length?`\nSettings I'd consider: ${S.settings.join(", ")}`:""}
+${grows?`Biggest differences between my work now and my goal:\n${grows}\n`:""}My workplace: ${S.environment||"(not given)"}
+
+${NEED}
+- my gaps in five areas: skills, experience, leadership, mentors and sponsors, and my setting; for each, whether it's possible where I work now (Yes / With changes / Not likely)
+- 2–3 specific next steps for the next 6 months, each with a "by when" and "who can help"
+- one person to ask for help, and what to ask
+- a 30-second pitch that says who I am, where I'm headed, and what I need, in plain language that sounds like me
+
+Realistic options include ${IDEAS_TEXT}. Push back gently if a step is vague or too big, and help me make it specific enough to start next month.
+
+${finish("my plan")}
+GAPS:
+Skills: the gap | Possible: Yes / With changes / Not likely
+Experience: the gap | Possible: ...
+Leadership: the gap | Possible: ...
+Mentors and sponsors: the gap | Possible: ...
+Your setting: the gap | Possible: ...
+NEXT STEPS:
+1. the step | by when | who can help
+ASK: one sentence
+PITCH: about 75 words`;
+ return {s1,s2,s3,s4};
+}
+// The full coach describes phenotypes by name, description, and main kinds of work. The weights stay on
+// the page (unpublished), which calculates exact scores after import.
+function phenoFull(){ return PHENO.map(p=>{ const top=p.w.map((v,k)=>({v,k})).sort((a,b)=>b.v-a.v).slice(0,4).map(x=>ATTR[x.k].n.toLowerCase());
+  return `- ${p.n}: ${p.d} Most of the work: ${top.join(", ")}.`; }).join("\n"); }
+function fullPrompt(){ return `You're my career coach for clinical informatics. Over one conversation, we'll work through four steps together and finish with my one-page career plan.
+
+About me: I'm a clinician (physician, nurse, advanced practice provider, pharmacist, or other). I may be new to informatics, and some of my informatics work may be unpaid or informal.
+
+How to coach me:
+- ${COACH_STYLE}
+${TALK}
+- Learn the personal context that shapes my choices, at the level I want to share: what I care about, what I'm proud of, constraints like family, location, finances, or time, and what success would feel like.
+- Invite me to share files or paste text that helps: my CV or résumé, a portfolio, a job description I'm curious about, my current role description, or notes from a performance review. Use them to draft answers I can correct. Remind me to remove anything sensitive first.
+- Share hunches and options, not verdicts ("Here's what I'm hearing. Does that fit?"). Phenotypes describe work, not people.
+- Use plain language. Explain informatics terms simply. Count unpaid and informal work.
+- Call each kind of work by its name. Codes like (A01) are only for the export block at the end.
+${SAFETY}
+- If I say I need to stop, give me the export block (described at the end) with everything so far.
+
+HOW TO START
+Open with a short welcome (4–5 sentences): what we'll do together (look at where I am now, the kind of informatics work I do, the work I want, and a plan to get there), that it takes about 45–90 minutes and I can stop anytime, and that I'll leave with a one-page plan. Then ask whether you should use anything you remember about me from other conversations, and whether I'd like to start by sharing a CV or just by talking.
+
+THROUGHOUT
+- Keep the destination in view: a goal I chose and 2–3 next steps I can act on in the next 6 months. When something I say connects to that, point it out.
+- Start each step with a heading, like "Step 2 of 4: Your current phenotype", and 2–3 sentences on why this step matters and what we'll talk about.
+- End each step by summarizing what you heard, and check with me before moving on.
+- In each step, cover what's needed in whatever order fits our conversation, and skip anything I've already told you.
+- For the 20 kinds of work: ${draftRatings(false).replace("Don't","don't")}
+
+STEP 1 OF 4: WHERE I AM NOW
+Why it matters: ${PURPOSE.s1}. Don't suggest a career direction yet.
+What you need by the end:
+- my profession, specialty and setting, career stage, informatics experience (none yet / some, unpaid or informal / some paid or protected time / a formal informatics role), and roughly what share of my work is informatics
+- 1–3 projects that mattered to me, my role in each (I led it / I did the work / I advised / I was kept informed), and why each mattered; projects can be clinical, quality improvement, teaching, research, informatics, or work with AI tools
+- something I wanted to do but didn't, and what got in the way
+- what my workplace makes easy or hard, and who makes informatics decisions
+- a 4–6 sentence first-person summary of who I am now
+
+STEP 2 OF 4: MY CURRENT PHENOTYPE
+Why it matters: ${PURPOSE.s2}.
+What you need by the end:
+- 1–2 first-person sentences about who I am now, based on what I do
+- how often my work over the last 6–12 months involves each of these 20 kinds of work (${SCALE_TEXT}):
+${attrList()}
+Then compare my ratings with these 20 clinical informatics phenotypes (common patterns of informatics work). Name the 2–3 closest. For each, say what we have in common and what I'd need to grow. Ask which ones fit me. Say these are estimates; my coach page calculates exact match scores.
+${phenoFull()}
+
+STEP 3 OF 4: MY GOAL PHENOTYPE
+Why it matters: ${PURPOSE.s3}.
+If I don't know what I want yet, start there: ${CONTRAST}.
+What you need by the end:
+- what energizes me and what drains me
+- a project I'd love to lead
+- my priorities, such as ${PRIORITIES}
+- the settings I'd consider: ${SETTINGS.join(", ")}
+- how much of each of the 20 kinds of work I want, starting from my current ratings and changing only what should change
+Then suggest the 2–3 phenotypes from the list that best fit the work I want, with the trade-offs of each, and help me choose one goal (and a second if I'm torn).
+
+STEP 4 OF 4: GAPS AND ACTION PLAN
+Why it matters: ${PURPOSE.s4}.
+Compare my current work with my goal phenotype: what's on track, what's a small gap, and what's a big gap. What you need by the end:
+- my gaps in five areas: skills, experience, leadership, mentors and sponsors, and my setting; for each, whether it's possible where I work now (Yes / With changes / Not likely) and how
+- 2–3 specific next steps for the next 6 months, each with a "by when" and "who can help"
+- one person to ask for help, and what to ask
+- a 30-second pitch that says who I am, where I'm headed, and what I need
+Realistic ideas include ${IDEAS_TEXT}. Push back gently if a step is vague or too big, and help me make it specific enough to start next month.
+
+FINISH
+1. Write my one-page career plan with these headings: About me; Where I am now; Current phenotype (what fits and what to grow); Goal phenotype (why it fits); Biggest gaps; Next steps (a table: step, by when, who can help); My ask; My pitch. Keep it to one page, in plain language.
+2. Then write "Copy everything below into the coach" and this export block, exactly in this format: labels in capitals, one item per line, no extra formatting. Before writing it, check you have every item; if something is missing, ask me instead of guessing.
+PROFESSION: one of ${PROFESSIONS.join(", ")}
+SPECIALTY AND SETTING: one line
+CAREER STAGE: one of ${STAGES.join(", ")}
+INFORMATICS EXPERIENCE: one of None yet, Some unpaid or informal, Some paid or protected time, A formal informatics role
+INFORMATICS SHARE: one of ${SHARES.join(", ")}
+PROJECTS:
+1. project title | my role | why it mattered
+WANTED TO DO: one sentence
+WHAT GOT IN THE WAY: from ${REASONS.join(", ")}
+MY SETTING: 1–2 sentences about my workplace
+SUMMARY: 4–6 sentences
+IDENTITY: 1–2 sentences
+${ratingsFormat("RATINGS")}
+CURRENT PHENOTYPE: the 1–2 phenotype names I said fit me, separated by " + "
+${ratingsFormat("WANT RATINGS")}
+SETTING: the settings I'd consider
+DREAM PROJECT: one sentence
+GOAL: the exact phenotype name I chose
+SECOND GOAL: another exact name, or "none"
+GAPS:
+Skills: the gap | Possible: Yes / With changes / Not likely
+Experience: the gap | Possible: ...
+Leadership: the gap | Possible: ...
+Mentors and sponsors: the gap | Possible: ...
+Your setting: the gap | Possible: ...
+NEXT STEPS:
+1. the step | by when | who can help
+ASK: one sentence
+PITCH: about 75 words`; }
+
+/* =====================================================================
+   READING AI ANSWERS
+   ===================================================================== */
+const LABELS = ["PROFESSION","SPECIALTY AND SETTING","CAREER STAGE","INFORMATICS EXPERIENCE","INFORMATICS SHARE","CURRENT PHENOTYPE","PROJECTS","WANTED TO DO","WHAT GOT IN THE WAY","MY SETTING","SUMMARY","WANT RATINGS","RATINGS","SETTING","IDENTITY","DREAM PROJECT","SECOND GOAL","GOAL","GAPS","NEXT STEPS","ASK","PITCH"];
+// Splits an answer into labeled sections. Tolerates markdown bold, headings, bullets, and code fences.
+function sections(txt){
+  const out={}; let cur=null;
+  const re=new RegExp("^[\\s>*#_-]*("+LABELS.join("|")+")[\\s*_]*:\\s*(.*)$","i");
+  txt.replace(/\r/g,"").split("\n").forEach(line=>{
+    if(/^\s*(```|~~~)/.test(line)) return;
+    const m=line.match(re);
+    if(m){ cur=m[1].toUpperCase(); out[cur]=(m[2]||"").replace(/\*\*/g,"").trim(); }
+    else if(cur){ out[cur]+=(out[cur]?"\n":"")+line.replace(/\*\*/g,"").trim(); }
+  });
+  Object.keys(out).forEach(k=>out[k]=out[k].trim()); return out;
+}
+const listLines = s => (s||"").split("\n").map(l=>l.replace(/^\s*(\d+[.)]|[-*•])\s*/,"").trim()).filter(Boolean);
+const norm = t => (t||"").toLowerCase().replace(/[–—]/g,"-").replace(/,/g,"").replace(/\s+/g," ").trim();
+const letters = t => (t||"").toLowerCase().replace(/[^a-z ]/g," ").replace(/\s+/g," ").trim();
+function roleFrom(s){ s=(s||"").toLowerCase(); if(/led|lead|accountable|own/.test(s)) return ROLES[0]; if(/did|responsible|work|built/.test(s)) return ROLES[1]; if(/advis|consult/.test(s)) return ROLES[2]; if(/inform/.test(s)) return ROLES[3]; return ""; }
+function phenoFrom(s){ s=letters(s); if(!s||s==="none") return "";
+  const p=PHENO.find(p=>letters(p.n)===s) || PHENO.find(p=>{ const n=letters(p.n); return s.includes(n)||n.includes(s); }); return p? p.n : ""; }
+function optionFrom(list, text){ const t=norm(text); if(!t) return "";
+  return list.find(o=>norm(o)===t) || list.find(o=>{ const b=norm(o).split(" (")[0]; return t===b||t.startsWith(b)||b.startsWith(t); }) || ""; }
+// Reads "Name (A01) = 3" lines into a ratings array. Returns which were found and which had a bad value.
+function parseRatings(txt, arr, uns){ const found=new Set(), bad=[];
+  txt.split(/\r?\n/).forEach(line=>{ const m=line.match(/A\s*0?(\d{1,2})\b[^=:\n]*[=:]\s*([^\s,;]+)/i); if(!m) return; const i=+m[1]-1; if(i<0||i>19) return;
+    if(/^[0-5](\.0+)?$/.test(m[2])){ arr[i]=parseFloat(m[2]); uns[i]=false; found.add(i); }
+    else if(/not sure|n\/?a|unsure|\?/i.test(line.slice(line.search(/[=:]/)))){ arr[i]=null; uns[i]=true; found.add(i); }
+    else bad.push(i); });
+  return {found, bad}; }
+function ratingsCheck(label, {found,bad}){ const missing=ATTR.map((_,i)=>i).filter(i=>!found.has(i)&&!bad.includes(i)).map(attrLabel);
+  return {label, ok:found.size===20, opt:false, detail: found.size===20? "all 20 found" : `${found.size} of 20 found${missing.length?`; missing ${missing.join(", ")}`:""}${bad.length?`; not a number from 0 to 5: ${bad.map(attrLabel).join(", ")}`:""}`}; }
+// Applies one step's answer. Returns a checklist: {label, ok, opt (optional), detail}.
+function applyPaste(step, txt){
+  const s=sections(txt), C=[], chk=(label,ok,opt,detail)=>C.push({label,ok:!!ok,opt,detail});
+  if(step==="s1"){
+    const ps=listLines(s.PROJECTS).slice(0,3).map(l=>{ const [t,r,w]=l.split("|").map(x=>(x||"").trim()); return {title:t||"",role:roleFrom(r),why:w||""}; }).filter(p=>p.title);
+    if(ps.length) S.projects=[0,1,2].map(i=>ps[i]||{title:"",role:"",why:""});
+    chk("Projects",ps.length,false, ps.length? `${ps.length} found` : "no PROJECTS lines found");
+    if(s.SUMMARY) S.snapshot=s.SUMMARY; chk("Summary",s.SUMMARY,false);
+    if(s["WANTED TO DO"]) S.unrealized.text=s["WANTED TO DO"]; chk("Something you wanted to do",s["WANTED TO DO"],true);
+    if(s["WHAT GOT IN THE WAY"]){ const low=s["WHAT GOT IN THE WAY"].toLowerCase(); S.unrealized.reasons=REASONS.filter(r=>low.includes(r.toLowerCase())); } chk("What got in the way",s["WHAT GOT IN THE WAY"],true);
+    if(s["MY SETTING"]) S.environment=s["MY SETTING"]; chk("Your setting",s["MY SETTING"],true);
+  }
+  if(step==="s2"){
+    if(s.IDENTITY) S.identity=s.IDENTITY; chk("Description of you",s.IDENTITY,false);
+    C.push(ratingsCheck("Ratings", parseRatings(s.RATINGS||(s["WANT RATINGS"]?"":txt), S.ratings, S.unsure)));
+  }
+  if(step==="s3"){
+    C.push(ratingsCheck("Ratings for the work you want", parseRatings(s["WANT RATINGS"]||"", S.want, S.wantUnsure)));
+    if(s.SETTING){ const low=s.SETTING.toLowerCase(); const hit=SETTINGS.filter((x,k)=>SETTING_WORDS[k].some(w=>low.includes(w))); if(hit.length) S.settings=hit; }
+    chk("Settings you'd consider",s.SETTING,true);
+    if(s["DREAM PROJECT"]) S.dream=s["DREAM PROJECT"]; chk("Project you'd love to lead",s["DREAM PROJECT"],true);
+  }
+  if(step==="s4"){
+    let k=0; listLines(s.GAPS).forEach(l=>{ const m=l.match(/^([^:|]+):\s*(.*)$/); if(!m) return; const head=m[1].toLowerCase();
+      const key= /skill/.test(head)?"skills": /experien|project/.test(head)?"projects": /lead/.test(head)?"leadership": /mentor|sponsor/.test(head)?"mentorship": /setting|environ/.test(head)?"environment":null; if(!key) return;
+      const [t,p]=m[2].split("|").map(x=>(x||"").trim()); const pv=(p||"").replace(/^possible\s*:\s*/i,"").toLowerCase(); if(!t) return;
+      S.gaps[key]={t, p: pv.startsWith("yes")?"Yes": pv.startsWith("with")?"With changes": pv.startsWith("not")?"Not likely":""}; k++; });
+    chk("Gaps",k,false,`${k} found`);
+    const st=listLines(s["NEXT STEPS"]).slice(0,3).map(l=>{ const [w,n,h]=l.split("|").map(x=>(x||"").trim()); return {what:w||"",when:n||"",who:h||""}; }).filter(x=>x.what);
+    if(st.length) S.steps=[0,1,2].map(i=>st[i]||{what:"",when:"",who:""});
+    chk("Next steps",st.length>=2,false,`${st.length} found${st.length<2?" (need at least 2)":""}`);
+    if(s.ASK) S.ask=s.ASK; chk("Your ask",s.ASK,false);
+    if(s.PITCH) S.pitch=s.PITCH; chk("Your pitch",s.PITCH,true);
+  }
+  return C;
+}
+// Full AI coach export: About you, then each step's reader on the same text, then current phenotype and goal.
+function applyFull(txt){
+  const s=sections(txt), C=[], p=S.profile;
+  const prof=optionFrom(PROFESSIONS,s.PROFESSION), stage=optionFrom(STAGES,s["CAREER STAGE"]), exp=optionFrom(EXPERIENCE,s["INFORMATICS EXPERIENCE"]), share=optionFrom(SHARES,s["INFORMATICS SHARE"]);
+  if(prof) p.profession=prof; if(stage) p.stage=stage; if(exp) p.experience=exp; if(share) p.time=share; if(s["SPECIALTY AND SETTING"]) p.setting=s["SPECIALTY AND SETTING"];
+  const miss=[!prof&&"profession",!stage&&"career stage",!exp&&"informatics experience"].filter(Boolean);
+  C.push({label:"About you",ok:!miss.length,opt:false,detail:miss.length?`couldn't read ${miss.join(", ")}`:""});
+  STEPS.forEach(([st],n)=>applyPaste(st,txt).forEach(c=>C.push({...c,label:`Step ${n+1}: ${c.label}`})));
+  const cur=(s["CURRENT PHENOTYPE"]||"").split(/\+|,| and /).map(phenoFrom).filter(Boolean);
+  if(cur.length) S.chosen=[...new Set(cur)].slice(0,2);
+  C.push({label:"Step 2: Current phenotype",ok:cur.length>0,opt:true,detail:cur.length?S.chosen.join(" + "):""});
+  const g1=phenoFrom(s.GOAL), g2=phenoFrom(s["SECOND GOAL"]);
+  if(g1) S.target=[g1, g2&&g2!==g1?g2:""];
+  C.push({label:"Step 3: Goal",ok:!!g1,opt:false,detail:g1?`matched to “${g1}”${S.target[1]?` and “${S.target[1]}”`:""}`: s.GOAL?`“${s.GOAL}” isn't one of the 20 names. Pick it in step 3.`:"no GOAL line found"});
+  if(!S.pref) S.pref="ai";
+  return C;
+}
+function renderCheck(step, C){
+  const msg=$("#fillmsg-"+step), reqMiss=C.filter(c=>!c.ok&&!c.opt);
+  if(!C.some(c=>c.ok)){ msg.innerHTML=`<p class="needmsg">Nothing matched. Make sure you pasted the AI's final answer, the part after “Copy everything below into the coach.”</p>`; return; }
+  let h=`<ul class="checklist">${C.map(c=>`<li class="${c.ok?"":c.opt?"opt":"no"}">${esc(c.label)}${c.detail?`: ${esc(c.detail)}`:""}${!c.ok&&c.opt?" (optional)":""}</li>`).join("")}</ul>`;
+  if(step==="s2" && rated()>=8){ const t=matches()[0]; h+=`<p class="small" style="margin-top:6px">Your closest phenotype now: <b>${esc(PHENO[t.i].n)}</b>, match score ${score(t.r)} of 100. Your full results are below.</p>`; }
+  if(step==="s3" && wanted()>=8){ const t=fits()[0]; h+=`<p class="small" style="margin-top:6px">Closest fit for the work you want: <b>${esc(PHENO[t.i].n)}</b>, fit score ${score(t.r)} of 100. See the suggestions below, then choose your goal.</p>`; }
+  if(reqMiss.length){ const fix=`Please give me the final answer again, in exactly the format from my first message: labels in capitals, one item per line, no extra formatting. I'm missing: ${reqMiss.map(c=>`${c.label}${c.detail?` (${c.detail})`:""}`).join("; ")}.`;
+    h+=`<p class="small" style="margin-top:6px">Some required items are missing. Copy this message into the AI and paste its new answer here:</p><pre hidden id="fix-${step}">${esc(fix)}</pre><button type="button" class="tiny" data-copy="fix-${step}" style="margin-top:4px">Copy the fix-it message</button>`; }
+  msg.innerHTML=h;
+}
+
+/* =====================================================================
+   RENDERING
+   ===================================================================== */
+// The step-1 choice (S.pref) is the default; a step can override its mode (S.mode) or AI tool (S.stepTool).
+const modeFor = step => S.mode[step] || S.pref;
+const toolFor = step => S.stepTool[step] || S.aiTool;
+const toolName = k => k==="other" ? "your AI tool" : TOOLS[k].n;
+const toolOptions = sel => Object.keys(TOOLS).map(k=>`<option value="${k}" ${k===sel?"selected":""}>${esc(TOOL_LABEL(k))}</option>`).join("");
+function goButton(key, tk){ return tk==="other"
+  ? `<button type="button" class="primary" data-copyprompt="${key}">Copy the prompt</button><span class="small muted">Then paste it into your AI tool.</span>`
+  : `<a class="btn primary" href="${TOOLS[tk].u}" target="_blank" rel="noopener" data-copyprompt="${key}">Copy the prompt and open ${esc(TOOLS[tk].n)} ↗</a>`; }
+function renderPref(){ $$("[data-pref]").forEach(b=>b.setAttribute("aria-pressed", String(S.pref===b.dataset.pref))); $("#pref-tool").hidden = S.pref!=="ai"; }
+function renderFork(step){
+  const el=document.querySelector(`[data-fork="${step}"]`), m=modeFor(step), tk=toolFor(step);
+  if(!m) el.innerHTML="";
+  else if(m==="self") el.innerHTML=`<div class="manualhead"><h2>${SECTION[step]}</h2><button type="button" class="linkbtn" data-mode="ai" data-step="${step}">Use AI for this step instead</button></div>`;
+  else el.innerHTML=`<div class="ai">
+    <div class="ai-band"><span class="ai-badge">AI coaching</span><h2>${SECTION[step]}</h2></div>
+    <div class="ai-body">
+    <div class="modebar"><label for="tool-${step}">Working with <select class="toolsel" id="tool-${step}" data-steptool="${step}">${toolOptions(tk)}</select></label><span class="spacer"></span><button type="button" class="linkbtn" data-mode="self" data-step="${step}">Do this step myself instead</button></div>
+    <p class="small muted">${AI_INTRO[step]}</p>
+    <ol>
+      <li><div class="row">${goButton(step,tk)}</div>
+        <details class="peek"><summary>See the prompt</summary><pre class="prompt" id="prompt-${step}">${esc(prompts()[step])}</pre></details></li>
+      <li>In ${esc(toolName(tk))}, paste (Ctrl+V or ⌘V) and answer its questions. At the end it gives you ${AI_RETURNS[step]}. New chat or same chat both work; the prompt carries your earlier answers.</li>
+      <li><label for="paste-${step}"><span>Paste the AI's final answer here, then click <b>Fill in my answers</b> to add it to this page.</span><textarea id="paste-${step}" class="paste" placeholder="Paste everything after “Copy everything below into the coach”"></textarea></label>
+        <div class="row" style="margin-top:8px"><button type="button" class="primary" data-fill="${step}">Fill in my answers</button></div><div class="fillmsg" id="fillmsg-${step}" role="status"></div></li>
+    </ol><p class="small muted">Check what was filled in below and change anything that doesn't sound like you.</p></div></div>`;
+  visibility();
+}
+function renderCoachPage(){ $("#full-go").innerHTML=goButton("full",S.aiTool); $("#prompt-full").textContent=fullPrompt(); }
+function renderForks(){ STEPS.forEach(([s])=>renderFork(s)); renderCoachPage(); }
+// A step's fields appear once it has a mode (in practice, once step 1's choice is made).
+function visibility(){ STEPS.forEach(([step])=>{ const m=modeFor(step); let after=false;
+  [...document.getElementById(step).children].forEach(ch=>{ if(ch.matches(".fork")){ after=true; return; } if(after && !ch.matches("[data-recap]")) ch.hidden=!m; }); }); }
+// Carry-forward card: a read-only display of the previous step's answers, shown at the top of steps 2-4.
+function renderRecaps(){
+  const row=(k,v)=>v?`<dt>${k}</dt><dd>${esc(v)}</dd>`:"";
+  const projs=S.projects.filter(p=>p.title).map(p=>`${p.title}${p.role?` (${p.role})`:""}${p.why?`: ${p.why}`:""}`).join("\n");
+  const u=S.unrealized, wantedTo=[u.text, u.reasons.length?`What got in the way: ${u.reasons.join(", ")}`:""].filter(Boolean).join("\n");
+  const topNow=DISPLAY.filter(i=>S.ratings[i]!=null&&S.ratings[i]>=3).sort((x,y)=>S.ratings[y]-S.ratings[x]).slice(0,5).map(i=>ATTR[i].n).join(", ");
+  const fit=goalFit();
+  const R={
+    s2:["From step 1: where you are now",[["About you",profileLine()==="(not given)"?"":profileLine()],["Projects",projs],["Wanted to do",wantedTo],["Your setting",S.environment],["Summary",S.snapshot]]],
+    s3:["From step 2: your current phenotype",[["You now",S.identity],["Current phenotype",currentPhenos().join(" / ")],["Work you do most",topNow]]],
+    s4:["From step 3: your goal",[["Goal phenotype",S.target.filter(Boolean).join(" + ")+(fit!=null?` (fit score ${score(fit)} of 100)`:"")],["A project you'd love to lead",S.dream],["Settings you'd consider",S.settings.join(", ")],["Current phenotype",currentPhenos().join(" / ")]]]
+  };
+  Object.keys(R).forEach(step=>{ const el=document.querySelector(`[data-recap="${step}"]`), [title,rows]=R[step], items=rows.filter(x=>x[1]);
+    el.hidden=!items.length; if(el.hidden) return;
+    el.innerHTML=`<h2>${title}</h2><dl>${items.map(x=>row(...x)).join("")}</dl>`; });
+}
+function updatePrompts(){ const P=prompts(); STEPS.forEach(([k])=>{ const el=document.getElementById("prompt-"+k); if(el) el.textContent=P[k]; }); $("#prompt-full").textContent=fullPrompt(); }
+
+// Builds the parts of the page that come from the data lists. Runs once.
+function renderStatic(){
+  $$("[data-options]").forEach(sel=>{ sel.innerHTML='<option value="">Choose…</option>'+OPTION_LISTS[sel.dataset.options].map(o=>`<option>${esc(o)}</option>`).join(""); });
+  $$("[data-tools]").forEach(sel=>{ sel.innerHTML=toolOptions(S.aiTool); });
+  $("#projects").innerHTML = S.projects.map((p,i)=>`
+   <div class="grid2 grid-project">
+     <label for="pj${i}t">Project ${i+1}<input type="text" id="pj${i}t" data-bind="projects.${i}.title"></label>
+     <label for="pj${i}r">Your role<select id="pj${i}r" data-bind="projects.${i}.role"><option value="">Choose…</option>${ROLES.map(r=>`<option>${r}</option>`).join("")}</select></label>
+     <label for="pj${i}w" class="span-all">Why it mattered<input type="text" id="pj${i}w" data-bind="projects.${i}.why"></label>
+   </div>`).join("");
+  $("#reasons").innerHTML = REASONS.map((r,i)=>`<label for="rs${i}"><input type="checkbox" id="rs${i}" data-reason="${esc(r)}">${esc(r)}</label>`).join("");
+  const rateHTML = kind => GROUPS.map((g,gi)=>`<div class="group"><h3>${g}</h3>${DISPLAY.filter(i=>ATTR[i].g===gi).map(i=>`
+   <fieldset class="rate"><legend>${esc(ATTR[i].n)}${kind==="want"?`<span class="nowval" id="now-${i}"></span>`:""}<span>${esc(ATTR[i].d)}</span></legend>
+     <div class="seg">${SCALE.map((s,v)=>`<label><input type="radio" name="${kind}${i}" value="${v}" data-${kind}="${i}"><span>${v} ${s}</span></label>`).join("")}<label><input type="radio" name="${kind}${i}" value="" data-${kind}="${i}"><span>Not sure</span></label></div>
+   </fieldset>`).join("")}</div>`).join("");
+  $("#ratings").innerHTML = rateHTML("rate");
+  $("#wants").innerHTML = rateHTML("want");
+  $("#settings").innerHTML = SETTINGS.map((s,i)=>`<label for="set${i}"><input type="checkbox" id="set${i}" data-setting="${esc(s)}">${esc(s)}</label>`).join("");
+  $("#gapdims").innerHTML = GAPDIMS.map(([k,t,h])=>`
+   <div class="grid2 grid-gap">
+     <label for="gp-${k}">${t} <span class="hint">${h}</span><input type="text" id="gp-${k}" data-bind="gaps.${k}.t"></label>
+     <label for="gq-${k}">Possible where you work now?<select id="gq-${k}" data-bind="gaps.${k}.p"><option value="">Choose…</option>${POSSIBLE.map(p=>`<option>${p}</option>`).join("")}</select></label>
+   </div>`).join("");
+  $("#nextsteps").innerHTML = S.steps.map((s,i)=>`
+   <div class="grid2 grid-step">
+     <label for="st${i}w">Step ${i+1}<input type="text" id="st${i}w" data-bind="steps.${i}.what"></label>
+     <label for="st${i}n">By when<input type="text" id="st${i}n" data-bind="steps.${i}.when"></label>
+     <label for="st${i}h">Who can help<input type="text" id="st${i}h" data-bind="steps.${i}.who"></label>
+   </div>`).join("");
+  STEPS.forEach(([id])=>document.querySelector(`#${id} .head`).insertAdjacentHTML("afterend",`<div class="stepbar"><button type="button" class="tiny" data-example="${id}">Fill with an example</button><button type="button" class="tiny" data-clearstep="${id}">Clear this step</button></div>`));
+  $("#lib-phenos").innerHTML = PHENO.map(p=>{ const top=p.w.map((v,k)=>({v,k})).sort((a,b)=>b.v-a.v).slice(0,4).map(x=>ATTR[x.k].n.toLowerCase());
+    return `<div class="pcard"><b>${esc(p.n)}</b><p>${esc(p.d)}</p><p><b>Most of the work:</b> ${top.map(esc).join(", ")}.</p>${p.o!==p.n?`<p class="small"><i>Original name: ${esc(p.o)}</i></p>`:""}</div>`; }).join("");
+  $("#lib-attrs").innerHTML = `<thead><tr><th>Kind of work</th><th>What it covers</th><th>Domain</th></tr></thead><tbody>${DISPLAY.map(i=>`<tr><td>${esc(ATTR[i].n)}</td><td>${esc(ATTR[i].d)}</td><td class="num">${ATTR[i].dop}</td></tr>`).join("")}</tbody>`;
+}
+// Puts state values into the form controls.
+function fill(){
+  $$("[data-bind]").forEach(el=>{ el.value = getPath(S,el.dataset.bind) ?? ""; });
+  $$("[data-reason]").forEach(el=>{ el.checked=S.unrealized.reasons.includes(el.dataset.reason); });
+  $$("[data-setting]").forEach(el=>{ el.checked=S.settings.includes(el.dataset.setting); });
+  const radios=(attr,arr,uns)=>$$(`[data-${attr}]`).forEach(el=>{ const i=+el.dataset[attr]; el.checked = el.value==="" ? !!uns[i] : (arr[i]!==null && +el.value===arr[i]); });
+  radios("rate",S.ratings,S.unsure); radios("want",S.want,S.wantUnsure);
+}
+
+/* step 2 */
+function renderMatches(){
+  const el=$("#matches"), n=rated(); $("#rate-count").textContent=`${answered()} of 20 answered`;
+  if(n<8){ el.innerHTML=`<p class="small muted">Rate at least 8 kinds of work to see your matches. You've rated ${n}.</p>`; return; }
+  const m=matches();
+  el.innerHTML = SCORE_NOTE("match") + LEGEND + `<p class="small"><b>Tick the ones that fit you, up to 2.</b> They'll show as your current phenotype in step 4 and on your report. If you tick none, your top match is used.</p>`
+   + m.slice(0,3).map((x,j)=>{ const p=PHENO[x.i];
+    return `<div class="match"><div class="match-top"><span class="match-name">${j+1}. ${esc(p.n)}</span><span class="spacer"></span>${meter(x.r)}<span class="tag">${strength(x.r)}</span></div>
+    <p class="small muted">${esc(p.d)}</p>${chips(x.i)}
+    <label class="pick" for="ch${x.i}"><input type="checkbox" id="ch${x.i}" data-choose="${esc(p.n)}" ${S.chosen.includes(p.n)?"checked":""}>This fits me</label></div>`; }).join("")
+   + `<div class="match"><p class="small"><b>Also close:</b></p><ul class="near">${m.slice(3,7).map(x=>`<li><span>${esc(PHENO[x.i].n)}</span>${meter(x.r)}</li>`).join("")}</ul></div>`;
+}
+
+/* step 3 */
+function goalButtons(n){ const i=S.target.indexOf(n);
+  if(i===0) return '<span class="tag">Your goal</span><button type="button" class="tiny" data-goal="clear1">Remove</button>';
+  if(i===1) return '<span class="tag">Second goal</span><button type="button" class="tiny" data-goal="clear2">Remove</button>';
+  return `<button type="button" class="tiny ${S.target[0]?"":"primary"}" data-goal="1" data-name="${esc(n)}">Make this my goal</button>${S.target[0]?`<button type="button" class="tiny" data-goal="2" data-name="${esc(n)}">Second goal</button>`:""}`; }
+const settingTag = pi => PSET[pi].some(k=>S.settings.includes(SETTINGS[k])) ? `<span class="tag">Fits a setting you chose</span>` : "";
+function renderFit(){
+  $("#want-count").textContent=`${wantAnswered()} of 20 answered`;
+  ATTR.forEach((_,i)=>{ const el=document.getElementById("now-"+i); if(el) el.textContent = S.ratings[i]!==null ? `Now: ${S.ratings[i]}` : S.unsure[i] ? "Now: not sure" : ""; });
+  const has=wanted()>=8, f=has?fits():PHENO.map((_,i)=>({i,r:null})), cur=curName();
+  $("#fit-list").innerHTML = !has ? '<p class="small muted">Answer at least 8 of the 20 to see which phenotypes fit.</p>'
+    : SCORE_NOTE("fit") + LEGEND + f.slice(0,3).map((x,j)=>{ const p=PHENO[x.i];
+    return `<div class="match"><div class="match-top"><span class="match-name">${j+1}. ${esc(p.n)}</span><span class="spacer"></span>${meter(x.r)}<span class="tag">${strength(x.r,"fit")}</span></div>
+      <div class="row">${p.n===cur?'<span class="tag">Same as your current phenotype</span>':""}${settingTag(x.i)}</div>
+      <p class="small muted">${esc(p.d)}</p>${chips(x.i)}
+      <div class="row">${goalButtons(p.n)}</div></div>`; }).join("");
+  const g=S.target.filter(Boolean);
+  $("#goal-now").innerHTML = g.length ? `<p>${g.map(n=>`<b>${esc(n)}</b>${has?` (fit ${score(pearson(S.want,PHENO[pIndex(n)].w))})`:""}`).join(" and ")}</p>`
+    : has ? `<p class="small">Suggested: <b>${esc(PHENO[f[0].i].n)}</b>, your closest fit. Choose "Make this my goal" above, or pick another below.</p>` : "";
+  $("#picker-note").innerHTML = has ? `Sorted by fit with the work you want.${LEGEND}` : "Answer the questions above to sort these by fit.";
+  $("#picker").innerHTML = f.map(x=>{ const p=PHENO[x.i];
+    return `<div class="pcard ${S.target.includes(p.n)?"sel":""}"><b>${esc(p.n)}</b>${has?`<div class="row">${meter(x.r)}${settingTag(x.i)}</div>`:""}
+      <p>${esc(p.d)}</p>${has?chips(x.i,2,1):""}<div class="row">${goalButtons(p.n)}</div></div>`; }).join("");
+}
+
+/* step 4 */
+function compareTable(rows){
+  return `<div class="tablewrap"><table class="t"><thead><tr><th>Kind of work</th><th>Now</th><th>You want</th><th>Goal role</th><th>Gap</th></tr></thead><tbody>${rows.map(r=>{ const [l,c]=GAPLABEL[r.gap]; return `<tr><td>${esc(r.a.n)}</td><td class="num">${r.you??"–"}</td><td class="num">${S.want[r.k]??"–"}</td><td class="num">${r.t.toFixed(1)}</td><td><span class="tag ${c}">${l}</span></td></tr>`; }).join("")}</tbody></table></div>`; }
+function renderComparison(){
+  const cur=currentPhenos(), g=S.target.filter(Boolean), rows=compareRows();
+  if(!cur.length||!g.length||!rows){ $("#side-by-side").innerHTML='<p class="small muted">Finish steps 2 and 3 to see this.</p>'; $("#compare").innerHTML=""; return; }
+  const box=(title,names,vec,lbl)=>`<div class="sbs-col"><span class="eyebrow">${title}</span>${names.map(n=>`<div class="pbox"><b>${esc(n)}</b><div class="row">${meter(pearson(vec,PHENO[pIndex(n)].w))}<span class="small muted">${lbl}</span></div></div>`).join("")}</div>`;
+  $("#side-by-side").innerHTML = `<div class="sbs">${box("Current phenotype",cur,S.ratings,"match with your work now")}<div class="sbs-arrow" aria-hidden="true">→</div>${box("Goal phenotype",g,S.want,"fit with the work you want")}</div>`;
+  const c=gapCounts(rows), ti=targetIdx(), r=goalR(), top=growRows().slice(0,5);
+  $("#compare").innerHTML = `<div class="summary"><div class="row"><b>Match with your work now</b>${meter(r)}<span class="tag">${strength(r)}</span></div>
+     <div class="chips"><span class="chip">On track: ${c.ok}</span><span class="chip up">Small gap: ${c.small}</span><span class="chip up">Big gap: ${c.big}</span><span class="chip neutral">More than the goal needs: ${c.more}</span></div>
+     ${ti.length===1?LEGEND+chips(ti[0]):""}</div>
+   ${ti.some(i=>S.chosen.includes(PHENO[i].n)) ? '<p class="small">Your goal is a phenotype you already identify with. Your gaps are about scope and depth, not a change of direction.</p>' : ""}
+   ${top.length?`<h3 class="subhead">Biggest differences</h3>${compareTable(top)}`:'<p class="small">No big differences. Focus on scope, leadership, and making your work visible.</p>'}
+   ${modeFor("s4")==="ai" ? "" : '<p class="note">This page shows where the gaps are. It doesn\'t coach you on closing them. For specific ideas, use the AI option for this step, or take this to a mentor.</p>'}
+   <details class="peek"><summary>See all 20 kinds of work</summary><p class="small muted" style="margin:8px 0">"Now" is your step 2 rating. "You want" is your step 3 answer. "Goal role" is the typical level for your goal phenotype, adjusted to your overall level so the table compares the mix of work, not how busy you are. The gap is between now and the goal role.</p>${compareTable([...rows].sort((a,b)=>(b.g??-9)-(a.g??-9)))}</details>`;
+}
+function renderIdeas(){
+  const g=growRows().slice(0,3), item=o=>`<li>${esc(o)} <button type="button" class="tiny addbtn" data-addstep="${esc(o)}">Add</button></li>`;
+  $("#ideas").innerHTML = (g.length? `<div class="idea-group"><h3>For your biggest gaps</h3>${g.map(r=>`<p class="small"><b>${esc(r.a.n)}</b> <span class="tag ${GAPLABEL[r.gap][1]}">${GAPLABEL[r.gap][0]}</span></p><ul class="ideas">${r.a.o.map(item).join("")}</ul>`).join("")}</div>` : "")
+    + `<div class="idea-group"><h3>Ways to build experience</h3><ul class="ideas">${STARTERS.map(item).join("")}</ul></div>`;
+}
+
+/* report */
+function profileSVG(){
+  const u=S.ratings, tv=targetVec(), W=330,H=118,lx=118,bw=184;
+  const g=GROUPS.map((n,gi)=>{ const ks=ATTR.map((a,k)=>a.g===gi?k:-1).filter(k=>k>=0); const uv=ks.map(k=>u[k]).filter(v=>v!==null);
+    return {um:uv.length? uv.reduce((a,b)=>a+b,0)/uv.length : 0, tm:tv? ks.reduce((s,k)=>s+tv[k],0)/ks.length : null}; });
+  const short=["Clinical & teaching","Leadership & policy","Operations & quality","Building & design","Data & research"];
+  const row=(d,i)=>{ const y=10+i*21; return `<text x="0" y="${y+9}" font-size="7.5" fill="#33434c">${short[i]}</text>
+    <rect x="${lx}" y="${y}" width="${bw}" height="11" fill="#eef2f2"/><rect x="${lx}" y="${y}" width="${(d.um/5*bw).toFixed(1)}" height="11" fill="#1d6a83"/>
+    ${d.tm!==null?`<line x1="${(lx+d.tm/5*bw).toFixed(1)}" x2="${(lx+d.tm/5*bw).toFixed(1)}" y1="${y-2}" y2="${y+13}" stroke="#a5650f" stroke-width="2"/>`:""}`; };
+  return `<svg class="profile" viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Average rating by type of work, now and for the goal">${g.map(row).join("")}
+   <text x="${lx}" y="${H-1}" font-size="6.5" fill="#5c6b73">0</text><text x="${lx+bw-6}" y="${H-1}" font-size="6.5" fill="#5c6b73">5</text>
+   <rect x="${lx+44}" y="${H-8}" width="8" height="6" fill="#1d6a83"/><text x="${lx+55}" y="${H-2}" font-size="6.5" fill="#5c6b73">you now</text>
+   ${tv?`<line x1="${lx+98}" x2="${lx+98}" y1="${H-9}" y2="${H-1}" stroke="#a5650f" stroke-width="2"/><text x="${lx+102}" y="${H-2}" font-size="6.5" fill="#5c6b73">goal</text>`:""}</svg>`;
+}
+function renderReport(){
+  const p=S.profile, cur=currentPhenos(), g=growRows().slice(0,5), steps=S.steps.filter(s=>s.what), E='<span class="rp-empty">Not filled in yet</span>';
+  const strong = rated()>=8 ? drivers(matches()[0].i).shared.map(k=>ATTR[k].n) : [];
+  if(!S.made){ const d=new Date(); S.made=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; save(); }
+  const date=new Date(S.made+"T12:00:00").toLocaleDateString(undefined,{year:"numeric",month:"long",day:"numeric"});
+  const method = STEPS.some(([s])=>modeFor(s)==="ai") ? "Self-assessment with AI coaching" : "Self-assessment";
+  const fit=goalFit(), gr=goalR();
+  $("#report-page").innerHTML = `
+   <div class="rp-head"><div><div class="sub">Clinical informatics career plan</div><h2>${esc(p.name)||"My informatics career plan"}</h2></div>
+     <div class="rp-date">${esc(date)}<br>${method}</div></div>
+   <div class="rp-meta">
+     <div><span>Profession</span>${esc(p.profession)||"–"}</div><div><span>Specialty and setting</span>${esc(p.setting)||"–"}</div>
+     <div><span>Career stage</span>${esc(p.stage)||"–"}</div><div><span>Informatics share of work</span>${esc(p.time)||"–"}</div>
+   </div>
+   <div class="rp-two">
+     <div class="rp-sec"><h4>Current phenotype</h4>
+       <div class="rp-big">${cur.length? cur.map(esc).join(" <span style='color:#8a979d'>/</span> ") : E}</div>
+       ${cur.length&&rated()>=8?`<div class="rp-score">Match score: ${cur.map(n=>`${esc(n)} <b>${score(pearson(S.ratings,PHENO[pIndex(n)].w))}</b>/100`).join(" · ")}</div>`:""}
+       ${S.identity?`<div class="rp-quote">“${esc(S.identity)}”</div>`:""}
+       ${strong.length?`<div><b>Strongest areas now:</b> ${strong.map(esc).join(", ")}</div>`:""}
+     </div>
+     <div class="rp-sec"><h4>My work by area, now and for my goal</h4>${rated()>=8? profileSVG() : E}</div>
+   </div>
+   <div class="rp-two">
+     <div class="rp-sec"><h4>Goal phenotype</h4>
+       <div class="rp-big">${S.target.filter(Boolean).map(esc).join(" + ")||E}</div>
+       ${gr!==null&&rated()>=8?`<div class="rp-score">Fit with the work I want: <b>${fit!==null?score(fit):"–"}</b>/100 · match with my work now: <b>${score(gr)}</b>/100</div>`:""}
+       ${S.dream?`<div><b>Project I'd love to lead:</b> ${esc(S.dream)}</div>`:""}
+       ${S.settings.length?`<div><b>Settings I'd consider:</b> ${esc(S.settings.join(", "))}</div>`:""}
+     </div>
+     <div class="rp-sec"><h4>Biggest differences from my goal</h4>
+       ${g.length?`<table><thead><tr><th>Kind of work</th><th>Now</th><th>Want</th><th>Goal</th><th>Gap</th></tr></thead><tbody>${g.map(r=>`<tr><td>${esc(r.a.n)}</td><td class="num">${r.you}</td><td class="num">${S.want[r.k]??"–"}</td><td class="num">${r.t.toFixed(1)}</td><td><span class="tag">${GAPLABEL[r.gap][0]}</span></td></tr>`).join("")}</tbody></table>`
+         : (compareRows()&&rated()>=8? "<div>No big differences. Focus on scope and visibility.</div>" : E)}
+     </div>
+   </div>
+   <div class="rp-sec"><h4>My gaps</h4>
+     ${GAPDIMS.some(([k])=>S.gaps[k].t)?`<table><thead><tr><th>Area</th><th>Gap</th><th>Possible where I work now?</th></tr></thead><tbody>${GAPDIMS.filter(([k])=>S.gaps[k].t).map(([k,t])=>`<tr><td style="width:20%"><b>${t}</b></td><td>${esc(S.gaps[k].t)}</td><td style="width:22%">${esc(S.gaps[k].p)}</td></tr>`).join("")}</tbody></table>`:E}
+   </div>
+   <div class="rp-two">
+     <div class="rp-sec"><h4>Next steps</h4>
+       ${steps.length?`<table><thead><tr><th>Step</th><th>By when</th><th>Who can help</th></tr></thead><tbody>${steps.map(s=>`<tr><td>${esc(s.what)}</td><td>${esc(s.when)}</td><td>${esc(s.who)}</td></tr>`).join("")}</tbody></table>`:E}
+       ${S.ask?`<div><b>My ask:</b> ${esc(S.ask)}</div>`:""}
+       ${S.checkin?`<div><b>Check-in:</b> ${esc(S.checkin.toLowerCase())}. Is my goal still right?</div>`:""}
+     </div>
+     <div class="rp-sec"><h4>My pitch</h4>${S.pitch?`<div class="rp-quote">${esc(S.pitch)}</div>`:E}</div>
+   </div>
+   <div class="rp-foot">
+     <div><b>About this report.</b> Phenotypes are common patterns of informatics work, drawn from expert consensus and a survey of practicing informaticians. They describe work; they don't classify people. Use this page to start a conversation with a mentor, sponsor, or leader.</div>
+     <div><b>Resources</b><ul>
+       <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7647208/">CI Domains of Practice</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7647284/">Health Informatics Domains of Practice</a></li>
+       <li><a href="https://amia.org/education-events/amia-10x10-virtual-courses">AMIA 10x10 courses</a> · <a href="https://amia.org/careers-certifications/amia-health-informatics-certification-ahic">AHIC certification</a></li>
+       <li><a href="https://www.theabpm.org/become-certified/subspecialties/clinical-informatics/">CI board certification (ABPM)</a> · <a href="https://www.nursingworld.org/our-certifications/informatics-nurse/">Informatics nursing (ANCC)</a></li>
+     </ul></div>
+   </div>`;
+}
+
+// Re-renders everything that depends on answers.
+function refresh(){ renderMatches(); renderFit(); renderComparison(); renderIdeas(); visibility(); renderRecaps(); if(isStep(cur)) markNeed(cur); renderRail(); updatePrompts(); if(cur==="report") renderReport(); }
+
+/* =====================================================================
+   REQUIRED ITEMS AND NAVIGATION
+   ===================================================================== */
+function reqs(step){ const r=[], add=(ok,label,anchor)=>r.push({ok:!!ok,label,anchor});
+  if(step==="s1"){ add(S.pref,"How you want to work","#pref-card"); add(S.profile.profession,"Profession","#p-prof"); add(S.profile.stage,"Career stage","#p-stage"); add(S.profile.experience,"Informatics experience","#p-exp");
+    add(S.projects.some(p=>p.title.trim()),"At least one project","#projects"); add(S.snapshot.trim(),"Summary","#snap"); }
+  if(step==="s2"){ add(S.identity.trim(),"Description of you","#identity"); add(answered()===20 && rated()>=8,"Answer all 20 (at least 8 with a number)","#ratings"); }
+  if(step==="s3"){ add(wantAnswered()===20 && wanted()>=8,"Answer all 20 (at least 8 with a number)","#wants"); add(S.target[0],"A goal","#goal-now"); }
+  if(step==="s4"){ add(GAPDIMS.some(([k])=>S.gaps[k].t.trim()),"At least one gap","#gapdims"); add(S.steps.filter(s=>s.what.trim()).length>=2,"At least two next steps","#nextsteps"); add(S.ask.trim(),"Your ask","#ask"); }
+  return r; }
+const missingIn = step => reqs(step).filter(x=>!x.ok);
+const stepDone = step => !missingIn(step).length;
+const isStep = id => STEPS.some(s=>s[0]===id);
+const ORDER = ["s1","s2","s3","s4","report"];               // gated: each needs the ones before it done
+const NAV = ["home","s1","s2","s3","s4","report"];           // pages with the bottom Back/Next bar
+const PAGES = ["home","s1","s2","s3","s4","report","coach","resources"];
+const blockerFor = id => { const i=ORDER.indexOf(id); return i<0 ? null : ORDER.slice(0,i).find(s=>!stepDone(s))||null; };
+const flagged = {};
+const cardOf = sel => { const el=document.querySelector(sel); return el && (el.closest(".card")||el); };
+const needTarget = sel => { const el=document.querySelector(sel); return el && (el.matches("input,select,textarea") ? el.closest("label") : cardOf(sel)); };
+function markNeed(step){ document.getElementById(step).querySelectorAll(".need").forEach(x=>x.classList.remove("need"));
+  if(flagged[step]) missingIn(step).forEach(m=>{ const c=needTarget(m.anchor); if(c) c.classList.add("need"); }); }
+function showMissing(step){ flagged[step]=true; markNeed(step); const m=missingIn(step); if(!m.length) return;
+  scrollToEl(cardOf(m[0].anchor));
+  const f=document.querySelector(m[0].anchor); if(f && f.matches("input,select,textarea")) setTimeout(()=>f.focus({preventScroll:true}),350);
+  toast(m.length===1? `Still needed: ${m[0].label.toLowerCase()}.` : `${m.length} required items still needed.`); }
+
+let cur = "home";
+const HOME_ICON = `<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5h13V10"/><path d="M10 19.5v-5h4v5"/></svg>`;
+function railLink(id, inner, cls=""){ const locked=!!blockerFor(id);
+  return `<a href="#${id}" data-go="${id}" class="${cls} ${locked?"locked":""}" ${locked?'aria-disabled="true"':""} ${id===cur?'aria-current="page"':""}>${inner}</a>`; }
+function renderRail(){
+  $("#rail").innerHTML = railLink("home",`${HOME_ICON}<span class="lbl">Home</span>`)
+   + STEPS.map(([id,l],i)=>railLink(id,`<span class="n">${i+1}</span>${l}`, stepDone(id)?"done":"")).join("")
+   + railLink("report",`<span class="n">→</span>Report`)
+   + `<span class="rail-div" aria-hidden="true"></span>` + railLink("coach","Full AI coach","coachchip");
+  if(cur==="resources") $("#hdr-resources").setAttribute("aria-current","page"); else $("#hdr-resources").removeAttribute("aria-current");
+  const rail=$("#rail"), act=$("#rail [aria-current]"); if(act && rail.scrollWidth>rail.clientWidth) rail.scrollLeft = act.offsetLeft - 16;
+  // bottom Back/Next bar
+  const i=NAV.indexOf(cur), nb=$("#navbar"); nb.hidden = i<=0; if(i<=0) return;
+  const label=id=> id==="report"?"Report" : STEPS.find(s=>s[0]===id)[1];
+  const prev=NAV[i-1], next=NAV[i+1], left=isStep(cur)? missingIn(cur).length : 0;
+  Object.assign($("#nav-back"),{href:"#"+prev}); $("#nav-back").dataset.go=prev;
+  $("#nav-where").textContent = cur==="report" ? "Your report" : left ? `Step ${i} of 4 · ${plural(left,"required item")} left` : `Step ${i} of 4 · complete`;
+  const nn=$("#nav-next"); nn.hidden=!next; if(next){ nn.href="#"+next; nn.dataset.go=next; nn.textContent=`Next: ${label(next)} →`; nn.classList.toggle("primary", !left); }
+}
+function go(id, push=true, quiet=false){
+  if(!PAGES.includes(id)) id="home";
+  const b=blockerFor(id); if(b){ if(cur!==b) go(b,push,true); if(!quiet) showMissing(b); return; }
+  cur=id;
+  // step 3's wanted-work ratings start from the current ratings
+  if(id==="s3" && !S.want.some(v=>v!==null) && !S.wantUnsure.some(Boolean)){ S.want=[...S.ratings]; S.wantUnsure=[...S.unsure]; save(); fill(); refresh(); }
+  if(push){ try{ if(location.hash!=="#"+id) history.pushState(null,"","#"+id); }catch(e){} }
+  $$("main>.page").forEach(s=>s.hidden = s.id!==cur);
+  if(cur==="report") renderReport();
+  renderRail(); window.scrollTo({top:0});
+  const h=document.querySelector(`#${cur} h1`); if(h) h.focus({preventScroll:true});
+}
+window.addEventListener("popstate",()=>go((location.hash||"#home").slice(1),false,true));
+window.addEventListener("hashchange",()=>{ const h=(location.hash||"#home").slice(1); if(h!==cur) go(h,false,true); });
+
+/* =====================================================================
+   EVENTS
+   ===================================================================== */
+document.addEventListener("input",e=>{
+  const t=e.target; if(!t.dataset.bind) return;
+  setPath(S,t.dataset.bind,t.value); save();
+  if(t.dataset.bind==="aiTool"){ $$("[data-tools]").forEach(s=>s.value=S.aiTool); renderForks(); }
+  else if(t.tagName==="SELECT" || /^profile/.test(t.dataset.bind)) refresh();
+  else { if(isStep(cur)) markNeed(cur); renderRail(); updatePrompts(); }
+});
+// After a rating chosen with the mouse or touch, move to the next unanswered item, then to the results.
+let rateByPointer=false;
+document.addEventListener("pointerdown",e=>{ rateByPointer=!!e.target.closest(".seg"); });
+function advance(t, listSel, doneEl){ if(!rateByPointer) return; rateByPointer=false;
+  const sets=[...$$(`${listSel} fieldset.rate`)], next=sets.slice(sets.indexOf(t.closest("fieldset"))+1).find(f=>!f.querySelector("input:checked"));
+  if(next) scrollToEl(next,"center"); else if(doneEl) scrollToEl(doneEl); }
+const toggleIn = (arr,v,on) => { const i=arr.indexOf(v); if(on&&i<0) arr.push(v); if(!on&&i>=0) arr.splice(i,1); };
+document.addEventListener("change",e=>{
+  const t=e.target, d=t.dataset;
+  if(d.rate!==undefined){ const i=+d.rate; S.ratings[i]= t.value===""? null : +t.value; S.unsure[i]= t.value===""; save(); refresh(); advance(t,"#ratings", answered()===20 && $("#results")); }
+  else if(d.want!==undefined){ const i=+d.want; S.want[i]= t.value===""? null : +t.value; S.wantUnsure[i]= t.value===""; save(); refresh(); advance(t,"#wants", wantAnswered()===20 && $("#fit")); }
+  else if(d.setting){ toggleIn(S.settings,d.setting,t.checked); save(); refresh(); }
+  else if(d.reason){ toggleIn(S.unrealized.reasons,d.reason,t.checked); save(); updatePrompts(); }
+  else if(d.steptool){ S.stepTool[d.steptool]= t.value===S.aiTool ? "" : t.value; save(); renderFork(d.steptool); toast(`This step now uses ${toolName(toolFor(d.steptool))}.`); }
+  else if(d.choose){ if(t.checked && S.chosen.length>=2){ t.checked=false; toast("You can tick up to 2. Untick one first."); return; }
+    toggleIn(S.chosen,d.choose,t.checked); save(); refresh(); }
+});
+const AFTERFILL = {s1:"#projects", s2:"#results", s3:"#fit", s4:"#gapdims"};
+const stepHasData = step => STEPFIELDS[step].some(k=>JSON.stringify(S[k])!==JSON.stringify(blank()[k]));
+function setStep(step, src){ STEPFIELDS[step].forEach(k=>{ S[k]=clone(src[k]); }); save(); fill(); refresh(); }
+function afterLoad(){ save(); fill(); renderPref(); renderForks(); refresh(); }
+document.addEventListener("click",e=>{
+  const q=s=>e.target.closest(s); let el;
+  if((el=q("[data-go]"))){ e.preventDefault(); $("details.menu").open=false; go(el.dataset.go); return; }
+  if((el=q("[data-pref]"))){ S.pref=el.dataset.pref; S.mode={s1:"",s2:"",s3:"",s4:""}; afterLoad();
+    scrollToEl(S.pref==="ai" ? $("#pref-tool") : cardOf("#p-prof"), S.pref==="ai"?"center":"start"); return; }
+  if((el=q("[data-mode]"))){ const st=el.dataset.step; S.mode[st]= el.dataset.mode===S.pref ? "" : el.dataset.mode; save(); renderFork(st); renderComparison(); renderRecaps(); markNeed(st); renderRail();
+    const f=document.querySelector(`[data-fork="${st}"]`); scrollToEl(el.dataset.mode==="ai" ? f.querySelector(".ai") : f.nextElementSibling); return; }
+  if((el=q("[data-copyprompt]"))){ const k=el.dataset.copyprompt, ok=copyText(k==="full" ? fullPrompt() : prompts()[k]);
+    toast(ok? (el.tagName==="A"? "Prompt copied. Paste it into the new tab." : "Prompt copied.") : "Couldn't copy. Open “See the prompt” and copy it by hand."); return; }
+  if((el=q("[data-copy]"))){ toast(copyText(document.getElementById(el.dataset.copy).textContent)?"Copied.":"Couldn't copy. Select the text and copy it by hand."); return; }
+  if((el=q("[data-fill]"))){ const st=el.dataset.fill, txt=$("#paste-"+st).value;
+    if(!txt.trim()){ $("#fillmsg-"+st).innerHTML='<p class="needmsg">Paste the AI\'s answer first.</p>'; return; }
+    const C=applyPaste(st,txt); save(); fill(); refresh(); renderCheck(st,C);
+    if(!C.some(c=>!c.ok&&!c.opt)) setTimeout(()=>scrollToEl(cardOf(AFTERFILL[st])),900); return; }
+  if((el=q("[data-fillfull]"))){ const txt=$("#paste-full").value, msg=$("#fillmsg-full");
+    if(!txt.trim()){ msg.innerHTML='<p class="needmsg">Paste the export block first.</p>'; return; }
+    const C=applyFull(txt); afterLoad(); renderCheck("full",C); if(!C.some(c=>c.ok)) return;
+    const b=blockerFor("report");
+    msg.insertAdjacentHTML("beforeend", b ? `<div class="row" style="margin-top:8px"><a class="btn primary" href="#${b}" data-go="${b}">Finish ${STEPS.find(s=>s[0]===b)[1].toLowerCase()}</a><span class="small muted">A required item is missing there.</span></div>`
+      : `<div class="row" style="margin-top:8px"><a class="btn primary" href="#report" data-go="report">See my one-page report</a><a class="btn" href="#s4" data-go="s4">Review the steps</a></div>`); return; }
+  if((el=q("[data-goal]"))){ const v=el.dataset.goal, n=el.dataset.name;
+    if(v==="1") S.target=[n, S.target[1]===n?"":S.target[1]]; else if(v==="2") S.target[1]=n; else if(v==="clear1") S.target=[S.target[1]||"",""]; else S.target[1]="";
+    save(); refresh(); if(v==="1"||v==="2") scrollToEl($("#goal-now").closest(".card")); return; }
+  if((el=q("[data-example]"))){ const st=el.dataset.example;
+    if(stepHasData(st) && !confirm("Replace what you've entered in this step with the example?")) return;
+    if(!S.pref){ S.pref="self"; renderPref(); } setStep(st, EXAMPLE()); renderForks(); toast("Example filled in. Edit it or clear the step to start fresh."); return; }
+  if((el=q("[data-clearstep]"))){ const st=el.dataset.clearstep;
+    if(stepHasData(st) && !confirm("Clear everything in this step?")) return;
+    setStep(st, blank()); toast("Step cleared."); return; }
+  if((el=q("[data-addstep]"))){ const i=S.steps.findIndex(s=>!s.what); if(i<0){ toast("All three steps are filled. Clear one first."); return; }
+    S.steps[i].what=el.dataset.addstep; save(); fill(); refresh(); toast(`Added as step ${i+1}.`); return; }
+  if((el=q("[data-savefile]"))){ saveFile(); return; }
+  const m=$("details.menu"); if(m.open && !m.contains(e.target)) m.open=false;
+});
+function saveFile(){ const blob=new Blob([JSON.stringify(S,null,2)],{type:"application/json"}), a=document.createElement("a");
+  a.href=URL.createObjectURL(blob); a.download="ci-career-plan.json"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  toast("Saved to your downloads."); $("details.menu").open=false; }
+$("#m-save").addEventListener("click",saveFile);
+$("#m-load").addEventListener("click",()=>{ $("details.menu").open=false; $("#file-load").click(); });
+$("#file-load").addEventListener("change",e=>{ const f=e.target.files[0]; if(!f) return; const r=new FileReader();
+  r.onload=()=>{ try{ S=merge(JSON.parse(r.result)); afterLoad(); toast("Your saved answers are open."); }catch(err){ toast("That file couldn't be read. Choose a ci-career-plan.json file."); } };
+  r.readAsText(f); e.target.value=""; });
+$("#m-clear").addEventListener("click",()=>{ $("details.menu").open=false;
+  if(!confirm("Erase all your answers in this browser? Save them to a file first if you want a copy.")) return;
+  S=blank(); try{ localStorage.removeItem(KEY); }catch(e){} afterLoad(); go("home"); toast("Cleared."); });
+$("#btn-print").addEventListener("click",()=>{ renderReport(); window.print(); });
+$("#btn-copy-report").addEventListener("click",()=>{ renderReport(); toast(copyText($("#report-page").innerText.replace(/\n{3,}/g,"\n\n"))?"Report copied as text.":"Couldn't copy. Select the report and copy it by hand."); });
+
+/* =====================================================================
+   START
+   ===================================================================== */
+function setHdr(){ document.documentElement.style.setProperty("--hdr", $(".topbar").offsetHeight+"px"); } // steps stick just below the header
+window.addEventListener("resize", setHdr);
+renderStatic(); fill(); renderPref(); renderForks(); refresh(); setHdr();
+go((location.hash||"#home").slice(1), false, true);
+try{ localStorage.setItem(KEY+".probe","1"); localStorage.removeItem(KEY+".probe"); }catch(e){ storageOK=false; $("#storage-warn").hidden=false; }
+</script>
+</body>
+</html>
