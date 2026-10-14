@@ -707,7 +707,7 @@ svg.profile text{font-family:var(--f-mono)}
   </div>
 </section>
 <!-- BUILD TAG: bump on every deploy so you can tell which build people are seeing. -->
-<footer class="buildtag">PREVIEW · build v0.7.13 (2026-10-14)</footer>
+<footer class="buildtag">PREVIEW · build v0.7.14 (2026-10-14)</footer>
 </main>
 </div>
 
@@ -925,8 +925,8 @@ function drivers(pi){ const u=S.ratings, w=PHENO[pi].w; const idx=u.map((v,i)=>v
 
 /* shared display pieces */
 // One line: bar, score, short label. Used where space is tight (summary cards).
-const scoreLine = (r,label) => { const s=score(r); return `<span class="score-line" title="Score ${s} out of 100"><span class="meter" aria-hidden="true"><i style="width:${s}%"></i></span><b>${s}%</b> ${label}</span>`; };
-const meter = r => { const s=score(r); return `<span class="score" title="Score ${s} out of 100"><span class="meter" aria-hidden="true"><i style="width:${s}%"></i></span><b>${s}</b></span>`; };
+const scoreLine = (r,label) => { const s=score(r); return `<span class="score-line" title="Score ${s}%"><span class="meter" aria-hidden="true"><i style="width:${s}%"></i></span><b>${s}%</b> ${label}</span>`; };
+const meter = r => { const s=score(r); return `<span class="score" title="Score ${s}%"><span class="meter" aria-hidden="true"><i style="width:${s}%"></i></span><b>${s}%</b></span>`; };
 // What you share with a phenotype and what you'd grow, behind a toggle so lists stay calm. Open toggles stay open on re-render.
 const WHY_OPEN = new Set();
 const chips = (pi,nShared=3,nGrow=2,ctx="") => { const d=drivers(pi), key=ctx+pi;
@@ -935,7 +935,7 @@ const chips = (pi,nShared=3,nGrow=2,ctx="") => { const d=drivers(pi), key=ctx+pi
   const fit = ctx==="m";
   return `<details class="why" data-why="${key}" ${WHY_OPEN.has(key)?"open":""}><summary>More details</summary>${row(fit?"Fits well":"Already do",d.shared.slice(0,nShared),"")}${row(fit?"Fits less well":"Need to grow",d.miss.slice(0,nGrow),fit?"neutral":"up")}</details>`; };
 document.addEventListener("toggle", e=>{ const d=e.target; if(d.matches && d.matches("details[data-why]")) d.open ? WHY_OPEN.add(d.dataset.why) : WHY_OPEN.delete(d.dataset.why); }, true);
-const SCORE_NOTE = what => `<p class="small muted">${what==="fit"?"Fit score (0–100) shows how similar the work you want is":"Match score (0–100) shows how similar the mix of your work is"} to each phenotype's typical mix. 60 or more is close.</p>`;
+const SCORE_NOTE = what => `<p class="small muted">${what==="fit"?"Fit score shows how similar the work you want is":"Match score shows how similar the mix of your work is"} to each phenotype's typical mix, from 0% to 100%. 60% or more is close.</p>`;
 
 /* =====================================================================
    PROMPTS
@@ -1264,8 +1264,8 @@ function renderCheck(step, C){
   const msg=$("#fillmsg-"+step), reqMiss=C.filter(c=>!c.ok&&!c.opt);
   if(!C.some(c=>c.ok)){ msg.innerHTML=`<p class="needmsg">Nothing matched. Make sure you pasted the AI's final answer, the part after “Copy everything below into the coach.”</p>`; return; }
   let h=`<ul class="checklist">${C.map(c=>`<li class="${c.ok?"":c.opt?"opt":"no"}">${esc(c.label)}${c.detail?`: ${esc(c.detail)}`:""}${!c.ok&&c.opt?" (optional)":""}</li>`).join("")}</ul>`;
-  if(step==="s2" && rated()>=8){ const t=matches()[0]; h+=`<p class="small" style="margin-top:6px">Your closest phenotype now: <b>${esc(PHENO[t.i].n)}</b>, match score ${score(t.r)} of 100. Your full results are below.</p>`; }
-  if(step==="s3" && wanted()>=8){ const t=fits()[0]; h+=`<p class="small" style="margin-top:6px">Closest fit for the work you want: <b>${esc(PHENO[t.i].n)}</b>, fit score ${score(t.r)} of 100. See the suggestions below, then choose your goal.</p>`; }
+  if(step==="s2" && rated()>=8){ const t=matches()[0]; h+=`<p class="small" style="margin-top:6px">Your closest phenotype now: <b>${esc(PHENO[t.i].n)}</b>, match score ${score(t.r)}%. Your full results are below.</p>`; }
+  if(step==="s3" && wanted()>=8){ const t=fits()[0]; h+=`<p class="small" style="margin-top:6px">Closest fit for the work you want: <b>${esc(PHENO[t.i].n)}</b>, fit score ${score(t.r)}%. See the suggestions below, then choose your goal.</p>`; }
   if(reqMiss.length){ const fix=`Please give me the final answer again, in exactly the format from my first message: labels in capitals, one item per line, no extra formatting. I'm missing: ${reqMiss.map(c=>`${c.label}${c.detail?` (${c.detail})`:""}`).join("; ")}.`;
     h+=`<p class="small" style="margin-top:6px">Some required items are missing. Copy this message into the AI and paste its new answer here:</p><pre hidden id="fix-${step}">${esc(fix)}</pre><button type="button" class="tiny" data-copy="fix-${step}" style="margin-top:4px">Copy the fix-it message</button>`; }
   msg.innerHTML=h;
@@ -1506,7 +1506,7 @@ function renderReport(){
    <div class="rp-two">
      <div class="rp-sec"><h4>Current phenotype</h4>
        <div class="rp-big">${cur.length? cur.map(esc).join(" <span style='color:#8a979d'>/</span> ") : E}</div>
-       ${cur.length&&rated()>=8?`<div class="rp-score">Match score: ${cur.map(n=>`${esc(n)} <b>${score(pearson(S.ratings,PHENO[pIndex(n)].w))}</b>/100`).join(" · ")}</div>`:""}
+       ${cur.length&&rated()>=8?`<div class="rp-score">Match score: ${cur.map(n=>`${esc(n)} <b>${score(pearson(S.ratings,PHENO[pIndex(n)].w))}%</b>`).join(" · ")}</div>`:""}
        ${S.identity?`<div class="rp-quote">“${esc(S.identity)}”</div>`:""}
        ${strong.length?`<div><b>Strongest areas now:</b> ${strong.map(esc).join(", ")}</div>`:""}
      </div>
@@ -1515,7 +1515,7 @@ function renderReport(){
    <div class="rp-two">
      <div class="rp-sec"><h4>Goal phenotype</h4>
        <div class="rp-big">${S.target.filter(Boolean).map(esc).join(" + ")||E}</div>
-       ${gr!==null&&rated()>=8?`<div class="rp-score">Fit with the work I want: <b>${fit!==null?score(fit):"–"}</b>/100 · match with my work now: <b>${score(gr)}</b>/100</div>`:""}
+       ${gr!==null&&rated()>=8?`<div class="rp-score">Fit with the work I want: <b>${fit!==null?score(fit)+"%":"–"}</b> · match with my work now: <b>${score(gr)}%</b></div>`:""}
        ${S.dream?`<div><b>Project I'd love to lead:</b> ${esc(S.dream)}</div>`:""}
        ${S.settings.length?`<div><b>Settings I'd consider:</b> ${esc(S.settings.join(", "))}</div>`:""}
      </div>
