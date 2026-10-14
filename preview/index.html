@@ -350,7 +350,6 @@ svg.profile text{font-family:var(--f-mono)}
   <div class="topbar-in">
     <a class="brand" href="#home" data-go="home">CI Career Phenotype Coach</a>
     <span class="spacer"></span>
-    <a class="hlink" href="#resources" data-go="resources" id="hdr-resources">Resources</a>
     <details class="menu"><summary><span aria-hidden="true">≡</span> Menu</summary>
       <div class="menu-list">
         <button type="button" id="m-save">Save my answers to a file</button>
@@ -683,7 +682,7 @@ svg.profile text{font-family:var(--f-mono)}
   </div>
 </section>
 <!-- BUILD TAG: bump on every deploy so you can tell which build people are seeing. -->
-<footer class="buildtag">PREVIEW · build v0.7.3 (2026-10-14)</footer>
+<footer class="buildtag">PREVIEW · build v0.7.4 (2026-10-14)</footer>
 </main>
 </div>
 
@@ -1546,14 +1545,15 @@ function showMissing(step){ flagged[step]=true; markNeed(step); const m=missingI
 
 let cur = "home";
 const HOME_ICON = `<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5h13V10"/><path d="M10 19.5v-5h4v5"/></svg>`;
+const BOOK_ICON = `<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5z"/><path d="M4 21.5V5.5"/></svg>`;
 function railLink(id, inner, cls=""){ const locked=!!blockerFor(id);
   return `<a href="#${id}" data-go="${id}" class="${cls} ${locked?"locked":""}" ${locked?'aria-disabled="true"':""} ${id===cur?'aria-current="page"':""}>${inner}</a>`; }
 function renderRail(){
   $("#rail").innerHTML = railLink("home",`${HOME_ICON}<span class="lbl">Home</span>`)
    + STEPS.map(([id,l],i)=>railLink(id,`<span class="n">${i+1}</span>${l}`, stepDone(id)?"done":"")).join("")
    + railLink("report",`<span class="n">→</span>Report`)
+   + railLink("resources",`<span class="n">${BOOK_ICON}</span>Resources`)
    + `<span class="rail-div" aria-hidden="true"></span>` + railLink("coach","Full AI coach","coachchip");
-  if(cur==="resources") $("#hdr-resources").setAttribute("aria-current","page"); else $("#hdr-resources").removeAttribute("aria-current");
   const rail=$("#rail"), act=$("#rail [aria-current]"); if(act && rail.scrollWidth>rail.clientWidth) rail.scrollLeft = act.offsetLeft - 16;
   // bottom Back/Next bar
   const i=NAV.indexOf(cur), nb=$("#navbar"); nb.hidden = i<=0; if(i<=0) return;
