@@ -992,7 +992,7 @@ PITCH: about 75 words`;
  return {s1,s2,s3,s4};
 }
 // The full coach describes phenotypes by name, description, and main kinds of work. The weights stay on
-// the page (unpublished), which calculates exact scores after import.
+// the page (not sent to the AI), which calculates exact scores after import.
 function phenoFull(){ return PHENO.map(p=>{ const top=p.w.map((v,k)=>({v,k})).sort((a,b)=>b.v-a.v).slice(0,4).map(x=>ATTR[x.k].n.toLowerCase());
   return `- ${p.n}: ${p.d} Most of the work: ${top.join(", ")}.`; }).join("\n"); }
 function fullPrompt(){ return `You're my career coach for clinical informatics. Over one conversation, we'll work through four steps together and finish with my one-page career plan.
