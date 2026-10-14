@@ -112,6 +112,8 @@ main{max-width:880px;width:100%;margin:0;padding:24px 0 120px;min-width:0}
 .goal-chosen{padding:8px 12px;border-radius:var(--r);background:var(--accent-soft)}
 .features{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-bottom:12px}
 .features.pair{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center}
+.dream-note{display:grid;gap:2px;padding:8px 12px;border-left:3px solid var(--accent);background:var(--sheet);border-radius:0 var(--r) var(--r) 0}
+.dream-note p{font-size:.88rem;margin:0}
 .fcol{display:grid;gap:10px;align-content:center}
 .feature-arrow{font-size:1.5rem;color:var(--muted)}
 .feature{display:grid;grid-template-columns:132px minmax(0,1fr);border:1px solid var(--rule);border-radius:var(--r);background:var(--sheet);overflow:hidden;min-height:100px}
@@ -695,7 +697,7 @@ svg.profile text{font-family:var(--f-mono)}
   </div>
 </section>
 <!-- BUILD TAG: bump on every deploy so you can tell which build people are seeing. -->
-<footer class="buildtag">PREVIEW · build v0.7.9 (2026-10-14)</footer>
+<footer class="buildtag">PREVIEW · build v0.7.10 (2026-10-14)</footer>
 </main>
 </div>
 
@@ -1303,10 +1305,11 @@ function renderRecaps(){
     return `<div class="feature">${art(n,"fthumb")}<div class="feature-body"><span class="eyebrow">${label}</span><div class="ph-head">${pglyph(i,48)}<b>${esc(n)}</b></div>${scoreTxt||""}</div></div>`; };
   const curCards=cur.map(n=>feature(n,"Current phenotype",rated()>=8?scoreLine(pearson(S.ratings,PHENO[pIndex(n)].w),"match with current work"):"")).join("");
   const goalCards=goals.map(n=>feature(n,"Goal phenotype",wanted()>=8?scoreLine(pearson(S.want,PHENO[pIndex(n)].w),"fit with work you want"):"")).join("");
+  const dreamNote = S.dream ? `<div class="dream-note"><span class="why-label">A project you'd love to lead</span><p>${esc(S.dream)}</p></div>` : "";
   const R={
     s2:["From step 1: where you are now",[["About you",profileLine()==="(not given)"?"":profileLine()],["Projects",projs],["Wanted to do",wantedTo],["Your setting",S.environment],["Summary",S.snapshot]]],
     s3:["From step 2: who you are now",[["You now",S.identity],["Work you do most",topNow]],curCards],
-    s4:["Where you are and where you're headed",[["A project you'd love to lead",S.dream]],curCards&&goalCards?`<div class="fcol">${curCards}</div><div class="feature-arrow" aria-hidden="true">→</div><div class="fcol">${goalCards}</div>`:curCards+goalCards]
+    s4:["Where you are and where you're headed",[],curCards&&goalCards?`<div class="fcol">${curCards}</div><div class="feature-arrow" aria-hidden="true">→</div><div class="fcol">${goalCards}${dreamNote}</div>`:curCards+goalCards+dreamNote]
   };
   Object.keys(R).forEach(step=>{ const el=document.querySelector(`[data-recap="${step}"]`), [title,rows,cards]=R[step], items=rows.filter(x=>x[1]);
     el.hidden=!items.length && !cards; if(el.hidden) return;
