@@ -60,8 +60,6 @@ p{margin:0}
 .topbar{position:sticky;top:0;z-index:10;background:var(--sheet);border-bottom:1px solid var(--rule)}
 .topbar-in{max-width:1160px;margin:0 auto;padding:10px 16px;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
 .brand{font-family:var(--f-display);font-weight:650;font-size:1.05rem;text-decoration:none;color:var(--ink)}
-.hlink{font-size:.88rem;font-weight:600;text-decoration:none;padding:4px 8px;border-radius:4px}
-.hlink[aria-current="page"]{background:var(--accent-soft)}
 details.menu{position:relative}
 details.menu summary{list-style:none;cursor:pointer;font-size:.88rem;font-weight:600;padding:4px 10px;border:1px solid var(--rule);border-radius:4px}
 details.menu summary::-webkit-details-marker{display:none}
@@ -103,8 +101,32 @@ main{max-width:880px;width:100%;margin:0;padding:24px 0 120px;min-width:0}
 .note{border-left:3px solid var(--accent);background:var(--accent-soft);padding:10px 12px;border-radius:0 4px 4px 0;font-size:.9rem}
 .note.warn{border-color:var(--warn);background:var(--warn-soft)}
 #storage-warn{margin-bottom:16px}
-.tickler{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;padding:12px 16px;border:1px solid var(--coach-rule);border-radius:var(--r);background:var(--coach-soft);font-size:.92rem}
-.tickler .btn{border-color:var(--coach-rule);color:var(--coach)}
+.why summary{cursor:pointer;font-size:.84rem;color:var(--muted);width:max-content;max-width:100%}
+.why[open] summary{margin-bottom:6px}
+.why-row{display:grid;grid-template-columns:7.5em minmax(0,1fr);gap:8px;align-items:start;margin-top:4px}
+.why-label{font-size:.8rem;font-weight:600;color:var(--muted);padding-top:2px}
+.goal-chosen{padding:8px 12px;border-radius:var(--r);background:var(--accent-soft)}
+.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-bottom:12px}
+.features.pair{grid-template-columns:minmax(0,1fr) 44px minmax(0,1fr);align-items:stretch;gap:0}
+.features.pair .fcol{align-content:center}
+.merge{position:relative;align-self:stretch;min-height:60px}
+.merge svg{width:100%;height:100%;display:block;overflow:visible}
+.merge path{fill:none;stroke:var(--accent);stroke-width:2}
+.merge i{position:absolute;right:0;top:50%;transform:translateY(-50%);border-style:solid;border-width:6px 0 6px 9px;border-color:transparent transparent transparent var(--accent)}
+.goal-card{display:grid;grid-template-rows:auto 1fr;border:2px solid var(--accent);border-radius:var(--r);background:var(--sheet);overflow:hidden}
+.art.goalart{aspect-ratio:21/8}
+.goal-body{display:grid;gap:6px;padding:10px 14px 12px;align-content:start}
+.goal-body .ph-head{align-items:center}
+.goal-body .ph-head b{padding-top:0;font-size:1rem}
+.goal-dream{margin-top:4px;padding-top:8px;border-top:1px solid var(--rule)}
+.goal-dream p{font-size:.88rem;margin:2px 0 0}
+.fcol{display:grid;gap:10px;align-content:center}
+.feature{display:grid;grid-template-columns:132px minmax(0,1fr);border:1px solid var(--rule);border-radius:var(--r);background:var(--sheet);overflow:hidden;min-height:100px}
+.feature .art.fthumb{height:100%;aspect-ratio:auto;min-height:100px}
+.feature-body{display:grid;gap:4px;align-content:center;padding:10px 12px}
+.feature-body .ph-head{align-items:center}
+.feature-body .ph-head b{padding-top:0;font-size:.98rem}
+@media (max-width:640px){.features.pair{grid-template-columns:minmax(0,1fr);gap:0}.merge{min-height:30px}.merge svg{display:none}.merge i{right:auto;left:50%;top:auto;bottom:4px;transform:translateX(-50%);border-width:9px 7px 0 7px;border-color:var(--accent) transparent transparent transparent}.feature{grid-template-columns:96px minmax(0,1fr)}}
 .recap{border:1px solid var(--rule);border-radius:var(--r);background:var(--paper);padding:8px 14px;font-size:.88rem}
 .recap summary{cursor:pointer;font-weight:600;color:var(--muted)}
 .recap dl{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:4px 14px;margin:8px 0 4px}
@@ -152,6 +174,14 @@ label.need input,label.need select,label.need textarea{border-color:var(--warn);
 .choice button{flex-direction:column;align-items:flex-start;text-align:left;padding:12px 14px;gap:2px;font-weight:700}
 .choice button span{font-weight:400;font-size:.84rem;color:var(--muted)}
 .choice button[aria-pressed="true"]{border:2px solid var(--accent);background:var(--accent-soft)}
+/* purple marks every place you choose AI */
+.choice button[data-pref="ai"]{border-color:var(--coach-rule);color:var(--coach)}
+.choice button[data-pref="ai"][aria-pressed="true"]{border:2px solid var(--coach);background:var(--coach-band)}
+#pref-tool{color:var(--coach)}
+#pref-tool select{border-color:var(--coach)}
+.ai-link{color:var(--coach)!important}
+.btn.ai-btn{border-color:var(--coach);color:var(--coach);background:var(--coach-soft)}
+.btn.ai-btn:hover{background:var(--coach-band)}
 
 /* AI coaching panels (purple) and manual section headers */
 .fork{display:grid;gap:10px}
@@ -164,6 +194,7 @@ label.need input,label.need select,label.need textarea{border-color:var(--warn);
 .ai li::marker{font-weight:700;color:var(--coach)}
 .ai .primary{background:var(--coach);border-color:var(--coach);color:var(--coach-ink)}
 .ai .linkbtn,.ai a:not(.btn){color:var(--coach)}
+.ai .linkbtn[data-mode="self"]{color:var(--accent)} /* leaving AI is navigation, so it stays blue */
 .ai textarea,.ai select,.ai .prompt{background:var(--sheet)}
 .modebar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .modebar label{display:flex;gap:8px;align-items:center;font-weight:600}
@@ -203,6 +234,9 @@ fieldset.rate{border:0;border-top:1px dashed var(--rule);border-radius:0;padding
 .tag.ok{background:var(--ok-soft);color:var(--ok)} .tag.warn{background:var(--warn-soft);color:var(--warn)} .tag.neutral{background:var(--rule);color:var(--muted)}
 .pick{display:flex;gap:6px;align-items:center;font-weight:400;font-size:.9rem}
 .score{display:inline-flex;gap:6px;align-items:center;font:500 .85rem var(--f-mono);white-space:nowrap}
+.score-line{display:inline-flex;gap:6px;align-items:center;white-space:nowrap;font-size:.8rem;color:var(--muted)}
+.score-line .meter{width:56px}
+.score-line b{font:600 .82rem var(--f-mono);color:var(--ink)}
 .meter{display:inline-block;width:84px;height:7px;background:var(--rule);border-radius:4px;overflow:hidden}
 .meter i{display:block;height:100%;background:var(--accent)}
 .chips{display:flex;flex-wrap:wrap;gap:5px}
@@ -336,7 +370,6 @@ svg.profile text{font-family:var(--f-mono)}
   <div class="topbar-in">
     <a class="brand" href="#home" data-go="home">CI Career Phenotype Coach</a>
     <span class="spacer"></span>
-    <a class="hlink" href="#resources" data-go="resources" id="hdr-resources">Resources</a>
     <details class="menu"><summary><span aria-hidden="true">≡</span> Menu</summary>
       <div class="menu-list">
         <button type="button" id="m-save">Save my answers to a file</button>
@@ -370,7 +403,7 @@ svg.profile text{font-family:var(--f-mono)}
     </ol>
     <p class="small muted">About 45–90 minutes. Your answers save in this browser, so you can stop and come back. Use AI or not, as you prefer, for any step.</p>
     <p class="small muted">If you use AI: tools that remember your past chats will bring that context into the coaching. For a blank slate, use a temporary or incognito chat.</p>
-    <div class="row"><a class="btn primary" href="#s1" data-go="s1">Start step 1</a><a class="linkbtn small" href="#coach" data-go="coach">Or do it all in one AI conversation</a></div>
+    <div class="row"><a class="btn primary" href="#s1" data-go="s1">Start step 1</a><a class="btn ai-btn" href="#coach" data-go="coach">Or do it all in one AI conversation</a></div>
   </div>
 </section>
 
@@ -397,7 +430,7 @@ svg.profile text{font-family:var(--f-mono)}
     </ul>
   </div>
   <div class="card">
-    <h2>About you</h2>
+    <h2>Where are you in your career?</h2>
     <div class="grid2">
       <label for="p-name">Name <span class="hint">Optional. Only appears on your report.</span><input type="text" id="p-name" data-bind="profile.name"></label>
       <label for="p-prof"><span>Profession <span class="req">Required</span></span>
@@ -413,18 +446,18 @@ svg.profile text{font-family:var(--f-mono)}
   </div>
   <div class="fork" data-fork="s1"></div>
   <div class="card">
-    <h2>Projects that mattered to you <span class="req">At least one required</span></h2>
+    <h2>Which projects have mattered most to you? <span class="req">At least one required</span></h2>
     <p class="small muted">Up to three. Clinical, operational, research, teaching, or informatics.</p>
     <div id="projects" class="stack"></div>
   </div>
   <div class="card">
-    <h2>Something you wanted to do but didn't</h2>
+    <h2>What did you want to do but didn't?</h2>
     <label for="unreal">What was it?<textarea id="unreal" data-bind="unrealized.text"></textarea></label>
     <fieldset><legend>What got in the way?</legend><div class="checks" id="reasons"></div></fieldset>
     <label for="env">Your setting <span class="hint">What does your workplace make easy or hard? Who makes informatics decisions?</span><textarea id="env" data-bind="environment"></textarea></label>
   </div>
   <div class="card">
-    <h2>Summary of where you are now <span class="req">Required</span></h2>
+    <h2>How would you sum up where you are now? <span class="req">Required</span></h2>
     <p class="small muted">4–6 sentences in your own words. The AI can draft this for you.</p>
     <textarea id="snap" class="tall" data-bind="snapshot" aria-label="Summary of where you are now"></textarea>
   </div>
@@ -441,16 +474,16 @@ svg.profile text{font-family:var(--f-mono)}
   <div class="carry" data-recap="s2" hidden></div>
   <div class="fork" data-fork="s2"></div>
   <div class="card">
-    <h2>Describe yourself in a sentence or two</h2>
-    <label for="identity"><span>Who are you now, based on what you do? <span class="req">Required</span></span> <span class="hint">For example: "A hospitalist who fixes clinical workflows by building EHR tools." You can revise it after you see your results.</span><textarea id="identity" data-bind="identity"></textarea></label>
+    <h2>Who are you now, in a sentence or two?</h2>
+    <label for="identity"><span>Describe yourself by what you do <span class="req">Required</span></span> <span class="hint">For example: "A hospitalist who fixes clinical workflows by building EHR tools." You can revise it after you see your results.</span><textarea id="identity" data-bind="identity"></textarea></label>
   </div>
   <div class="card">
-    <div class="row"><h2>Rate your work over the last 6–12 months <span class="req">All 20 required</span></h2><span class="spacer"></span><span class="count" id="rate-count"></span></div>
+    <div class="row"><h2>How often has your work involved each of these in the last 6–12 months? <span class="req">All 20 required</span></h2><span class="spacer"></span><span class="count" id="rate-count"></span></div>
     <p class="scale-key">0 Never · 1 About once a year · 2 About monthly · 3 About weekly · 4 A few times a week · 5 Daily. Choose "Not sure" to leave one out.</p>
     <div id="ratings"></div>
   </div>
   <div class="card hi" id="results">
-    <h2>Your closest phenotypes</h2>
+    <h2>Which of these fit you?</h2>
     <div id="matches"></div>
   </div>
 </section>
@@ -460,7 +493,7 @@ svg.profile text{font-family:var(--f-mono)}
   <div class="head">
     <span class="eyebrow">Step 3 of 4</span>
     <h1 tabindex="-1">Your goal phenotype</h1>
-    <p class="lede">Describe the work you want to be doing in 3–5 years. The tool finds the phenotypes that fit that work and suggests one as your goal. You can change it.</p>
+    <p class="lede">Describe the work you want to be doing in 3–5 years. The tool shows the phenotypes that fit that work, and you choose one as your goal.</p>
   </div>
   <div class="carry" data-recap="s3" hidden></div>
   <div class="fork" data-fork="s3"></div>
@@ -473,18 +506,16 @@ svg.profile text{font-family:var(--f-mono)}
     <fieldset><legend>Where would you like to work? <span class="hint">Choose any that appeal to you.</span></legend><div class="checks" id="settings"></div></fieldset>
   </div>
   <div class="card">
-    <div class="row"><h2>The work you want in 3–5 years <span class="req">All 20 required</span></h2><span class="spacer"></span><span class="count" id="want-count"></span></div>
+    <div class="row"><h2>How much of each kind of work do you want in 3–5 years? <span class="req">All 20 required</span></h2><span class="spacer"></span><span class="count" id="want-count"></span></div>
     <p class="small">These start at your current ratings. Move up anything you want more of, and down anything you want less of.</p>
     <p class="scale-key">0 Never · 1 About once a year · 2 About monthly · 3 About weekly · 4 A few times a week · 5 Daily</p>
     <div id="wants"></div>
   </div>
   <div class="card hi" id="fit">
-    <h2>Phenotypes that fit the work you want</h2>
-    <div id="fit-list"></div>
-  </div>
-  <div class="card">
-    <div class="row"><h2>Your goal <span class="req">Required</span></h2><span class="spacer"></span><span class="small muted">Use the suggestion, or pick another. Add a second if you're torn.</span></div>
+    <h2>Which phenotype do you want to aim for? <span class="req">Required</span></h2>
+    <p class="small muted">Choose "Make this my goal" on one of the top three, or pick from all 20 below. Add a second if you're torn.</p>
     <div id="goal-now"></div>
+    <div id="fit-list"></div>
     <details class="peek"><summary>See all 20 phenotypes, sorted by fit</summary><div class="stack" style="margin-top:8px"><div class="small muted" id="picker-note"></div><div class="picker" id="picker"></div></div></details>
   </div>
 </section>
@@ -493,42 +524,42 @@ svg.profile text{font-family:var(--f-mono)}
 <section class="page" id="s4" hidden>
   <div class="head">
     <span class="eyebrow">Step 4 of 4</span>
-    <h1 tabindex="-1">Gaps and action plan</h1>
+    <h1 tabindex="-1">Gaps and plan</h1>
     <p class="lede">See your current and goal phenotypes side by side, look at what's different, and plan 2–3 next steps to close the gap.</p>
   </div>
+  <div class="carry" data-recap="s4" hidden></div>
   <div class="card hi">
-    <h2>Your work now compared with your goal</h2>
+    <h2>How does your work now compare with your goal?</h2>
     <div id="side-by-side"></div>
     <div id="compare"></div>
   </div>
-  <div class="carry" data-recap="s4" hidden></div>
   <div class="fork" data-fork="s4"></div>
   <div class="card">
-    <h2>Name your gaps <span class="req">At least one required</span></h2>
+    <h2>What are your gaps? <span class="req">At least one required</span></h2>
     <p class="small muted">Fill in the ones that apply. For each, is it possible where you work now?</p>
     <div id="gapdims" class="stack"></div>
   </div>
   <div class="card">
-    <h2>Ideas for next steps</h2>
+    <h2>What could you try?</h2>
     <p class="small muted">Pick any that fit and add them to your steps. You can edit them after.</p>
     <div id="ideas"></div>
   </div>
   <div class="card">
-    <h2>Next steps <span class="req">At least two required</span></h2>
+    <h2>What will you do next? <span class="req">At least two required</span></h2>
     <p class="small muted">2–3 steps you can start in the next 6 months. Be specific about when and who can help.</p>
     <div id="nextsteps" class="stack"></div>
   </div>
   <div class="card">
-    <h2>Your ask</h2>
+    <h2>Who can help you?</h2>
     <label for="ask"><span>Who will you ask for help, and for what? <span class="req">Required</span></span> <span class="hint">For example: "Ask our CMIO for a seat on the CDS committee this spring."</span><textarea id="ask" data-bind="ask"></textarea></label>
   </div>
   <div class="card">
-    <h2>Check in on this plan</h2>
+    <h2>When will you check in on this plan?</h2>
     <label for="checkin">How often will you review it? <span class="hint">Ask: is my time building the skills, credibility, and network I need? Has my goal changed as I've learned more?</span>
       <select id="checkin" data-bind="checkin"><option value="">Choose…</option><option>Every month</option><option>Every 3 months</option><option>Every 6 months</option></select></label>
   </div>
   <div class="card">
-    <h2>Your pitch</h2>
+    <h2>How would you tell your story in 30 seconds?</h2>
     <label for="pitch"><span>About 30 seconds out loud: who you are now, where you're headed, and what you need. <span class="req">Optional</span></span><textarea id="pitch" class="tall" data-bind="pitch"></textarea></label>
   </div>
 </section>
@@ -574,7 +605,7 @@ svg.profile text{font-family:var(--f-mono)}
     </div>
   </div>
   <div class="card">
-    <h2>Optional: bring your results back</h2>
+    <h2>Want exact scores and the printable report?</h2>
     <p class="small">The AI ends with an export block. Paste it here, then click <b>Fill in the worksheet</b>. That fills in all four steps, so you can check exact match scores and print the formatted one-page report. The AI's own matches are estimates. This page calculates them exactly.</p>
     <label for="paste-full">Export block from the AI<textarea id="paste-full" class="paste" placeholder="Paste everything after “Copy everything below into the coach”"></textarea></label>
     <div class="row"><button type="button" class="primary" data-fillfull>Fill in the worksheet</button></div>
@@ -607,7 +638,7 @@ svg.profile text{font-family:var(--f-mono)}
   </div>
   <div class="card">
     <h2>Full AI coach</h2>
-    <p class="small">Prefer one conversation? The <a href="#coach" data-go="coach">full AI coach</a> runs the whole session in any AI tool from a single prompt.</p>
+    <p class="small">Prefer one conversation? The <a class="ai-link" href="#coach" data-go="coach">full AI coach</a> runs the whole session in any AI tool from a single prompt.</p>
   </div>
   <div class="card">
     <h2>What informaticians do</h2>
@@ -671,7 +702,7 @@ svg.profile text{font-family:var(--f-mono)}
   </div>
 </section>
 <!-- BUILD TAG: bump on every deploy so you can tell which build people are seeing. -->
-<footer class="buildtag">Prototype · build v0.7.0 (2026-10-14)</footer>
+<footer class="buildtag">Prototype · build v0.8.0 (2026-10-14)</footer>
 </main>
 </div>
 
@@ -740,6 +771,7 @@ const PHENO = [
 ];
 const SETTINGS = ["Academic health system","Community or regional health system","Health IT company or startup","Large tech company","Government, policy, or public health","Research","Education and training","Independent or consulting"];
 const SETTING_WORDS = [["academic"],["community","regional"],["health it","startup","start-up","vendor"],["tech company","large tech","big tech"],["government","policy","public health"],["research"],["education","training","teaching"],["independent","consult"]];
+// Usual settings per phenotype. Not shown since v0.7.1 (the "fits a setting" tag was dropped); kept as phenotype data.
 const PSET = [[0],[1],[0,1],[0,1],[0,1],[4,0],[4],[2],[2],[2],[2],[3],[2,3],[7],[5,0],[5],[6,0],[6,0],[5,2,3],[2,3]]; // usual settings per phenotype
 const PROFESSIONS = ["Physician","Nurse practitioner","Physician assistant","Registered nurse","Pharmacist","Other clinician"];
 const STAGES = ["Trainee","Informatics fellow","Early career","Mid career","Senior or executive"];
@@ -767,7 +799,7 @@ const TOOLS = {
 };
 const TOOL_LABEL = k => ({copilot:"Microsoft Copilot (including your organization's version)",other:"Another tool (copy the prompt)"}[k] || TOOLS[k].n);
 const STEPS = [["s1","Where you are now"],["s2","Current phenotype"],["s3","Goal phenotype"],["s4","Gaps and plan"]];
-const SECTION = {s1:"Step 1: Describe where you are now",s2:"Step 2: Describe yourself and rate your work",s3:"Step 3: Describe the work you want",s4:"Step 4: Identify gaps and name next steps"};
+const SECTION = {s1:"Step 1: Where are you now?",s2:"Step 2: What work do you do now?",s3:"Step 3: What work do you want?",s4:"Step 4: What are your gaps, and what will you do next?"};
 const AI_INTRO = {
   s1:"The AI asks you about your work and drafts your answers.",
   s2:"The AI helps you describe yourself, then asks about your work and suggests ratings you can change.",
@@ -779,7 +811,7 @@ const AI_RETURNS = {s1:"your projects, setting, and summary",s2:"a short descrip
 /* =====================================================================
    STATE (saved in this browser; can be saved to and loaded from a file)
    ===================================================================== */
-const KEY = "ciPhenotypeCoach.v2";
+const KEY = "ciPhenotypeCoach.v2" + (/\/preview\//.test(location.pathname) ? ".preview" : ""); // never change the live key
 const blank = () => ({
   pref:"", aiTool:"chatgpt", mode:{s1:"",s2:"",s3:"",s4:""}, stepTool:{s1:"",s2:"",s3:"",s4:""},
   profile:{name:"",profession:"",setting:"",stage:"",experience:"",time:""},
@@ -888,10 +920,18 @@ function drivers(pi){ const u=S.ratings, w=PHENO[pi].w; const idx=u.map((v,i)=>v
           miss:idx.filter(i=>gap(i)>=GAP_SMALL).sort((a,b)=>gap(b)-gap(a)).slice(0,3)}; }
 
 /* shared display pieces */
-const meter = r => { const s=score(r); return `<span class="score" title="Score ${s} out of 100"><span class="meter" aria-hidden="true"><i style="width:${s}%"></i></span><b>${s}</b></span>`; };
-const chips = (pi,nShared=3,nGrow=2) => { const d=drivers(pi); return `<div class="chips">${d.shared.slice(0,nShared).map(i=>`<span class="chip">✓ ${esc(ATTR[i].n)}</span>`).join("")}${d.miss.slice(0,nGrow).map(i=>`<span class="chip up">↑ ${esc(ATTR[i].n)}</span>`).join("")}</div>`; };
-const LEGEND = `<div class="legend"><span><span class="chip">✓</span> Work you already do, little development needed</span><span><span class="chip up">↑</span> Work you'd need to grow for this role</span></div>`;
-const SCORE_NOTE = what => `<p class="small muted">${what==="fit"?"Fit score (0–100) shows how similar the work you want is":"Match score (0–100) shows how similar the mix of your work is"} to each phenotype's typical mix. 60 or more is close.</p>`;
+// One line: bar, score, short label. Used where space is tight (summary cards).
+const scoreLine = (r,label) => { const s=score(r); return `<span class="score-line" title="Score ${s}%"><span class="meter" aria-hidden="true"><i style="width:${s}%"></i></span><b>${s}%</b> ${label}</span>`; };
+const meter = r => { const s=score(r); return `<span class="score" title="Score ${s}%"><span class="meter" aria-hidden="true"><i style="width:${s}%"></i></span><b>${s}%</b></span>`; };
+// What you share with a phenotype and what you'd grow, behind a toggle so lists stay calm. Open toggles stay open on re-render.
+const WHY_OPEN = new Set();
+const chips = (pi,nShared=3,nGrow=2,ctx="") => { const d=drivers(pi), key=ctx+pi;
+  const row=(label,ks,cls)=>ks.length?`<div class="why-row"><span class="why-label">${label}</span><div class="chips">${ks.map(i=>`<span class="chip ${cls}">${esc(ATTR[i].n)}</span>`).join("")}</div></div>`:"";
+  // Step 2 asks "does this describe my work?" (no goal yet), so differences are neutral, not gaps to grow.
+  const fit = ctx==="m";
+  return `<details class="why" data-why="${key}" ${WHY_OPEN.has(key)?"open":""}><summary>More details</summary>${row(fit?"Fits well":"Already do",d.shared.slice(0,nShared),"")}${row(fit?"Fits less well":"Need to grow",d.miss.slice(0,nGrow),fit?"neutral":"up")}</details>`; };
+document.addEventListener("toggle", e=>{ const d=e.target; if(d.matches && d.matches("details[data-why]")) d.open ? WHY_OPEN.add(d.dataset.why) : WHY_OPEN.delete(d.dataset.why); }, true);
+const SCORE_NOTE = what => `<p class="small muted">${what==="fit"?"Fit score shows how similar the work you want is":"Match score shows how similar the mix of your work is"} to each phenotype's typical mix, from 0% to 100%. 60% or more is close.</p>`;
 
 /* =====================================================================
    PROMPTS
@@ -1220,8 +1260,8 @@ function renderCheck(step, C){
   const msg=$("#fillmsg-"+step), reqMiss=C.filter(c=>!c.ok&&!c.opt);
   if(!C.some(c=>c.ok)){ msg.innerHTML=`<p class="needmsg">Nothing matched. Make sure you pasted the AI's final answer, the part after “Copy everything below into the coach.”</p>`; return; }
   let h=`<ul class="checklist">${C.map(c=>`<li class="${c.ok?"":c.opt?"opt":"no"}">${esc(c.label)}${c.detail?`: ${esc(c.detail)}`:""}${!c.ok&&c.opt?" (optional)":""}</li>`).join("")}</ul>`;
-  if(step==="s2" && rated()>=8){ const t=matches()[0]; h+=`<p class="small" style="margin-top:6px">Your closest phenotype now: <b>${esc(PHENO[t.i].n)}</b>, match score ${score(t.r)} of 100. Your full results are below.</p>`; }
-  if(step==="s3" && wanted()>=8){ const t=fits()[0]; h+=`<p class="small" style="margin-top:6px">Closest fit for the work you want: <b>${esc(PHENO[t.i].n)}</b>, fit score ${score(t.r)} of 100. See the suggestions below, then choose your goal.</p>`; }
+  if(step==="s2" && rated()>=8){ const t=matches()[0]; h+=`<p class="small" style="margin-top:6px">Your closest phenotype now: <b>${esc(PHENO[t.i].n)}</b>, match score ${score(t.r)}%. Your full results are below.</p>`; }
+  if(step==="s3" && wanted()>=8){ const t=fits()[0]; h+=`<p class="small" style="margin-top:6px">Closest fit for the work you want: <b>${esc(PHENO[t.i].n)}</b>, fit score ${score(t.r)}%. See the suggestions below, then choose your goal.</p>`; }
   if(reqMiss.length){ const fix=`Please give me the final answer again, in exactly the format from my first message: labels in capitals, one item per line, no extra formatting. I'm missing: ${reqMiss.map(c=>`${c.label}${c.detail?` (${c.detail})`:""}`).join("; ")}.`;
     h+=`<p class="small" style="margin-top:6px">Some required items are missing. Copy this message into the AI and paste its new answer here:</p><pre hidden id="fix-${step}">${esc(fix)}</pre><button type="button" class="tiny" data-copy="fix-${step}" style="margin-top:4px">Copy the fix-it message</button>`; }
   msg.innerHTML=h;
@@ -1242,7 +1282,7 @@ function renderPref(){ $$("[data-pref]").forEach(b=>b.setAttribute("aria-pressed
 function renderFork(step){
   const el=document.querySelector(`[data-fork="${step}"]`), m=modeFor(step), tk=toolFor(step);
   if(!m) el.innerHTML="";
-  else if(m==="self") el.innerHTML=`<div class="manualhead"><h2>${SECTION[step]}</h2><button type="button" class="linkbtn" data-mode="ai" data-step="${step}">Use AI for this step instead</button></div>`;
+  else if(m==="self") el.innerHTML=`<div class="manualhead"><h2>${SECTION[step]}</h2><button type="button" class="linkbtn ai-link" data-mode="ai" data-step="${step}">Use AI for this step instead</button></div>`;
   else el.innerHTML=`<div class="ai">
     <div class="ai-band"><span class="ai-badge">AI coaching</span><h2>${SECTION[step]}</h2></div>
     <div class="ai-body">
@@ -1268,20 +1308,27 @@ function renderRecaps(){
   const projs=S.projects.filter(p=>p.title).map(p=>`${p.title}${p.role?` (${p.role})`:""}${p.why?`: ${p.why}`:""}`).join("\n");
   const u=S.unrealized, wantedTo=[u.text, u.reasons.length?`What got in the way: ${u.reasons.join(", ")}`:""].filter(Boolean).join("\n");
   const topNow=DISPLAY.filter(i=>S.ratings[i]!=null&&S.ratings[i]>=3).sort((x,y)=>S.ratings[y]-S.ratings[x]).slice(0,5).map(i=>ATTR[i].n).join(", ");
-  const fit=goalFit();
+  const fit=goalFit(), cur=currentPhenos(), goals=S.target.filter(Boolean);
+  const feature=(n,label,scoreTxt)=>{ const i=pIndex(n); if(i<0) return "";
+    return `<div class="feature">${art(n,"fthumb")}<div class="feature-body"><span class="eyebrow">${label}</span><div class="ph-head">${pglyph(i,48)}<b>${esc(n)}</b></div>${scoreTxt||""}</div></div>`; };
+  const curCards=cur.map(n=>feature(n,"Current phenotype",rated()>=8?scoreLine(pearson(S.ratings,PHENO[pIndex(n)].w),"match with current work"):"")).join("");
+  // Step 4 summary: current phenotype card(s) merge, by a drawn connector, into one goal card that also holds the dream project.
+  const goalCard = () => { const n=goals[0], i=n?pIndex(n):-1; if(i<0) return "";
+    return `<div class="goal-card">${art(n,"goalart")}<div class="goal-body"><span class="eyebrow">Goal phenotype</span><div class="ph-head">${pglyph(i,48)}<b>${esc(n)}</b></div>${wanted()>=8?scoreLine(pearson(S.want,PHENO[i].w),"fit with work you want"):""}${goals[1]?`<span class="small muted">Also considering: ${esc(goals[1])}</span>`:""}${S.dream?`<div class="goal-dream"><span class="why-label">A project you'd love to lead</span><p>${esc(S.dream)}</p></div>`:""}</div></div>`; };
+  const merge = k => `<div class="merge" aria-hidden="true"><svg viewBox="0 0 40 100" preserveAspectRatio="none"><path vector-effect="non-scaling-stroke" d="${k>1?"M0 25 C24 25 16 50 40 50 M0 75 C24 75 16 50 40 50":"M0 50 L40 50"}"/></svg><i></i></div>`;
   const R={
     s2:["From step 1: where you are now",[["About you",profileLine()==="(not given)"?"":profileLine()],["Projects",projs],["Wanted to do",wantedTo],["Your setting",S.environment],["Summary",S.snapshot]]],
-    s3:["From step 2: your current phenotype",[["You now",S.identity],["Current phenotype",currentPhenos().join(" / ")],["Work you do most",topNow]]],
-    s4:["From step 3: your goal",[["Goal phenotype",S.target.filter(Boolean).join(" + ")+(fit!=null?` (fit score ${score(fit)} of 100)`:"")],["A project you'd love to lead",S.dream],["Settings you'd consider",S.settings.join(", ")],["Current phenotype",currentPhenos().join(" / ")]]]
+    s3:["From step 2: who you are now",[["You now",S.identity],["Work you do most",topNow]],curCards],
+    s4:["Where you are and where you're headed",[],curCards&&goalCard()?`<div class="fcol">${curCards}</div>${merge(cur.length)}${goalCard()}`:curCards+goalCard()]
   };
-  Object.keys(R).forEach(step=>{ const el=document.querySelector(`[data-recap="${step}"]`), [title,rows]=R[step], items=rows.filter(x=>x[1]);
-    el.hidden=!items.length; if(el.hidden) return;
-    el.innerHTML=`<h2>${title}</h2><dl>${items.map(x=>row(...x)).join("")}</dl>`; });
+  Object.keys(R).forEach(step=>{ const el=document.querySelector(`[data-recap="${step}"]`), [title,rows,cards]=R[step], items=rows.filter(x=>x[1]);
+    el.hidden=!items.length && !cards; if(el.hidden) return;
+    el.innerHTML=`<h2>${title}</h2>${cards?`<div class="features${step==="s4"?" pair":""}">${cards}</div>`:""}${items.length?`<dl>${items.map(x=>row(...x)).join("")}</dl>`:""}`; });
 }
 function updatePrompts(){ const P=prompts(); STEPS.forEach(([k])=>{ const el=document.getElementById("prompt-"+k); if(el) el.textContent=P[k]; }); $("#prompt-full").textContent=fullPrompt(); }
 
 /* =====================================================================
-   GLYPH (visual test): a phenotype's "signature", computed from its 20 weights. Never hand-drawn.
+   GLYPH: a phenotype's "signature", computed from its 20 weights. Never hand-drawn.
    One petal per kind of work, clockwise from the top in DISPLAY order, with a gap between the 5
    groups. Petal length = weight (0–5). Optional overlays for a person:
      you   = their ratings (ink dots joined by a thin outline)
@@ -1366,10 +1413,10 @@ function renderMatches(){
   const el=$("#matches"), n=rated(); $("#rate-count").textContent=`${answered()} of 20 answered`;
   if(n<8){ el.innerHTML=`<p class="small muted">Rate at least 8 kinds of work to see your matches. You've rated ${n}.</p>`; return; }
   const m=matches();
-  el.innerHTML = SCORE_NOTE("match") + LEGEND + `<p class="small"><b>Tick the ones that fit you, up to 2.</b> They'll show as your current phenotype in step 4 and on your report. If you tick none, your top match is used.</p>`
+  el.innerHTML = SCORE_NOTE("match") + `<p class="small"><b>Tick the ones that fit you, up to 2.</b> They'll show as your current phenotype in step 4 and on your report. If you tick none, your top match is used.</p>`
    + m.slice(0,3).map((x,j)=>{ const p=PHENO[x.i];
     return `<div class="match has-art"><div class="match-art">${art(p.n,"thumb")}${pglyph(x.i,48)}</div><div class="match-body"><div class="match-top"><span class="match-name">${j+1}. ${esc(p.n)}</span><span class="spacer"></span>${meter(x.r)}<span class="tag">${strength(x.r)}</span></div>
-    <p class="small muted">${esc(p.d)}</p>${chips(x.i)}
+    <p class="small muted">${esc(p.d)}</p>${chips(x.i,3,2,"m")}
     <label class="pick" for="ch${x.i}"><input type="checkbox" id="ch${x.i}" data-choose="${esc(p.n)}" ${S.chosen.includes(p.n)?"checked":""}>This fits me</label></div></div>`; }).join("")
    + `<div class="match"><p class="small"><b>Also close:</b></p><ul class="near">${m.slice(3,7).map(x=>`<li><span>${esc(PHENO[x.i].n)}</span>${meter(x.r)}</li>`).join("")}</ul></div>`;
 }
@@ -1379,24 +1426,22 @@ function goalButtons(n){ const i=S.target.indexOf(n);
   if(i===0) return '<span class="tag">Your goal</span><button type="button" class="tiny" data-goal="clear1">Remove</button>';
   if(i===1) return '<span class="tag">Second goal</span><button type="button" class="tiny" data-goal="clear2">Remove</button>';
   return `<button type="button" class="tiny ${S.target[0]?"":"primary"}" data-goal="1" data-name="${esc(n)}">Make this my goal</button>${S.target[0]?`<button type="button" class="tiny" data-goal="2" data-name="${esc(n)}">Second goal</button>`:""}`; }
-const settingTag = pi => PSET[pi].some(k=>S.settings.includes(SETTINGS[k])) ? `<span class="tag">Fits a setting you chose</span>` : "";
 function renderFit(){
   $("#want-count").textContent=`${wantAnswered()} of 20 answered`;
   ATTR.forEach((_,i)=>{ const el=document.getElementById("now-"+i); if(el) el.textContent = S.ratings[i]!==null ? `Now: ${S.ratings[i]}` : S.unsure[i] ? "Now: not sure" : ""; });
   const has=wanted()>=8, f=has?fits():PHENO.map((_,i)=>({i,r:null})), cur=curName();
   $("#fit-list").innerHTML = !has ? '<p class="small muted">Answer at least 8 of the 20 to see which phenotypes fit.</p>'
-    : SCORE_NOTE("fit") + LEGEND + f.slice(0,3).map((x,j)=>{ const p=PHENO[x.i];
+    : SCORE_NOTE("fit") + f.slice(0,3).map((x,j)=>{ const p=PHENO[x.i];
     return `<div class="match has-art"><div class="match-art">${art(p.n,"thumb")}${pglyph(x.i,48)}</div><div class="match-body"><div class="match-top"><span class="match-name">${j+1}. ${esc(p.n)}</span><span class="spacer"></span>${meter(x.r)}<span class="tag">${strength(x.r,"fit")}</span></div>
-      <div class="row">${p.n===cur?'<span class="tag">Same as your current phenotype</span>':""}${settingTag(x.i)}</div>
-      <p class="small muted">${esc(p.d)}</p>${chips(x.i)}
+      <div class="row">${p.n===cur?'<span class="tag">Same as your current phenotype</span>':""}</div>
+      <p class="small muted">${esc(p.d)}</p>${chips(x.i,3,2,"f")}
       <div class="row">${goalButtons(p.n)}</div></div></div>`; }).join("");
   const g=S.target.filter(Boolean);
-  $("#goal-now").innerHTML = g.length ? `<p>${g.map(n=>`<b>${esc(n)}</b>${has?` (fit ${score(pearson(S.want,PHENO[pIndex(n)].w))})`:""}`).join(" and ")}</p>`
-    : has ? `<p class="small">Suggested: <b>${esc(PHENO[f[0].i].n)}</b>, your closest fit. Choose "Make this my goal" above, or pick another below.</p>` : "";
-  $("#picker-note").innerHTML = has ? `Sorted by fit with the work you want.${LEGEND}` : "Answer the questions above to sort these by fit.";
+  $("#goal-now").innerHTML = g.length ? `<p class="goal-chosen">Your goal: ${g.map(n=>`<b>${esc(n)}</b>`).join(" and ")}</p>` : "";
+  $("#picker-note").innerHTML = has ? "Sorted by fit with the work you want." : "Answer the questions above to sort these by fit.";
   $("#picker").innerHTML = f.map(x=>{ const p=PHENO[x.i];
-    return `<div class="pcard ${S.target.includes(p.n)?"sel":""}"><div class="ph-head">${pglyph(x.i,40)}<b>${esc(p.n)}</b></div>${has?`<div class="row">${meter(x.r)}${settingTag(x.i)}</div>`:""}
-      <p>${esc(p.d)}</p>${has?chips(x.i,2,1):""}<div class="row">${goalButtons(p.n)}</div></div>`; }).join("");
+    return `<div class="pcard ${S.target.includes(p.n)?"sel":""}"><div class="ph-head">${pglyph(x.i,40)}<b>${esc(p.n)}</b></div>${has?`<div class="row">${meter(x.r)}</div>`:""}
+      <p>${esc(p.d)}</p>${has?chips(x.i,3,2,"p"):""}<div class="row">${goalButtons(p.n)}</div></div>`; }).join("");
 }
 
 /* step 4 */
@@ -1408,12 +1453,12 @@ function renderComparison(){
   const you=S.ratings, goal=rows.map(x=>x.t), gaps=rows.map(x=>x.gap), curW=scaled(PHENO[pIndex(cur[0])].w,you);
   const gl={cur:glyph(curW,{size:150,you,label:`Your work now over the typical mix for ${cur[0]}`}),
             goal:glyph(goal,{size:150,you,goal,gaps,label:"Your work now against your goal; orange marks gaps to grow"})};
-  const box=(title,names,vec,lbl)=>`<div class="sbs-col"><span class="eyebrow">${title}</span><div class="sbs-glyph">${gl[title.startsWith("Goal")?"goal":"cur"]}</div>${names.map(n=>`<div class="pbox"><b>${esc(n)}</b><div class="row">${meter(pearson(vec,PHENO[pIndex(n)].w))}<span class="small muted">${lbl}</span></div></div>`).join("")}</div>`;
-  $("#side-by-side").innerHTML = `<div class="sbs">${box("Current phenotype",cur,S.ratings,"match with your work now")}<div class="sbs-arrow" aria-hidden="true">→</div>${box("Goal phenotype",g,S.want,"fit with the work you want")}</div>${GLYPH_LEGEND}<p class="small muted">Both are scaled to your overall level, so they compare the mix of work, not how busy you are. Dots are your step 2 ratings.</p>`;
+  const box=(title,names)=>`<div class="sbs-col"><span class="eyebrow">${title}</span><div class="sbs-glyph">${gl[title.startsWith("Goal")?"goal":"cur"]}</div>${names.map(n=>`<div class="pbox"><b>${esc(n)}</b></div>`).join("")}</div>`;
+  $("#side-by-side").innerHTML = `<div class="sbs">${box("Current phenotype",cur)}<div class="sbs-arrow" aria-hidden="true">→</div>${box("Goal phenotype",g)}</div>${GLYPH_LEGEND}`;
   const c=gapCounts(rows), ti=targetIdx(), r=goalR(), top=growRows().slice(0,5);
-  $("#compare").innerHTML = `<div class="summary"><div class="row"><b>Match with your work now</b>${meter(r)}<span class="tag">${strength(r)}</span></div>
+  $("#compare").innerHTML = `<div class="summary"><div class="row"><b>How close is your current work to your goal?</b>${meter(r)}<span class="tag">${strength(r)}</span></div>
      <div class="chips"><span class="chip">On track: ${c.ok}</span><span class="chip up">Small gap: ${c.small}</span><span class="chip up">Big gap: ${c.big}</span><span class="chip neutral">More than the goal needs: ${c.more}</span></div>
-     ${ti.length===1?LEGEND+chips(ti[0]):""}</div>
+     ${ti.length===1?chips(ti[0],4,3,"g"):""}</div>
    ${ti.some(i=>S.chosen.includes(PHENO[i].n)) ? '<p class="small">Your goal is a phenotype you already identify with. Your gaps are about scope and depth, not a change of direction.</p>' : ""}
    ${top.length?`<h3 class="subhead">Biggest differences</h3>${compareTable(top)}`:'<p class="small">No big differences. Focus on scope, leadership, and making your work visible.</p>'}
    ${modeFor("s4")==="ai" ? "" : '<p class="note">This page shows where the gaps are. It doesn\'t coach you on closing them. For specific ideas, use the AI option for this step, or take this to a mentor.</p>'}
@@ -1457,7 +1502,7 @@ function renderReport(){
    <div class="rp-two">
      <div class="rp-sec"><h4>Current phenotype</h4>
        <div class="rp-big">${cur.length? cur.map(esc).join(" <span style='color:#8a979d'>/</span> ") : E}</div>
-       ${cur.length&&rated()>=8?`<div class="rp-score">Match score: ${cur.map(n=>`${esc(n)} <b>${score(pearson(S.ratings,PHENO[pIndex(n)].w))}</b>/100`).join(" · ")}</div>`:""}
+       ${cur.length&&rated()>=8?`<div class="rp-score">Match with my current work: ${cur.map(n=>`${esc(n)} <b>${score(pearson(S.ratings,PHENO[pIndex(n)].w))}%</b>`).join(" · ")}</div>`:""}
        ${S.identity?`<div class="rp-quote">“${esc(S.identity)}”</div>`:""}
        ${strong.length?`<div><b>Strongest areas now:</b> ${strong.map(esc).join(", ")}</div>`:""}
      </div>
@@ -1466,7 +1511,7 @@ function renderReport(){
    <div class="rp-two">
      <div class="rp-sec"><h4>Goal phenotype</h4>
        <div class="rp-big">${S.target.filter(Boolean).map(esc).join(" + ")||E}</div>
-       ${gr!==null&&rated()>=8?`<div class="rp-score">Fit with the work I want: <b>${fit!==null?score(fit):"–"}</b>/100 · match with my work now: <b>${score(gr)}</b>/100</div>`:""}
+       ${gr!==null&&rated()>=8?`<div class="rp-score">Fit with the work I want: <b>${fit!==null?score(fit)+"%":"–"}</b> · how close my current work is: <b>${score(gr)}%</b></div>`:""}
        ${S.dream?`<div><b>Project I'd love to lead:</b> ${esc(S.dream)}</div>`:""}
        ${S.settings.length?`<div><b>Settings I'd consider:</b> ${esc(S.settings.join(", "))}</div>`:""}
      </div>
@@ -1528,14 +1573,15 @@ function showMissing(step){ flagged[step]=true; markNeed(step); const m=missingI
 
 let cur = "home";
 const HOME_ICON = `<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5h13V10"/><path d="M10 19.5v-5h4v5"/></svg>`;
+const BOOK_ICON = `<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5z"/><path d="M4 21.5V5.5"/></svg>`;
 function railLink(id, inner, cls=""){ const locked=!!blockerFor(id);
   return `<a href="#${id}" data-go="${id}" class="${cls} ${locked?"locked":""}" ${locked?'aria-disabled="true"':""} ${id===cur?'aria-current="page"':""}>${inner}</a>`; }
 function renderRail(){
   $("#rail").innerHTML = railLink("home",`${HOME_ICON}<span class="lbl">Home</span>`)
    + STEPS.map(([id,l],i)=>railLink(id,`<span class="n">${i+1}</span>${l}`, stepDone(id)?"done":"")).join("")
-   + railLink("report",`<span class="n">→</span>Report`)
+   + railLink("report",`<span class="n">5</span>Report`)
+   + railLink("resources",`<span class="n">${BOOK_ICON}</span>Resources`)
    + `<span class="rail-div" aria-hidden="true"></span>` + railLink("coach","Full AI coach","coachchip");
-  if(cur==="resources") $("#hdr-resources").setAttribute("aria-current","page"); else $("#hdr-resources").removeAttribute("aria-current");
   const rail=$("#rail"), act=$("#rail [aria-current]"); if(act && rail.scrollWidth>rail.clientWidth) rail.scrollLeft = act.offsetLeft - 16;
   // bottom Back/Next bar
   const i=NAV.indexOf(cur), nb=$("#navbar"); nb.hidden = i<=0; if(i<=0) return;
