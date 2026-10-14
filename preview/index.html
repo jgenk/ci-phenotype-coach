@@ -685,7 +685,7 @@ svg.profile text{font-family:var(--f-mono)}
   </div>
 </section>
 <!-- BUILD TAG: bump on every deploy so you can tell which build people are seeing. -->
-<footer class="buildtag">PREVIEW · build v0.7.5 (2026-10-14)</footer>
+<footer class="buildtag">PREVIEW · build v0.7.6 (2026-10-14)</footer>
 </main>
 </div>
 
@@ -1556,7 +1556,7 @@ function railLink(id, inner, cls=""){ const locked=!!blockerFor(id);
 function renderRail(){
   $("#rail").innerHTML = railLink("home",`${HOME_ICON}<span class="lbl">Home</span>`)
    + STEPS.map(([id,l],i)=>railLink(id,`<span class="n">${i+1}</span>${l}`, stepDone(id)?"done":"")).join("")
-   + railLink("report",`<span class="n">→</span>Report`)
+   + railLink("report",`<span class="n">5</span>Report`)
    + railLink("resources",`<span class="n">${BOOK_ICON}</span>Resources`)
    + `<span class="rail-div" aria-hidden="true"></span>` + railLink("coach","Full AI coach","coachchip");
   const rail=$("#rail"), act=$("#rail [aria-current]"); if(act && rail.scrollWidth>rail.clientWidth) rail.scrollLeft = act.offsetLeft - 16;
