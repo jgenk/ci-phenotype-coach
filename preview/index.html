@@ -683,7 +683,7 @@ svg.profile text{font-family:var(--f-mono)}
   </div>
 </section>
 <!-- BUILD TAG: bump on every deploy so you can tell which build people are seeing. -->
-<footer class="buildtag">PREVIEW · build v0.7.2 (2026-10-14)</footer>
+<footer class="buildtag">PREVIEW · build v0.7.3 (2026-10-14)</footer>
 </main>
 </div>
 
@@ -1286,9 +1286,9 @@ function renderRecaps(){
   const topNow=DISPLAY.filter(i=>S.ratings[i]!=null&&S.ratings[i]>=3).sort((x,y)=>S.ratings[y]-S.ratings[x]).slice(0,5).map(i=>ATTR[i].n).join(", ");
   const fit=goalFit(), cur=currentPhenos(), goals=S.target.filter(Boolean);
   const feature=(n,label,scoreTxt)=>{ const i=pIndex(n); if(i<0) return "";
-    return `<div class="feature">${art(n,"fthumb")}<div class="feature-body"><span class="eyebrow">${label}</span><div class="ph-head">${pglyph(i,48)}<b>${esc(n)}</b></div>${scoreTxt?`<span class="small muted">${scoreTxt}</span>`:""}</div></div>`; };
-  const curCards=cur.map(n=>feature(n,"Current phenotype",rated()>=8?`Match with your current work: ${score(pearson(S.ratings,PHENO[pIndex(n)].w))}`:"")).join("");
-  const goalCards=goals.map(n=>feature(n,"Goal phenotype",wanted()>=8?`Fit with the work you want: ${score(pearson(S.want,PHENO[pIndex(n)].w))}`:"")).join("");
+    return `<div class="feature">${art(n,"fthumb")}<div class="feature-body"><span class="eyebrow">${label}</span><div class="ph-head">${pglyph(i,48)}<b>${esc(n)}</b></div>${scoreTxt||""}</div></div>`; };
+  const curCards=cur.map(n=>feature(n,"Current phenotype",rated()>=8?`<div class="row">${meter(pearson(S.ratings,PHENO[pIndex(n)].w))}<span class="small muted">match with your current work</span></div>`:"")).join("");
+  const goalCards=goals.map(n=>feature(n,"Goal phenotype",wanted()>=8?`<div class="row">${meter(pearson(S.want,PHENO[pIndex(n)].w))}<span class="small muted">fit with the work you want</span></div>`:"")).join("");
   const R={
     s2:["From step 1: where you are now",[["About you",profileLine()==="(not given)"?"":profileLine()],["Projects",projs],["Wanted to do",wantedTo],["Your setting",S.environment],["Summary",S.snapshot]]],
     s3:["From step 2: who you are now",[["You now",S.identity],["Work you do most",topNow]],curCards],
