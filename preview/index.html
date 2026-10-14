@@ -107,7 +107,8 @@ main{max-width:880px;width:100%;margin:0;padding:24px 0 120px;min-width:0}
 .tickler .btn{border-color:var(--coach-rule);color:var(--coach)}
 .why summary{cursor:pointer;font-size:.84rem;color:var(--muted);width:max-content;max-width:100%}
 .why[open] summary{margin-bottom:6px}
-.why .legend{margin-top:6px}
+.why-row{display:grid;grid-template-columns:7.5em minmax(0,1fr);gap:8px;align-items:start;margin-top:4px}
+.why-label{font-size:.8rem;font-weight:600;color:var(--muted);padding-top:2px}
 .goal-chosen{padding:8px 12px;border-radius:var(--r);background:var(--accent-soft)}
 .features{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-bottom:12px}
 .features.pair{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center}
@@ -694,7 +695,7 @@ svg.profile text{font-family:var(--f-mono)}
   </div>
 </section>
 <!-- BUILD TAG: bump on every deploy so you can tell which build people are seeing. -->
-<footer class="buildtag">PREVIEW · build v0.7.8 (2026-10-14)</footer>
+<footer class="buildtag">PREVIEW · build v0.7.9 (2026-10-14)</footer>
 </main>
 </div>
 
@@ -917,8 +918,8 @@ const meter = r => { const s=score(r); return `<span class="score" title="Score 
 // What you share with a phenotype and what you'd grow, behind a toggle so lists stay calm. Open toggles stay open on re-render.
 const WHY_OPEN = new Set();
 const chips = (pi,nShared=3,nGrow=2,ctx="") => { const d=drivers(pi), key=ctx+pi;
-  return `<details class="why" data-why="${key}" ${WHY_OPEN.has(key)?"open":""}><summary>What you share and what you'd grow</summary><div class="chips">${d.shared.slice(0,nShared).map(i=>`<span class="chip">✓ ${esc(ATTR[i].n)}</span>`).join("")}${d.miss.slice(0,nGrow).map(i=>`<span class="chip up">↑ ${esc(ATTR[i].n)}</span>`).join("")}</div>${LEGEND}</details>`; };
-const LEGEND = `<div class="legend"><span><span class="chip">✓</span> Work you already do</span><span><span class="chip up">↑</span> Work you'd grow for this role</span></div>`;
+  const row=(label,ks,cls)=>ks.length?`<div class="why-row"><span class="why-label">${label}</span><div class="chips">${ks.map(i=>`<span class="chip ${cls}">${esc(ATTR[i].n)}</span>`).join("")}</div></div>`:"";
+  return `<details class="why" data-why="${key}" ${WHY_OPEN.has(key)?"open":""}><summary>What you share and what you'd grow</summary>${row("Already do",d.shared.slice(0,nShared),"")}${row("Need to grow",d.miss.slice(0,nGrow),"up")}</details>`; };
 document.addEventListener("toggle", e=>{ const d=e.target; if(d.matches && d.matches("details[data-why]")) d.open ? WHY_OPEN.add(d.dataset.why) : WHY_OPEN.delete(d.dataset.why); }, true);
 const SCORE_NOTE = what => `<p class="small muted">${what==="fit"?"Fit score (0–100) shows how similar the work you want is":"Match score (0–100) shows how similar the mix of your work is"} to each phenotype's typical mix. 60 or more is close.</p>`;
 
