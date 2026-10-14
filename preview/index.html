@@ -217,6 +217,9 @@ fieldset.rate{border:0;border-top:1px dashed var(--rule);border-radius:0;padding
 .tag.ok{background:var(--ok-soft);color:var(--ok)} .tag.warn{background:var(--warn-soft);color:var(--warn)} .tag.neutral{background:var(--rule);color:var(--muted)}
 .pick{display:flex;gap:6px;align-items:center;font-weight:400;font-size:.9rem}
 .score{display:inline-flex;gap:6px;align-items:center;font:500 .85rem var(--f-mono);white-space:nowrap}
+.score-line{display:inline-flex;gap:6px;align-items:center;white-space:nowrap;font-size:.8rem;color:var(--muted)}
+.score-line .meter{width:56px}
+.score-line b{font:600 .82rem var(--f-mono);color:var(--ink)}
 .meter{display:inline-block;width:84px;height:7px;background:var(--rule);border-radius:4px;overflow:hidden}
 .meter i{display:block;height:100%;background:var(--accent)}
 .chips{display:flex;flex-wrap:wrap;gap:5px}
@@ -682,7 +685,7 @@ svg.profile text{font-family:var(--f-mono)}
   </div>
 </section>
 <!-- BUILD TAG: bump on every deploy so you can tell which build people are seeing. -->
-<footer class="buildtag">PREVIEW · build v0.7.4 (2026-10-14)</footer>
+<footer class="buildtag">PREVIEW · build v0.7.5 (2026-10-14)</footer>
 </main>
 </div>
 
@@ -899,6 +902,8 @@ function drivers(pi){ const u=S.ratings, w=PHENO[pi].w; const idx=u.map((v,i)=>v
           miss:idx.filter(i=>gap(i)>=GAP_SMALL).sort((a,b)=>gap(b)-gap(a)).slice(0,3)}; }
 
 /* shared display pieces */
+// One line: bar, score, short label. Used where space is tight (summary cards).
+const scoreLine = (r,label) => { const s=score(r); return `<span class="score-line" title="Score ${s} out of 100"><span class="meter" aria-hidden="true"><i style="width:${s}%"></i></span><b>${s}%</b> ${label}</span>`; };
 const meter = r => { const s=score(r); return `<span class="score" title="Score ${s} out of 100"><span class="meter" aria-hidden="true"><i style="width:${s}%"></i></span><b>${s}</b></span>`; };
 // What you share with a phenotype and what you'd grow, behind a toggle so lists stay calm. Open toggles stay open on re-render.
 const WHY_OPEN = new Set();
@@ -1286,8 +1291,8 @@ function renderRecaps(){
   const fit=goalFit(), cur=currentPhenos(), goals=S.target.filter(Boolean);
   const feature=(n,label,scoreTxt)=>{ const i=pIndex(n); if(i<0) return "";
     return `<div class="feature">${art(n,"fthumb")}<div class="feature-body"><span class="eyebrow">${label}</span><div class="ph-head">${pglyph(i,48)}<b>${esc(n)}</b></div>${scoreTxt||""}</div></div>`; };
-  const curCards=cur.map(n=>feature(n,"Current phenotype",rated()>=8?`<div class="row">${meter(pearson(S.ratings,PHENO[pIndex(n)].w))}<span class="small muted">match with your current work</span></div>`:"")).join("");
-  const goalCards=goals.map(n=>feature(n,"Goal phenotype",wanted()>=8?`<div class="row">${meter(pearson(S.want,PHENO[pIndex(n)].w))}<span class="small muted">fit with the work you want</span></div>`:"")).join("");
+  const curCards=cur.map(n=>feature(n,"Current phenotype",rated()>=8?scoreLine(pearson(S.ratings,PHENO[pIndex(n)].w),"match with current work"):"")).join("");
+  const goalCards=goals.map(n=>feature(n,"Goal phenotype",wanted()>=8?scoreLine(pearson(S.want,PHENO[pIndex(n)].w),"fit with work you want"):"")).join("");
   const R={
     s2:["From step 1: where you are now",[["About you",profileLine()==="(not given)"?"":profileLine()],["Projects",projs],["Wanted to do",wantedTo],["Your setting",S.environment],["Summary",S.snapshot]]],
     s3:["From step 2: who you are now",[["You now",S.identity],["Work you do most",topNow]],curCards],
