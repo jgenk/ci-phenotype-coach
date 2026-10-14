@@ -109,6 +109,9 @@ main{max-width:880px;width:100%;margin:0;padding:24px 0 120px;min-width:0}
 .card .carry{border:0;padding:0;background:none;border-radius:0}
 .closeness{display:grid;grid-template-columns:auto minmax(0,1fr);gap:18px;align-items:center;padding:14px;border:1px solid var(--rule);border-radius:var(--r);background:var(--paper)}
 .closeness-body{display:grid;gap:10px;min-width:0}
+.vs-goal{display:grid;grid-template-columns:max-content auto auto;gap:6px 10px;align-items:center;justify-content:start}
+.vs-label{font-weight:600;font-size:.9rem}
+@media (max-width:560px){.vs-goal{grid-template-columns:auto auto}.vs-goal .vs-label{grid-column:1/-1}}
 @media (max-width:560px){.closeness{grid-template-columns:minmax(0,1fr)}.closeness .sbs-glyph{justify-self:center}}
 .features{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-bottom:12px}
 .features.pair{grid-template-columns:minmax(0,1fr) 44px minmax(0,1fr);align-items:stretch;gap:0}
@@ -699,7 +702,7 @@ svg.profile text{font-family:var(--f-mono)}
   </div>
 </section>
 <!-- BUILD TAG: bump on every deploy so you can tell which build people are seeing. -->
-<footer class="buildtag">PREVIEW · build v0.8.1 (2026-10-14)</footer>
+<footer class="buildtag">PREVIEW · build v0.8.2 (2026-10-14)</footer>
 </main>
 </div>
 
@@ -1447,10 +1450,19 @@ function compareTable(rows){
 function renderComparison(){
   const cur=currentPhenos(), g=S.target.filter(Boolean), rows=compareRows();
   if(!cur.length||!g.length||!rows){ $("#side-by-side").innerHTML='<p class="small muted">Finish steps 2 and 3 to see this.</p>'; $("#compare").innerHTML=""; return; }
-  const goal=rows.map(x=>x.t), gaps=rows.map(x=>x.gap), c=gapCounts(rows), ti=targetIdx(), r=goalR(), top=growRows().slice(0,5);
+  const goal=rows.map(x=>x.t), gaps=rows.map(x=>x.gap), c=gapCounts(rows), ti=targetIdx(), r=goalR(), fit=goalFit(), top=growRows().slice(0,5);
+  // Both bars are measured against the goal: one for the work you do now, one for the work you want. Their difference is the distance to cover.
+  const takeaway = fit==null ? "This compares the mix of your current work with your goal's typical mix. The orange marks show where you'd grow."
+    : fit-r>=0.2 ? (fit>=0.4 ? "The work you want fits this goal well. Your current work is partway there, and the orange gaps are the distance to cover." : "Your current work is partway to this goal. Even the work you want fits it only partly, so it's worth checking whether another goal fits better.")
+    : r>=0.6 ? "Your current work already looks a lot like this goal. Your gaps are about depth and scope more than new kinds of work."
+    : fit<0.4 ? "Neither your current work nor the work you want fits this goal closely. It may be worth looking again at the goal in step 3."
+    : "Your current work and the work you want are about equally close to this goal. The orange gaps show where to grow.";
   // One glyph: the goal's typical mix (scaled to your level), your current ratings as dots, gaps in orange.
   $("#side-by-side").innerHTML = `<div class="closeness"><div class="sbs-glyph">${glyph(goal,{size:160,you:S.ratings,goal,gaps,label:"Your current work against your goal; orange marks gaps to grow"})}</div>
-    <div class="closeness-body"><div class="row"><b>Overall match with your goal</b>${meter(r)}<span class="tag">${strength(r)}</span></div>
+    <div class="closeness-body"><div class="vs-goal">
+       <span class="vs-label">Match with current work</span>${meter(r)}<span class="tag">${strength(r)}</span>
+       ${fit!=null?`<span class="vs-label">Fit with work you want</span>${meter(fit)}<span class="tag">${strength(fit,"fit")}</span>`:""}</div>
+     <p class="small">${takeaway}</p>
      <div class="chips"><span class="chip">On track: ${c.ok}</span><span class="chip up">Small gap: ${c.small}</span><span class="chip up">Big gap: ${c.big}</span><span class="chip neutral">More than the goal needs: ${c.more}</span></div>
      ${ti.length===1?chips(ti[0],4,3,"g"):""}${GLYPH_LEGEND}</div></div>`;
   $("#compare").innerHTML = `${ti.some(i=>S.chosen.includes(PHENO[i].n)) ? '<p class="small">Your goal is a phenotype you already identify with. Your gaps are about scope and depth, not a change of direction.</p>' : ""}
@@ -1505,7 +1517,7 @@ function renderReport(){
    <div class="rp-two">
      <div class="rp-sec"><h4>Goal phenotype</h4>
        <div class="rp-big">${S.target.filter(Boolean).map(esc).join(" + ")||E}</div>
-       ${gr!==null&&rated()>=8?`<div class="rp-score">Fit with the work I want: <b>${fit!==null?score(fit)+"%":"–"}</b> · how close my current work is: <b>${score(gr)}%</b></div>`:""}
+       ${gr!==null&&rated()>=8?`<div class="rp-score">Match with my current work: <b>${score(gr)}%</b> · fit with the work I want: <b>${fit!==null?score(fit)+"%":"–"}</b></div>`:""}
        ${S.dream?`<div><b>Project I'd love to lead:</b> ${esc(S.dream)}</div>`:""}
        ${S.settings.length?`<div><b>Settings I'd consider:</b> ${esc(S.settings.join(", "))}</div>`:""}
      </div>
