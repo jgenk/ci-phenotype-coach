@@ -106,6 +106,10 @@ main{max-width:880px;width:100%;margin:0;padding:24px 0 120px;min-width:0}
 .why-row{display:grid;grid-template-columns:7.5em minmax(0,1fr);gap:8px;align-items:start;margin-top:4px}
 .why-label{font-size:.8rem;font-weight:600;color:var(--muted);padding-top:2px}
 .goal-chosen{padding:8px 12px;border-radius:var(--r);background:var(--accent-soft)}
+.card .carry{border:0;padding:0;background:none;border-radius:0}
+.closeness{display:grid;grid-template-columns:auto minmax(0,1fr);gap:18px;align-items:center;padding:14px;border:1px solid var(--rule);border-radius:var(--r);background:var(--paper)}
+.closeness-body{display:grid;gap:10px;min-width:0}
+@media (max-width:560px){.closeness{grid-template-columns:minmax(0,1fr)}.closeness .sbs-glyph{justify-self:center}}
 .features{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-bottom:12px}
 .features.pair{grid-template-columns:minmax(0,1fr) 44px minmax(0,1fr);align-items:stretch;gap:0}
 .features.pair .fcol{align-content:center}
@@ -255,14 +259,7 @@ ul.near li{display:flex;justify-content:space-between;gap:10px;align-items:cente
 .pcard .row{gap:6px}
 
 /* step 4 comparison */
-.sbs{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:14px;align-items:start}
-.sbs-col{display:grid;gap:8px;padding:12px;border:1px solid var(--rule);border-radius:var(--r);background:var(--paper)}
-.sbs-arrow{font-size:1.6rem;color:var(--muted);align-self:center}
-@media (max-width:640px){.sbs{grid-template-columns:minmax(0,1fr)}.sbs-arrow{transform:rotate(90deg);justify-self:center}}
-.pbox{display:grid;gap:6px;padding:12px;border:1px solid var(--rule);border-radius:var(--r);background:var(--sheet)}
-.pbox b{font-family:var(--f-display);font-size:1.05rem}
 #compare{display:grid;gap:10px;margin-top:4px}
-.summary{display:grid;gap:8px;padding:12px;border:1px solid var(--rule);border-radius:var(--r);background:var(--paper)}
 .idea-group{display:grid;gap:6px}
 .idea-group+.idea-group{border-top:1px solid var(--rule);padding-top:10px}
 .idea-group h3{font:600 .76rem var(--f-mono);letter-spacing:.07em;text-transform:uppercase;color:var(--accent)}
@@ -392,7 +389,7 @@ svg.profile text{font-family:var(--f-mono)}
   <div class="head">
     <span class="eyebrow">Clinical informatics career planning</span>
     <h1 tabindex="-1">Plan your next move in clinical informatics.</h1>
-    <p class="lede">Describe your work now, see which informatics roles it resembles, choose one to aim for, and plan how to get there. You finish with a one-page report to share with a mentor.</p>
+    <p class="lede">Describe your current work, see which informatics roles it resembles, choose one to aim for, and plan how to get there. You finish with a one-page report to share with a mentor.</p>
   </div>
   <div class="card">
     <ol class="links">
@@ -527,16 +524,16 @@ svg.profile text{font-family:var(--f-mono)}
     <h1 tabindex="-1">Gaps and plan</h1>
     <p class="lede">See your current and goal phenotypes side by side, look at what's different, and plan 2–3 next steps to close the gap.</p>
   </div>
-  <div class="carry" data-recap="s4" hidden></div>
   <div class="card hi">
-    <h2>How does your work now compare with your goal?</h2>
+    <h2>How does your current work compare with your goal?</h2>
+    <div class="carry" data-recap="s4" hidden></div>
     <div id="side-by-side"></div>
     <div id="compare"></div>
   </div>
   <div class="fork" data-fork="s4"></div>
   <div class="card">
     <h2>What are your gaps? <span class="req">At least one required</span></h2>
-    <p class="small muted">Fill in the ones that apply. For each, is it possible where you work now?</p>
+    <p class="small muted">Fill in the ones that apply. For each, is it possible at your current workplace?</p>
     <div id="gapdims" class="stack"></div>
   </div>
   <div class="card">
@@ -702,7 +699,7 @@ svg.profile text{font-family:var(--f-mono)}
   </div>
 </section>
 <!-- BUILD TAG: bump on every deploy so you can tell which build people are seeing. -->
-<footer class="buildtag">PREVIEW · build v0.8.0 (2026-10-14)</footer>
+<footer class="buildtag">PREVIEW · build v0.8.1 (2026-10-14)</footer>
 </main>
 </div>
 
@@ -1020,7 +1017,7 @@ STEP 3: THE WORK I WANT
 What this step is for: ${PURPOSE.s3}. Don't suggest career types or job titles; the coach page matches my answers to career types.
 
 Who I am now: ${S.identity||S.snapshot||"(not written yet)"}
-How often my work involves each of these 20 kinds of work now (${SCALE_TEXT}):
+How often my current work involves each of these 20 kinds of work (${SCALE_TEXT}):
 ${curLines}
 
 If I don't know what I want yet, start there: ${CONTRAST}.
@@ -1047,10 +1044,10 @@ What this step is for: ${PURPOSE.s4}.
 Who I am now: ${S.identity||S.snapshot||"(not written yet)"}
 My current phenotype: ${curName()||"(not scored yet)"}
 My goal phenotype: ${S.target.filter(Boolean).join(" and ")||"(not chosen yet)"}${S.dream?`\nA project I'd love to lead: ${S.dream}`:""}${S.settings.length?`\nSettings I'd consider: ${S.settings.join(", ")}`:""}
-${grows?`Biggest differences between my work now and my goal:\n${grows}\n`:""}My workplace: ${S.environment||"(not given)"}
+${grows?`Biggest differences between my current work and my goal:\n${grows}\n`:""}My workplace: ${S.environment||"(not given)"}
 
 ${NEED}
-- my gaps in five areas: skills, experience, leadership, mentors and sponsors, and my setting; for each, whether it's possible where I work now (Yes / With changes / Not likely)
+- my gaps in five areas: skills, experience, leadership, mentors and sponsors, and my setting; for each, whether it's possible at my current workplace (Yes / With changes / Not likely)
 - 2–3 specific next steps for the next 6 months, each with a "by when" and "who can help"
 - one person to ask for help, and what to ask
 - a 30-second pitch that says who I am, where I'm headed, and what I need, in plain language that sounds like me
@@ -1131,7 +1128,7 @@ Then suggest the 2–3 phenotypes from the list that best fit the work I want, w
 STEP 4 OF 4: GAPS AND ACTION PLAN
 Why it matters: ${PURPOSE.s4}.
 Compare my current work with my goal phenotype: what's on track, what's a small gap, and what's a big gap. What you need by the end:
-- my gaps in five areas: skills, experience, leadership, mentors and sponsors, and my setting; for each, whether it's possible where I work now (Yes / With changes / Not likely) and how
+- my gaps in five areas: skills, experience, leadership, mentors and sponsors, and my setting; for each, whether it's possible at my current workplace (Yes / With changes / Not likely) and how
 - 2–3 specific next steps for the next 6 months, each with a "by when" and "who can help"
 - one person to ask for help, and what to ask
 - a 30-second pitch that says who I am, where I'm headed, and what I need
@@ -1323,7 +1320,7 @@ function renderRecaps(){
   };
   Object.keys(R).forEach(step=>{ const el=document.querySelector(`[data-recap="${step}"]`), [title,rows,cards]=R[step], items=rows.filter(x=>x[1]);
     el.hidden=!items.length && !cards; if(el.hidden) return;
-    el.innerHTML=`<h2>${title}</h2>${cards?`<div class="features${step==="s4"?" pair":""}">${cards}</div>`:""}${items.length?`<dl>${items.map(x=>row(...x)).join("")}</dl>`:""}`; });
+    el.innerHTML=`${step==="s4"?"":`<h2>${title}</h2>`}${cards?`<div class="features${step==="s4"?" pair":""}">${cards}</div>`:""}${items.length?`<dl>${items.map(x=>row(...x)).join("")}</dl>`:""}`; });
 }
 function updatePrompts(){ const P=prompts(); STEPS.forEach(([k])=>{ const el=document.getElementById("prompt-"+k); if(el) el.textContent=P[k]; }); $("#prompt-full").textContent=fullPrompt(); }
 
@@ -1364,7 +1361,7 @@ function glyph(w, o={}){
 const slug = n => n.toLowerCase().replace(/\(.*?\)/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,""); // must match tools/illustrate.py
 const art = (n, cls) => `<figure class="art ${cls}"><img src="img/${slug(n)}.jpg" alt="" loading="lazy" onerror="this.parentNode.remove()"></figure>`;
 const pglyph = (i, size) => glyph(PHENO[i].w,{size,mini:size<100,name:PHENO[i].n});
-const GLYPH_LEGEND = `<div class="g-legend small"><span><i class="k-petal"></i>Phenotype (typical mix of work)</span><span><i class="k-you"></i>Your work now</span><span><i class="k-gap"></i>Gap to grow</span></div>`;
+const GLYPH_LEGEND = `<div class="g-legend small"><span><i class="k-petal"></i>Phenotype (typical mix of work)</span><span><i class="k-you"></i>Your current work</span><span><i class="k-gap"></i>Gap to grow</span></div>`;
 // Builds the parts of the page that come from the data lists. Runs once.
 function renderStatic(){
   $$("[data-options]").forEach(sel=>{ sel.innerHTML='<option value="">Choose…</option>'+OPTION_LISTS[sel.dataset.options].map(o=>`<option>${esc(o)}</option>`).join(""); });
@@ -1386,7 +1383,7 @@ function renderStatic(){
   $("#gapdims").innerHTML = GAPDIMS.map(([k,t,h])=>`
    <div class="grid2 grid-gap">
      <label for="gp-${k}">${t} <span class="hint">${h}</span><input type="text" id="gp-${k}" data-bind="gaps.${k}.t"></label>
-     <label for="gq-${k}">Possible where you work now?<select id="gq-${k}" data-bind="gaps.${k}.p"><option value="">Choose…</option>${POSSIBLE.map(p=>`<option>${p}</option>`).join("")}</select></label>
+     <label for="gq-${k}">Possible at your current workplace?<select id="gq-${k}" data-bind="gaps.${k}.p"><option value="">Choose…</option>${POSSIBLE.map(p=>`<option>${p}</option>`).join("")}</select></label>
    </div>`).join("");
   $("#nextsteps").innerHTML = S.steps.map((s,i)=>`
    <div class="grid2 grid-step">
@@ -1446,23 +1443,20 @@ function renderFit(){
 
 /* step 4 */
 function compareTable(rows){
-  return `<div class="tablewrap"><table class="t"><thead><tr><th>Kind of work</th><th>Now</th><th>You want</th><th>Goal role</th><th>Gap</th></tr></thead><tbody>${rows.map(r=>{ const [l,c]=GAPLABEL[r.gap]; return `<tr><td>${esc(r.a.n)}</td><td class="num">${r.you??"–"}</td><td class="num">${S.want[r.k]??"–"}</td><td class="num">${r.t.toFixed(1)}</td><td><span class="tag ${c}">${l}</span></td></tr>`; }).join("")}</tbody></table></div>`; }
+  return `<div class="tablewrap"><table class="t"><thead><tr><th>Kind of work</th><th>Current</th><th>You want</th><th>Goal role</th><th>Gap</th></tr></thead><tbody>${rows.map(r=>{ const [l,c]=GAPLABEL[r.gap]; return `<tr><td>${esc(r.a.n)}</td><td class="num">${r.you??"–"}</td><td class="num">${S.want[r.k]??"–"}</td><td class="num">${r.t.toFixed(1)}</td><td><span class="tag ${c}">${l}</span></td></tr>`; }).join("")}</tbody></table></div>`; }
 function renderComparison(){
   const cur=currentPhenos(), g=S.target.filter(Boolean), rows=compareRows();
   if(!cur.length||!g.length||!rows){ $("#side-by-side").innerHTML='<p class="small muted">Finish steps 2 and 3 to see this.</p>'; $("#compare").innerHTML=""; return; }
-  const you=S.ratings, goal=rows.map(x=>x.t), gaps=rows.map(x=>x.gap), curW=scaled(PHENO[pIndex(cur[0])].w,you);
-  const gl={cur:glyph(curW,{size:150,you,label:`Your work now over the typical mix for ${cur[0]}`}),
-            goal:glyph(goal,{size:150,you,goal,gaps,label:"Your work now against your goal; orange marks gaps to grow"})};
-  const box=(title,names)=>`<div class="sbs-col"><span class="eyebrow">${title}</span><div class="sbs-glyph">${gl[title.startsWith("Goal")?"goal":"cur"]}</div>${names.map(n=>`<div class="pbox"><b>${esc(n)}</b></div>`).join("")}</div>`;
-  $("#side-by-side").innerHTML = `<div class="sbs">${box("Current phenotype",cur)}<div class="sbs-arrow" aria-hidden="true">→</div>${box("Goal phenotype",g)}</div>${GLYPH_LEGEND}`;
-  const c=gapCounts(rows), ti=targetIdx(), r=goalR(), top=growRows().slice(0,5);
-  $("#compare").innerHTML = `<div class="summary"><div class="row"><b>How close is your current work to your goal?</b>${meter(r)}<span class="tag">${strength(r)}</span></div>
+  const goal=rows.map(x=>x.t), gaps=rows.map(x=>x.gap), c=gapCounts(rows), ti=targetIdx(), r=goalR(), top=growRows().slice(0,5);
+  // One glyph: the goal's typical mix (scaled to your level), your current ratings as dots, gaps in orange.
+  $("#side-by-side").innerHTML = `<div class="closeness"><div class="sbs-glyph">${glyph(goal,{size:160,you:S.ratings,goal,gaps,label:"Your current work against your goal; orange marks gaps to grow"})}</div>
+    <div class="closeness-body"><div class="row"><b>Overall match with your goal</b>${meter(r)}<span class="tag">${strength(r)}</span></div>
      <div class="chips"><span class="chip">On track: ${c.ok}</span><span class="chip up">Small gap: ${c.small}</span><span class="chip up">Big gap: ${c.big}</span><span class="chip neutral">More than the goal needs: ${c.more}</span></div>
-     ${ti.length===1?chips(ti[0],4,3,"g"):""}</div>
-   ${ti.some(i=>S.chosen.includes(PHENO[i].n)) ? '<p class="small">Your goal is a phenotype you already identify with. Your gaps are about scope and depth, not a change of direction.</p>' : ""}
+     ${ti.length===1?chips(ti[0],4,3,"g"):""}${GLYPH_LEGEND}</div></div>`;
+  $("#compare").innerHTML = `${ti.some(i=>S.chosen.includes(PHENO[i].n)) ? '<p class="small">Your goal is a phenotype you already identify with. Your gaps are about scope and depth, not a change of direction.</p>' : ""}
    ${top.length?`<h3 class="subhead">Biggest differences</h3>${compareTable(top)}`:'<p class="small">No big differences. Focus on scope, leadership, and making your work visible.</p>'}
    ${modeFor("s4")==="ai" ? "" : '<p class="note">This page shows where the gaps are. It doesn\'t coach you on closing them. For specific ideas, use the AI option for this step, or take this to a mentor.</p>'}
-   <details class="peek"><summary>See all 20 kinds of work</summary><p class="small muted" style="margin:8px 0">"Now" is your step 2 rating. "You want" is your step 3 answer. "Goal role" is the typical level for your goal phenotype, adjusted to your overall level so the table compares the mix of work, not how busy you are. The gap is between now and the goal role.</p>${compareTable([...rows].sort((a,b)=>(b.g??-9)-(a.g??-9)))}</details>`;
+   <details class="peek"><summary>See all 20 kinds of work</summary><p class="small muted" style="margin:8px 0">"Current" is your step 2 rating. "You want" is your step 3 answer. "Goal role" is the typical level for your goal phenotype, adjusted to your overall level so the table compares the mix of work, not how busy you are. The gap is between current and the goal role.</p>${compareTable([...rows].sort((a,b)=>(b.g??-9)-(a.g??-9)))}</details>`;
 }
 function renderIdeas(){
   const g=growRows().slice(0,3), item=o=>`<li>${esc(o)} <button type="button" class="tiny addbtn" data-addstep="${esc(o)}">Add</button></li>`;
@@ -1516,12 +1510,12 @@ function renderReport(){
        ${S.settings.length?`<div><b>Settings I'd consider:</b> ${esc(S.settings.join(", "))}</div>`:""}
      </div>
      <div class="rp-sec"><h4>Biggest differences from my goal</h4>
-       ${g.length?`<table><thead><tr><th>Kind of work</th><th>Now</th><th>Want</th><th>Goal</th><th>Gap</th></tr></thead><tbody>${g.map(r=>`<tr><td>${esc(r.a.n)}</td><td class="num">${r.you}</td><td class="num">${S.want[r.k]??"–"}</td><td class="num">${r.t.toFixed(1)}</td><td><span class="tag">${GAPLABEL[r.gap][0]}</span></td></tr>`).join("")}</tbody></table>`
+       ${g.length?`<table><thead><tr><th>Kind of work</th><th>Current</th><th>Want</th><th>Goal</th><th>Gap</th></tr></thead><tbody>${g.map(r=>`<tr><td>${esc(r.a.n)}</td><td class="num">${r.you}</td><td class="num">${S.want[r.k]??"–"}</td><td class="num">${r.t.toFixed(1)}</td><td><span class="tag">${GAPLABEL[r.gap][0]}</span></td></tr>`).join("")}</tbody></table>`
          : (compareRows()&&rated()>=8? "<div>No big differences. Focus on scope and visibility.</div>" : E)}
      </div>
    </div>
    <div class="rp-sec"><h4>My gaps</h4>
-     ${GAPDIMS.some(([k])=>S.gaps[k].t)?`<table><thead><tr><th>Area</th><th>Gap</th><th>Possible where I work now?</th></tr></thead><tbody>${GAPDIMS.filter(([k])=>S.gaps[k].t).map(([k,t])=>`<tr><td style="width:20%"><b>${t}</b></td><td>${esc(S.gaps[k].t)}</td><td style="width:22%">${esc(S.gaps[k].p)}</td></tr>`).join("")}</tbody></table>`:E}
+     ${GAPDIMS.some(([k])=>S.gaps[k].t)?`<table><thead><tr><th>Area</th><th>Gap</th><th>Possible at my current workplace?</th></tr></thead><tbody>${GAPDIMS.filter(([k])=>S.gaps[k].t).map(([k,t])=>`<tr><td style="width:20%"><b>${t}</b></td><td>${esc(S.gaps[k].t)}</td><td style="width:22%">${esc(S.gaps[k].p)}</td></tr>`).join("")}</tbody></table>`:E}
    </div>
    <div class="rp-two">
      <div class="rp-sec"><h4>Next steps</h4>
