@@ -13,7 +13,7 @@
    ok (green)     = work you already do / on track
    warn (orange)  = work to grow / gaps / missing required items
    coach (purple) = AI coaching only
-   rule (grey)    = neutral, "more than the goal needs" */
+   rule (grey)    = neutral, "goal uses less" */
 :root{
   --paper:#f6f8f7; --sheet:#ffffff; --ink:#15232c; --muted:#56656e; --rule:#d9e1e0;
   --accent:#1d6a83; --accent-ink:#ffffff; --accent-soft:#e3f0f3;
@@ -107,6 +107,16 @@ main{max-width:880px;width:100%;margin:0;padding:24px 0 120px;min-width:0}
 .why-label{font-size:.8rem;font-weight:600;color:var(--muted);padding-top:2px}
 .goal-chosen{padding:8px 12px;border-radius:var(--r);background:var(--accent-soft)}
 .card .carry{border:0;padding:0;background:none;border-radius:0}
+.card .carry .features{margin-bottom:0}
+/* step 4: the goal card drops a blue stem into a blue-framed section that unpacks the goal */
+.goal-stem{display:none}
+.goal-expand{display:grid;gap:14px;min-width:0}
+.goal-expand>.eyebrow{display:none}
+#s4cmp.ready .goal-stem{display:grid;grid-template-columns:minmax(0,1fr) 44px minmax(0,1fr);height:28px;margin:-14px 0}
+#s4cmp.ready .goal-stem i{grid-column:3;justify-self:center;width:2px;background:var(--accent)}
+#s4cmp.ready .goal-expand{border:2px solid var(--accent);border-radius:var(--r);padding:12px 14px 14px}
+#s4cmp.ready .goal-expand>.eyebrow{display:block;color:var(--accent)}
+@media (max-width:640px){#s4cmp.ready .goal-stem{grid-template-columns:minmax(0,1fr)}#s4cmp.ready .goal-stem i{grid-column:1}}
 .closeness{display:grid;grid-template-columns:auto minmax(0,1fr);gap:18px;align-items:center;padding:14px;border:1px solid var(--rule);border-radius:var(--r);background:var(--paper)}
 .closeness-body{display:grid;gap:10px;min-width:0}
 .vs-goal{display:grid;grid-template-columns:max-content auto auto;gap:6px 10px;align-items:center;justify-content:start}
@@ -527,11 +537,15 @@ svg.profile text{font-family:var(--f-mono)}
     <h1 tabindex="-1">Gaps and plan</h1>
     <p class="lede">See your current and goal phenotypes side by side, look at what's different, and plan 2–3 next steps to close the gap.</p>
   </div>
-  <div class="card hi">
+  <div class="card hi" id="s4cmp">
     <h2>How does your current work compare with your goal?</h2>
     <div class="carry" data-recap="s4" hidden></div>
-    <div id="side-by-side"></div>
-    <div id="compare"></div>
+    <div class="goal-stem" aria-hidden="true"><i></i></div>
+    <div class="goal-expand">
+      <span class="eyebrow">What this goal means for you</span>
+      <div id="side-by-side"></div>
+      <div id="compare"></div>
+    </div>
   </div>
   <div class="fork" data-fork="s4"></div>
   <div class="card">
@@ -702,7 +716,7 @@ svg.profile text{font-family:var(--f-mono)}
   </div>
 </section>
 <!-- BUILD TAG: bump on every deploy so you can tell which build people are seeing. -->
-<footer class="buildtag">PREVIEW · build v0.8.2 (2026-10-14)</footer>
+<footer class="buildtag">PREVIEW · build v0.8.3 (2026-10-14)</footer>
 </main>
 </div>
 
@@ -909,7 +923,7 @@ const GAP_SMALL=0.9, GAP_BIG=1.5, GAP_MORE=-1.75;
 function compareRows(){ const tv=targetVec(); if(!tv) return null; const t=scaled(tv,S.ratings);
   return ATTR.map((a,k)=>{ const you=S.ratings[k]; const g= you===null?null: t[k]-you;
     const gap= g===null?"": g>=GAP_BIG?"big": g>=GAP_SMALL?"small": g<=GAP_MORE?"more":"ok"; return {k,a,you,t:t[k],g,gap}; }); }
-const GAPLABEL = {big:["Big gap","warn"],small:["Small gap","warn"],ok:["On track","ok"],more:["More than the goal needs","neutral"],"":["Not rated","neutral"]};
+const GAPLABEL = {big:["Big gap","warn"],small:["Small gap","warn"],ok:["On track","ok"],more:["Goal uses less","neutral"],"":["Not rated","neutral"]};
 const growRows = () => (compareRows()||[]).filter(x=>x.gap==="big"||x.gap==="small").sort((a,b)=>b.g-a.g);
 function gapCounts(rows){ const c={ok:0,small:0,big:0,more:0}; rows.forEach(r=>{ if(r.gap in c) c[r.gap]++; }); return c; }
 // Chips always compare a role with current work, using the same gap rule as the table:
@@ -1449,6 +1463,7 @@ function compareTable(rows){
   return `<div class="tablewrap"><table class="t"><thead><tr><th>Kind of work</th><th>Current</th><th>You want</th><th>Goal role</th><th>Gap</th></tr></thead><tbody>${rows.map(r=>{ const [l,c]=GAPLABEL[r.gap]; return `<tr><td>${esc(r.a.n)}</td><td class="num">${r.you??"–"}</td><td class="num">${S.want[r.k]??"–"}</td><td class="num">${r.t.toFixed(1)}</td><td><span class="tag ${c}">${l}</span></td></tr>`; }).join("")}</tbody></table></div>`; }
 function renderComparison(){
   const cur=currentPhenos(), g=S.target.filter(Boolean), rows=compareRows();
+  $("#s4cmp").classList.toggle("ready", !!(cur.length&&g.length&&rows));
   if(!cur.length||!g.length||!rows){ $("#side-by-side").innerHTML='<p class="small muted">Finish steps 2 and 3 to see this.</p>'; $("#compare").innerHTML=""; return; }
   const goal=rows.map(x=>x.t), gaps=rows.map(x=>x.gap), c=gapCounts(rows), ti=targetIdx(), r=goalR(), fit=goalFit(), top=growRows().slice(0,5);
   // Both bars are measured against the goal: one for the work you do now, one for the work you want. Their difference is the distance to cover.
@@ -1463,7 +1478,7 @@ function renderComparison(){
        <span class="vs-label">Match with current work</span>${meter(r)}<span class="tag">${strength(r)}</span>
        ${fit!=null?`<span class="vs-label">Fit with work you want</span>${meter(fit)}<span class="tag">${strength(fit,"fit")}</span>`:""}</div>
      <p class="small">${takeaway}</p>
-     <div class="chips"><span class="chip">On track: ${c.ok}</span><span class="chip up">Small gap: ${c.small}</span><span class="chip up">Big gap: ${c.big}</span><span class="chip neutral">More than the goal needs: ${c.more}</span></div>
+     <div class="chips"><span class="chip">On track: ${c.ok}</span><span class="chip up">Small gap: ${c.small}</span><span class="chip up">Big gap: ${c.big}</span><span class="chip neutral">Goal uses less: ${c.more}</span></div>
      ${ti.length===1?chips(ti[0],4,3,"g"):""}${GLYPH_LEGEND}</div></div>`;
   $("#compare").innerHTML = `${ti.some(i=>S.chosen.includes(PHENO[i].n)) ? '<p class="small">Your goal is a phenotype you already identify with. Your gaps are about scope and depth, not a change of direction.</p>' : ""}
    ${top.length?`<h3 class="subhead">Biggest differences</h3>${compareTable(top)}`:'<p class="small">No big differences. Focus on scope, leadership, and making your work visible.</p>'}
