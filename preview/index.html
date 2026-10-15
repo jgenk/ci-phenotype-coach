@@ -120,7 +120,9 @@ main{max-width:880px;width:100%;margin:0;padding:24px 0 120px;min-width:0}
 .closeness{display:grid;grid-template-columns:auto minmax(0,1fr);gap:18px;align-items:center;padding:14px;border:1px solid var(--rule);border-radius:var(--r);background:var(--paper)}
 .closeness-body{display:grid;gap:10px;min-width:0}
 .vs-goal{display:grid;grid-template-columns:max-content auto auto;gap:6px 10px;align-items:center;justify-content:start}
-.vs-label{font-weight:600;font-size:.9rem}
+.vs-label{font-weight:600;font-size:.86rem}
+.goal-body .vs-goal{margin:2px 0}
+.goal-body .vs-goal .meter{width:56px}
 @media (max-width:560px){.vs-goal{grid-template-columns:auto auto}.vs-goal .vs-label{grid-column:1/-1}}
 @media (max-width:560px){.closeness{grid-template-columns:minmax(0,1fr)}.closeness .sbs-glyph{justify-self:center}}
 .features{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-bottom:12px}
@@ -716,7 +718,7 @@ svg.profile text{font-family:var(--f-mono)}
   </div>
 </section>
 <!-- BUILD TAG: bump on every deploy so you can tell which build people are seeing. -->
-<footer class="buildtag">PREVIEW · build v0.8.3 (2026-10-14)</footer>
+<footer class="buildtag">PREVIEW · build v0.8.4 (2026-10-14)</footer>
 </main>
 </div>
 
@@ -1327,8 +1329,11 @@ function renderRecaps(){
     return `<div class="feature">${art(n,"fthumb")}<div class="feature-body"><span class="eyebrow">${label}</span><div class="ph-head">${pglyph(i,48)}<b>${esc(n)}</b></div>${scoreTxt||""}</div></div>`; };
   const curCards=cur.map(n=>feature(n,"Current phenotype",rated()>=8?scoreLine(pearson(S.ratings,PHENO[pIndex(n)].w),"match with current work"):"")).join("");
   // Step 4 summary: current phenotype card(s) merge, by a drawn connector, into one goal card that also holds the dream project.
+  // Both scores are against the goal: current work (step 2 ratings) and the work you want (step 3).
+  const vsGoal = () => { const r=goalR(), f=goalFit(); if(r==null) return "";
+    return `<div class="vs-goal"><span class="vs-label">Match with current work</span>${meter(r)}<span class="tag">${strength(r)}</span>${f!=null?`<span class="vs-label">Fit with work you want</span>${meter(f)}<span class="tag">${strength(f,"fit")}</span>`:""}</div>`; };
   const goalCard = () => { const n=goals[0], i=n?pIndex(n):-1; if(i<0) return "";
-    return `<div class="goal-card">${art(n,"goalart")}<div class="goal-body"><span class="eyebrow">Goal phenotype</span><div class="ph-head">${pglyph(i,48)}<b>${esc(n)}</b></div>${wanted()>=8?scoreLine(pearson(S.want,PHENO[i].w),"fit with work you want"):""}${goals[1]?`<span class="small muted">Also considering: ${esc(goals[1])}</span>`:""}${S.dream?`<div class="goal-dream"><span class="why-label">A project you'd love to lead</span><p>${esc(S.dream)}</p></div>`:""}</div></div>`; };
+    return `<div class="goal-card">${art(n,"goalart")}<div class="goal-body"><span class="eyebrow">Goal phenotype</span><div class="ph-head">${pglyph(i,48)}<b>${esc(n)}</b></div>${vsGoal()}${goals[1]?`<span class="small muted">Also considering: ${esc(goals[1])}</span>`:""}${S.dream?`<div class="goal-dream"><span class="why-label">A project you'd love to lead</span><p>${esc(S.dream)}</p></div>`:""}</div></div>`; };
   const merge = k => `<div class="merge" aria-hidden="true"><svg viewBox="0 0 40 100" preserveAspectRatio="none"><path vector-effect="non-scaling-stroke" d="${k>1?"M0 25 C24 25 16 50 40 50 M0 75 C24 75 16 50 40 50":"M0 50 L40 50"}"/></svg><i></i></div>`;
   const R={
     s2:["From step 1: where you are now",[["About you",profileLine()==="(not given)"?"":profileLine()],["Projects",projs],["Wanted to do",wantedTo],["Your setting",S.environment],["Summary",S.snapshot]]],
@@ -1474,9 +1479,7 @@ function renderComparison(){
     : "Your current work and the work you want are about equally close to this goal. The orange gaps show where to grow.";
   // One glyph: the goal's typical mix (scaled to your level), your current ratings as dots, gaps in orange.
   $("#side-by-side").innerHTML = `<div class="closeness"><div class="sbs-glyph">${glyph(goal,{size:160,you:S.ratings,goal,gaps,label:"Your current work against your goal; orange marks gaps to grow"})}</div>
-    <div class="closeness-body"><div class="vs-goal">
-       <span class="vs-label">Match with current work</span>${meter(r)}<span class="tag">${strength(r)}</span>
-       ${fit!=null?`<span class="vs-label">Fit with work you want</span>${meter(fit)}<span class="tag">${strength(fit,"fit")}</span>`:""}</div>
+    <div class="closeness-body">
      <p class="small">${takeaway}</p>
      <div class="chips"><span class="chip">On track: ${c.ok}</span><span class="chip up">Small gap: ${c.small}</span><span class="chip up">Big gap: ${c.big}</span><span class="chip neutral">Goal uses less: ${c.more}</span></div>
      ${ti.length===1?chips(ti[0],4,3,"g"):""}${GLYPH_LEGEND}</div></div>`;
