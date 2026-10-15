@@ -724,7 +724,7 @@ svg.profile text{font-family:var(--f-mono)}
   </div>
 </section>
 <!-- BUILD TAG: bump on every deploy so you can tell which build people are seeing. -->
-<footer class="buildtag">PREVIEW · build v0.8.7 (2026-10-14)</footer>
+<footer class="buildtag">PREVIEW · build v0.8.8 (2026-10-14)</footer>
 </main>
 </div>
 
@@ -1300,8 +1300,8 @@ const toolOptions = sel => Object.keys(TOOLS).map(k=>`<option value="${k}" ${k==
 const goStep = tk => tk==="other" ? "Click the button below to copy your prompt. Open your AI tool and paste it (Ctrl+V or ⌘V)."
   : `Click the button below to copy your prompt and open ${esc(TOOLS[tk].n)}. Paste it there (Ctrl+V or ⌘V).`;
 function goButton(key, tk){ return tk==="other"
-  ? `<button type="button" class="primary" data-copyprompt="${key}">Click here to copy prompt</button><span class="small muted">Then paste it into your AI tool.</span>`
-  : `<a class="btn primary" href="${TOOLS[tk].u}" target="_blank" rel="noopener" data-copyprompt="${key}">Click here to copy prompt and open ${esc(TOOLS[tk].n)} ↗</a>`; }
+  ? `<button type="button" class="primary" data-copyprompt="${key}">Copy prompt</button><span class="small muted">Then paste it into your AI tool.</span>`
+  : `<a class="btn primary" href="${TOOLS[tk].u}" target="_blank" rel="noopener" data-copyprompt="${key}">Copy prompt and open ${esc(TOOLS[tk].n)} ↗</a>`; }
 function renderPref(){ $$("[data-pref]").forEach(b=>b.setAttribute("aria-pressed", String(S.pref===b.dataset.pref))); $("#pref-tool").hidden = S.pref!=="ai"; }
 function renderFork(step){
   const el=document.querySelector(`[data-fork="${step}"]`), m=modeFor(step), tk=toolFor(step);
