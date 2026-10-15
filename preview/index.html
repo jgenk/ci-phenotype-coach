@@ -116,7 +116,7 @@ main{max-width:880px;width:100%;margin:0;padding:24px 0 120px;min-width:0}
 #s4cmp.ready .goal-stem i{grid-column:3;justify-self:center;width:2px;background:var(--accent)}
 #s4cmp.ready .goal-expand{border:2px solid var(--accent);border-radius:var(--r);padding:12px 14px 14px}
 #s4cmp.ready .goal-expand>.eyebrow{display:block;color:var(--accent)}
-@media (max-width:640px){#s4cmp.ready .goal-stem{grid-template-columns:minmax(0,1fr)}#s4cmp.ready .goal-stem i{grid-column:1}}
+#s4cmp{container-type:inline-size}
 .closeness{display:grid;grid-template-columns:auto minmax(0,1fr);gap:18px;align-items:center;padding:14px;border:1px solid var(--rule);border-radius:var(--r);background:var(--paper)}
 .closeness-body{display:grid;gap:10px;min-width:0}
 .vs-goal{display:grid;grid-template-columns:max-content auto auto;gap:6px 10px;align-items:center;justify-content:start}
@@ -124,7 +124,6 @@ main{max-width:880px;width:100%;margin:0;padding:24px 0 120px;min-width:0}
 .goal-body .vs-goal{margin:2px 0}
 .goal-body .vs-goal .meter{width:56px}
 @media (max-width:560px){.vs-goal{grid-template-columns:auto auto}.vs-goal .vs-label{grid-column:1/-1}}
-@media (max-width:560px){.closeness{grid-template-columns:minmax(0,1fr)}.closeness .sbs-glyph{justify-self:center}}
 .features{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-bottom:12px}
 .features.pair{grid-template-columns:minmax(0,1fr) 44px minmax(0,1fr);align-items:stretch;gap:0}
 .features.pair .fcol{align-content:center}
@@ -134,7 +133,7 @@ main{max-width:880px;width:100%;margin:0;padding:24px 0 120px;min-width:0}
 .merge i{position:absolute;right:0;top:50%;transform:translateY(-50%);border-style:solid;border-width:6px 0 6px 9px;border-color:transparent transparent transparent var(--accent)}
 .goal-card{display:grid;grid-template-rows:auto 1fr;border:2px solid var(--accent);border-radius:var(--r);background:var(--sheet);overflow:hidden}
 .art.goalart{aspect-ratio:21/8}
-.goal-body{display:grid;gap:6px;padding:10px 14px 12px;align-content:start}
+.goal-body{display:grid;grid-template-columns:minmax(0,1fr);gap:6px;padding:10px 14px 12px;align-content:start}
 .goal-body .ph-head{align-items:center}
 .goal-body .ph-head b{padding-top:0;font-size:1rem}
 .goal-dream{margin-top:4px;padding-top:8px;border-top:1px solid var(--rule)}
@@ -142,10 +141,26 @@ main{max-width:880px;width:100%;margin:0;padding:24px 0 120px;min-width:0}
 .fcol{display:grid;gap:10px;align-content:center}
 .feature{display:grid;grid-template-columns:132px minmax(0,1fr);border:1px solid var(--rule);border-radius:var(--r);background:var(--sheet);overflow:hidden;min-height:100px}
 .feature .art.fthumb{height:100%;aspect-ratio:auto;min-height:100px}
-.feature-body{display:grid;gap:4px;align-content:center;padding:10px 12px}
+.feature-body{display:grid;grid-template-columns:minmax(0,1fr);gap:4px;align-content:center;padding:10px 12px}
 .feature-body .ph-head{align-items:center}
 .feature-body .ph-head b{padding-top:0;font-size:.98rem}
-@media (max-width:640px){.features.pair{grid-template-columns:minmax(0,1fr);gap:0}.merge{min-height:30px}.merge svg{display:none}.merge i{right:auto;left:50%;top:auto;bottom:4px;transform:translateX(-50%);border-width:9px 7px 0 7px;border-color:var(--accent) transparent transparent transparent}.feature{grid-template-columns:96px minmax(0,1fr)}}
+@media (max-width:640px){.feature{grid-template-columns:96px minmax(0,1fr)}}
+/* step 4 follows the card's own width (container query on #s4cmp); after the base rules so it wins */
+@container (max-width:760px){
+  .features.pair .feature{grid-template-columns:88px minmax(0,1fr)}
+  .goal-body .vs-goal{grid-template-columns:auto auto}
+  .goal-body .vs-goal .vs-label{grid-column:1/-1}
+}
+@container (max-width:600px){
+  .features.pair{grid-template-columns:minmax(0,1fr);gap:0}
+  .merge{min-height:30px}
+  .merge svg{display:none}
+  .merge i{right:auto;left:50%;top:auto;bottom:4px;transform:translateX(-50%);border-width:9px 7px 0 7px;border-color:var(--accent) transparent transparent transparent}
+  #s4cmp.ready .goal-stem{grid-template-columns:minmax(0,1fr)}
+  #s4cmp.ready .goal-stem i{grid-column:1}
+  .closeness{grid-template-columns:minmax(0,1fr)}
+  .closeness .sbs-glyph{justify-self:center}
+}
 .recap{border:1px solid var(--rule);border-radius:var(--r);background:var(--paper);padding:8px 14px;font-size:.88rem}
 .recap summary{cursor:pointer;font-weight:600;color:var(--muted)}
 .recap dl{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:4px 14px;margin:8px 0 4px}
@@ -209,18 +224,17 @@ label.need input,label.need select,label.need textarea{border-color:var(--warn);
 .ai-band h2{font-size:1.15rem;color:var(--coach-band-ink)}
 .manual-band{border:1px solid color-mix(in srgb,var(--accent) 35%,transparent);border-radius:var(--r);background:var(--accent-soft);color:var(--accent)}
 .manual-band h2{color:var(--ink)}
-.ai-badge{font:600 .68rem var(--f-mono);letter-spacing:.08em;text-transform:uppercase;border:1px solid currentColor;border-radius:3px;padding:2px 6px}
+.badge{font:600 .68rem var(--f-mono);letter-spacing:.08em;text-transform:uppercase;border:1px solid currentColor;border-radius:3px;padding:2px 6px}
 .ai-body{display:grid;gap:12px;padding:16px}
 .ai ol{margin:0;padding-left:1.3em;display:grid;gap:10px}
 .ai li::marker{font-weight:700;color:var(--coach)}
-.toolpick{display:inline-flex;flex-wrap:wrap;gap:8px;align-items:center;font-weight:600}
+.toolpick{display:inline-flex;flex-wrap:wrap;gap:8px;align-items:center;font-weight:600;padding-top:2px}
 .ai-go{display:grid;gap:4px}
 .ai-controls{display:grid;gap:14px;padding:14px;border:1px solid var(--coach-rule);border-radius:var(--r);background:var(--paper)}
 .ctl{display:grid;grid-template-columns:24px minmax(0,1fr);gap:10px;align-items:start;min-width:0}
 .ctl-n{width:22px;height:22px;border-radius:50%;background:var(--coach);color:var(--coach-ink);font:700 .75rem var(--f-mono);display:grid;place-items:center;margin-top:6px}
 .ctl-body{display:grid;gap:8px;min-width:0}
 .ctl-wait{margin:0;padding-top:6px;font-size:.9rem;color:var(--muted);font-style:italic}
-.toolpick{padding-top:2px}
 button:disabled{opacity:.45;cursor:not-allowed}
 .ai .primary{background:var(--coach);border-color:var(--coach);color:var(--coach-ink)}
 .ai .linkbtn,.ai a:not(.btn){color:var(--coach)}
@@ -260,7 +274,7 @@ fieldset.rate{border:0;border-top:1px dashed var(--rule);border-radius:0;padding
 .tag.ok{background:var(--ok-soft);color:var(--ok)} .tag.warn{background:var(--warn-soft);color:var(--warn)} .tag.neutral{background:var(--rule);color:var(--muted)}
 .pick{display:flex;gap:6px;align-items:center;font-weight:400;font-size:.9rem}
 .score{display:inline-flex;gap:6px;align-items:center;font:500 .85rem var(--f-mono);white-space:nowrap}
-.score-line{display:inline-flex;gap:6px;align-items:center;white-space:nowrap;font-size:.8rem;color:var(--muted)}
+.score-line{display:inline-flex;flex-wrap:wrap;gap:2px 6px;align-items:center;font-size:.8rem;color:var(--muted)}
 .score-line .meter{width:56px}
 .score-line b{font:600 .82rem var(--f-mono);color:var(--ink)}
 .meter{display:inline-block;width:84px;height:7px;background:var(--rule);border-radius:4px;overflow:hidden}
@@ -269,8 +283,6 @@ fieldset.rate{border:0;border-top:1px dashed var(--rule);border-radius:0;padding
 .chip{font-size:.76rem;padding:2px 8px;border-radius:999px;background:var(--ok-soft);color:var(--ok)}
 .chip.up{background:var(--warn-soft);color:var(--warn)}
 .chip.neutral{background:var(--rule);color:var(--muted)}
-.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.82rem;color:var(--muted);align-items:center}
-.legend>span{display:inline-flex;gap:6px;align-items:center}
 ul.near{list-style:none;margin:4px 0 0;padding:0;display:grid;gap:4px;font-size:.88rem}
 ul.near li{display:flex;justify-content:space-between;gap:10px;align-items:center}
 .picker{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
@@ -334,7 +346,7 @@ table.t td.num{font-family:var(--f-mono);text-align:center;white-space:nowrap}
 .rp-empty{color:#8a979d;font-style:italic}
 svg.profile text{font-family:var(--f-mono)}
 @media (max-width:700px){.rp-meta{grid-template-columns:repeat(2,minmax(0,1fr))}.rp-two,.rp-foot{grid-template-columns:minmax(0,1fr)}}
-/* phenotype glyphs (visual test): blue = the phenotype (neutral information), ink = you, orange = grow */
+/* phenotype glyphs: blue = the phenotype (neutral information), ink = you, orange = grow */
 .glyph{--g-acc:var(--accent);--g-ink:var(--ink);--g-warn:var(--warn);--g-rule:var(--rule);display:block;flex:none;overflow:visible}
 .report .glyph{--g-acc:#1d6a83;--g-ink:#14212a;--g-warn:#a5650f;--g-rule:#cfd8d8}
 .g-ring{fill:none;stroke:var(--g-rule);stroke-width:.8;stroke-dasharray:2 3}
@@ -610,7 +622,7 @@ svg.profile text{font-family:var(--f-mono)}
     <p class="lede">A more flexible, conversational version of the same four steps. One prompt starts a coaching conversation in the AI tool you use. You can share your CV or other files, talk through what matters to you, and go deeper where you want. The AI checks in after each step and finishes by writing your one-page plan.</p>
   </div>
   <div class="ai">
-    <div class="ai-band"><span class="ai-badge">AI coaching</span><h2>Full session</h2></div>
+    <div class="ai-band"><span class="badge">AI coaching</span><h2>Full session</h2></div>
     <div class="ai-body">
       <ul class="links small muted">
         <li>You can upload or paste your CV, a portfolio, or a job description you're curious about. Remove anything sensitive first.</li>
@@ -621,14 +633,14 @@ svg.profile text{font-family:var(--f-mono)}
         <li>Confirm your preferred AI tool below.</li>
         <li id="full-gostep"></li>
         <li>Chat with <span data-toolname></span>, one question at a time. Plan on 45–90 minutes. It tells you which step you're on, checks with you before moving on, and ends with your one-page career plan. Need to stop partway? Ask for "the export block so far."</li>
-        <li>Paste its export block in the box, then click <b>Fill in my answers</b>. That fills in all four steps here, with exact match scores and the printable report. (The AI's own scores are estimates.)</li>
+        <li>Copy the box that comes after your plan (most AI tools put a Copy button on it), paste it below, then click <b>Fill in my answers</b>. That fills in all four steps here, with exact match scores and the printable report. (The AI's own scores are estimates.)</li>
       </ol>
       <div class="ai-controls">
         <div class="ctl"><span class="ctl-n">1</span><label class="toolpick" for="tool-full">AI tool <select class="toolsel" id="tool-full" data-bind="aiTool" data-tools></select></label></div>
         <div class="ctl"><span class="ctl-n">2</span><div class="ai-go"><div class="row" id="full-go"></div>
           <details class="peek"><summary>See the prompt</summary><pre class="prompt" id="prompt-full"></pre></details></div></div>
-        <div class="ctl"><span class="ctl-n">3</span><p class="ctl-wait">Chat in <span data-toolname></span>. Come back when it writes “Copy everything below into the coach.”</p></div>
-        <div class="ctl"><span class="ctl-n">4</span><div class="ctl-body"><label for="paste-full">Answer from the AI<textarea id="paste-full" class="paste" data-fillsrc="fill-full" placeholder="Paste everything after “Copy everything below into the coach”"></textarea></label>
+        <div class="ctl"><span class="ctl-n">3</span><p class="ctl-wait">Chat in <span data-toolname></span>. Come back when it writes “Copy everything below into the coach” and gives you a box.</p></div>
+        <div class="ctl"><span class="ctl-n">4</span><div class="ctl-body"><label for="paste-full">Answer from the AI<textarea id="paste-full" class="paste" data-fillsrc="fill-full" placeholder="Paste the box that follows “Copy everything below into the coach”"></textarea></label>
           <div class="row"><button type="button" class="primary" id="fill-full" data-fillfull disabled>Fill in my answers</button></div><div class="fillmsg" id="fillmsg-full" role="status"></div></div></div>
       </div>
     </div>
@@ -724,7 +736,7 @@ svg.profile text{font-family:var(--f-mono)}
   </div>
 </section>
 <!-- BUILD TAG: bump on every deploy so you can tell which build people are seeing. -->
-<footer class="buildtag">PREVIEW · build v0.8.9 (2026-10-14)</footer>
+<footer class="buildtag">PREVIEW · build v0.9.0 (2026-10-14)</footer>
 </main>
 </div>
 
@@ -794,7 +806,7 @@ const PHENO = [
 const SETTINGS = ["Academic health system","Community or regional health system","Health IT company or startup","Large tech company","Government, policy, or public health","Research","Education and training","Independent or consulting"];
 const SETTING_WORDS = [["academic"],["community","regional"],["health it","startup","start-up","vendor"],["tech company","large tech","big tech"],["government","policy","public health"],["research"],["education","training","teaching"],["independent","consult"]];
 // Usual settings per phenotype. Not shown since v0.7.1 (the "fits a setting" tag was dropped); kept as phenotype data.
-const PSET = [[0],[1],[0,1],[0,1],[0,1],[4,0],[4],[2],[2],[2],[2],[3],[2,3],[7],[5,0],[5],[6,0],[6,0],[5,2,3],[2,3]]; // usual settings per phenotype
+const PSET = [[0],[1],[0,1],[0,1],[0,1],[4,0],[4],[2],[2],[2],[2],[3],[2,3],[7],[5,0],[5],[6,0],[6,0],[5,2,3],[2,3]];
 const PROFESSIONS = ["Physician","Nurse practitioner","Physician assistant","Registered nurse","Pharmacist","Other clinician"];
 const STAGES = ["Trainee","Informatics fellow","Early career","Mid career","Senior or executive"];
 const EXPERIENCE = ["None yet","Some, unpaid or informal (committees, superuser, projects)","Some paid or protected time","A formal informatics role"];
@@ -828,7 +840,7 @@ const AI_INTRO = {
   s3:"The AI asks about the work you want, your priorities, and where you'd like to work, then suggests ratings you can change.",
   s4:"The AI helps you name gaps and drafts your steps, ask, and pitch."
 };
-const AI_RETURNS = {s1:"your projects, setting, and summary",s2:"a short description of you and your ratings",s3:"ratings for the work you want, the settings you'd consider, and a dream project",s4:"your gaps, next steps, ask, and pitch"};
+const AI_RETURNS = {s1:"your projects, setting, and summary",s2:"a short description of you and your ratings",s3:"ratings for the work you want, the settings you'd consider, and a project you'd love to lead",s4:"your gaps, next steps, ask, and pitch"};
 
 /* =====================================================================
    STATE (saved in this browser; can be saved to and loaded from a file)
@@ -917,7 +929,7 @@ const matches = (v=S.ratings) => PHENO.map((p,i)=>({i,r:pearson(v,p.w)})).sort((
 const fits = () => matches(S.want);
 const score = r => Math.max(0, Math.round((r||0)*100));
 const strength = (r, word="match") => (r>=.6?"Close ":r>=.4?"Good ":r>=.2?"Partial ":"Weak ")+word;
-// Current phenotype(s): the ones ticked "This fits me" (up to 2), otherwise the top match.
+// Current phenotype(s): the ones checked "This fits me" (up to 2), otherwise the top match.
 const currentPhenos = () => S.chosen.length ? S.chosen.slice(0,2) : (rated()>=8 ? [PHENO[matches()[0].i].n] : []);
 const curName = () => currentPhenos()[0] || "";
 const targetIdx = () => S.target.filter(Boolean).map(pIndex).filter(i=>i>=0);
@@ -935,7 +947,7 @@ const GAPLABEL = {big:["Big gap","warn"],small:["Small gap","warn"],ok:["On trac
 const growRows = () => (compareRows()||[]).filter(x=>x.gap==="big"||x.gap==="small").sort((a,b)=>b.g-a.g);
 function gapCounts(rows){ const c={ok:0,small:0,big:0,more:0}; rows.forEach(r=>{ if(r.gap in c) c[r.gap]++; }); return c; }
 // Chips always compare a role with current work, using the same gap rule as the table:
-// green ✓ shared strengths (above average for both, no gap), orange ↑ gaps.
+// green = shared strengths (above average for both, no gap), orange = gaps (grey in step 2, where there's no goal yet).
 function drivers(pi){ const u=S.ratings, w=PHENO[pi].w; const idx=u.map((v,i)=>v===null?-1:i).filter(i=>i>=0); if(!idx.length) return {shared:[],miss:[]};
   const mu=idx.reduce((s,i)=>s+u[i],0)/idx.length, mw=idx.reduce((s,i)=>s+w[i],0)/idx.length, t=scaled(w,u), gap=i=>t[i]-u[i];
   return {shared:idx.filter(i=>u[i]>=mu&&w[i]>=mw&&gap(i)<GAP_SMALL).sort((a,b)=>(u[b]-mu)*(w[b]-mw)-(u[a]-mu)*(w[a]-mw)).slice(0,3),
@@ -980,11 +992,13 @@ ${MEMORY}
 - If it would save time, invite me to paste or upload a CV, role description, or job posting. Remind me to remove anything sensitive first.
 ${SAFETY}`; }
 const NEED = "What you need by the end (cover these in whatever order fits our conversation, and skip anything I've already told you):";
-const finish = what => `When you have enough, tell me in a few sentences ${what}, and ask whether it's right. Once I confirm, write "Copy everything below into the coach" and then the answer block below, exactly in this format: labels in capitals, one item per line, no extra formatting. If anything is missing, ask me instead of guessing.`;
+// The answer comes back in a code block: AI tools put a Copy button on it and don't restyle what's inside.
+const BLOCK_RULES = "My coach page reads this block automatically, so: put the whole block in one code block (```) with nothing else inside it; use every label below, in capitals, in this order, one item per line; write \"none\" for anything I chose to skip.";
+const finish = what => `When you have enough, tell me in a few sentences ${what}, and ask whether it's right. Once I confirm, write "Copy everything below into the coach" and then the answer block below. ${BLOCK_RULES} If anything is missing, ask me instead of guessing.`;
 const draftRatings = fromNow => `Don't go through the 20 kinds of work one at a time. Once we've talked, draft ratings for all 20 in one message, grouped as they're listed${fromNow?", starting from my current ratings and changing only what should change":""}, and mark the few you're least sure of. Ask me to correct them, then ask about only the ones you couldn't judge.`;
 const ratingsFormat = label => `${label}:
 Clinical work (A01) = 3
-(one line for each of the 20 kinds of work, in the order listed above, each with its name and code; write "not sure" instead of a number if I'm not sure)`;
+(one line for each of the 20 kinds of work, in the order listed above, each with its name, its code, and a whole number from 0 to 5; write "not sure" instead of a number if I'm not sure)`;
 const SCALE_TEXT = "0 never, 1 about once a year, 2 about monthly, 3 about weekly, 4 a few times a week, 5 daily";
 const IDEAS_TEXT = "reshaping my current role, committee or governance seats, superuser roles, AI governance or evaluation groups, AMIA 10x10 courses, Lean or Six Sigma training, AHIC or nursing informatics certification, a clinical informatics fellowship, or finding a mentor who has the role I want";
 const PRIORITIES = "how much clinical work to keep, leadership, building, working with AI, research, teaching, income, and flexibility";
@@ -1161,18 +1175,18 @@ Realistic ideas include ${IDEAS_TEXT}. Push back gently if a step is vague or to
 
 FINISH
 1. Write my one-page career plan with these headings: About me; Where I am now; Current phenotype (what fits and what to grow); Goal phenotype (why it fits); Biggest gaps; Next steps (a table: step, by when, who can help); My ask; My pitch. Keep it to one page, in plain language.
-2. Then write "Copy everything below into the coach" and this export block, exactly in this format: labels in capitals, one item per line, no extra formatting. Before writing it, check you have every item; if something is missing, ask me instead of guessing.
+2. Then write "Copy everything below into the coach" and this export block. ${BLOCK_RULES} Before writing it, check you have every item; if something is missing, ask me instead of guessing.
 PROFESSION: one of ${PROFESSIONS.join(", ")}
 SPECIALTY AND SETTING: one line
 CAREER STAGE: one of ${STAGES.join(", ")}
 INFORMATICS EXPERIENCE: one of None yet, Some unpaid or informal, Some paid or protected time, A formal informatics role
 INFORMATICS SHARE: one of ${SHARES.join(", ")}
 PROJECTS:
-1. project title | my role | why it mattered
+1. project title | my role (I led it / I did the work / I advised / I was kept informed) | why it mattered
 WANTED TO DO: one sentence
 WHAT GOT IN THE WAY: from ${REASONS.join(", ")}
 MY SETTING: 1–2 sentences about my workplace
-SUMMARY: 4–6 sentences
+SUMMARY: 4–6 first-person sentences about who I am now
 IDENTITY: 1–2 sentences
 ${ratingsFormat("RATINGS")}
 CURRENT PHENOTYPE: the 1–2 phenotype names I said fit me, separated by " + "
@@ -1206,7 +1220,7 @@ function sections(txt){
     if(m){ cur=m[1].toUpperCase(); out[cur]=(m[2]||"").replace(/\*\*/g,"").trim(); }
     else if(cur){ out[cur]+=(out[cur]?"\n":"")+line.replace(/\*\*/g,"").trim(); }
   });
-  Object.keys(out).forEach(k=>out[k]=out[k].trim()); return out;
+  Object.keys(out).forEach(k=>{ out[k]=out[k].trim(); if(/^(none|n\/?a|not given|not applicable|[-–—])\.?$/i.test(out[k])) out[k]=""; }); return out;
 }
 const listLines = s => (s||"").split("\n").map(l=>l.replace(/^\s*(\d+[.)]|[-*•])\s*/,"").trim()).filter(Boolean);
 const norm = t => (t||"").toLowerCase().replace(/[–—]/g,"-").replace(/,/g,"").replace(/\s+/g," ").trim();
@@ -1218,9 +1232,10 @@ function optionFrom(list, text){ const t=norm(text); if(!t) return "";
   return list.find(o=>norm(o)===t) || list.find(o=>{ const b=norm(o).split(" (")[0]; return t===b||t.startsWith(b)||b.startsWith(t); }) || ""; }
 // Reads "Name (A01) = 3" lines into a ratings array. Returns which were found and which had a bad value.
 function parseRatings(txt, arr, uns){ const found=new Set(), bad=[];
-  txt.split(/\r?\n/).forEach(line=>{ const m=line.match(/A\s*0?(\d{1,2})\b[^=:\n]*[=:]\s*([^\s,;]+)/i); if(!m) return; const i=+m[1]-1; if(i<0||i>19) return;
-    if(/^[0-5](\.0+)?$/.test(m[2])){ arr[i]=parseFloat(m[2]); uns[i]=false; found.add(i); }
-    else if(/not sure|n\/?a|unsure|\?/i.test(line.slice(line.search(/[=:]/)))){ arr[i]=null; uns[i]=true; found.add(i); }
+  txt.split(/\r?\n/).forEach(line=>{ const m=line.match(/A\s*0?(\d{1,2})\b[^=:|\n]*[=:|]\s*([^\s,;|]+)/i); if(!m) return; const i=+m[1]-1; if(i<0||i>19) return;
+    const v=m[2].replace(/\/5$/,"");
+    if(/^[0-5](\.0+)?$/.test(v)){ arr[i]=parseFloat(v); uns[i]=false; found.add(i); }
+    else if(/not sure|n\/?a|unsure|\?/i.test(line.slice(line.search(/[=:|]/)))){ arr[i]=null; uns[i]=true; found.add(i); }
     else bad.push(i); });
   return {found, bad}; }
 function ratingsCheck(label, {found,bad}){ const missing=ATTR.map((_,i)=>i).filter(i=>!found.has(i)&&!bad.includes(i)).map(attrLabel);
@@ -1233,9 +1248,9 @@ function applyPaste(step, txt){
     if(ps.length) S.projects=[0,1,2].map(i=>ps[i]||{title:"",role:"",why:""});
     chk("Projects",ps.length,false, ps.length? `${ps.length} found` : "no PROJECTS lines found");
     if(s.SUMMARY) S.snapshot=s.SUMMARY; chk("Summary",s.SUMMARY,false);
-    if(s["WANTED TO DO"]) S.unrealized.text=s["WANTED TO DO"]; chk("Something you wanted to do",s["WANTED TO DO"],true);
-    if(s["WHAT GOT IN THE WAY"]){ const low=s["WHAT GOT IN THE WAY"].toLowerCase(); S.unrealized.reasons=REASONS.filter(r=>low.includes(r.toLowerCase())); } chk("What got in the way",s["WHAT GOT IN THE WAY"],true);
-    if(s["MY SETTING"]) S.environment=s["MY SETTING"]; chk("Your setting",s["MY SETTING"],true);
+    if("WANTED TO DO" in s) S.unrealized.text=s["WANTED TO DO"]; chk("Something you wanted to do",s["WANTED TO DO"],true);
+    if("WHAT GOT IN THE WAY" in s){ const low=s["WHAT GOT IN THE WAY"].toLowerCase(); S.unrealized.reasons=REASONS.filter(r=>low.includes(r.toLowerCase())); } chk("What got in the way",s["WHAT GOT IN THE WAY"],true);
+    if("MY SETTING" in s) S.environment=s["MY SETTING"]; chk("Your setting",s["MY SETTING"],true);
   }
   if(step==="s2"){
     if(s.IDENTITY) S.identity=s.IDENTITY; chk("Description of you",s.IDENTITY,false);
@@ -1243,9 +1258,9 @@ function applyPaste(step, txt){
   }
   if(step==="s3"){
     C.push(ratingsCheck("Ratings for the work you want", parseRatings(s["WANT RATINGS"]||"", S.want, S.wantUnsure)));
-    if(s.SETTING){ const low=s.SETTING.toLowerCase(); const hit=SETTINGS.filter((x,k)=>SETTING_WORDS[k].some(w=>low.includes(w))); if(hit.length) S.settings=hit; }
+    if("SETTING" in s){ const low=s.SETTING.toLowerCase(); S.settings=SETTINGS.filter((x,k)=>SETTING_WORDS[k].some(w=>low.includes(w))); }
     chk("Settings you'd consider",s.SETTING,true);
-    if(s["DREAM PROJECT"]) S.dream=s["DREAM PROJECT"]; chk("Project you'd love to lead",s["DREAM PROJECT"],true);
+    if("DREAM PROJECT" in s) S.dream=s["DREAM PROJECT"]; chk("Project you'd love to lead",s["DREAM PROJECT"],true);
   }
   if(step==="s4"){
     let k=0; listLines(s.GAPS).forEach(l=>{ const m=l.match(/^([^:|]+):\s*(.*)$/); if(!m) return; const head=m[1].toLowerCase();
@@ -1257,7 +1272,7 @@ function applyPaste(step, txt){
     if(st.length) S.steps=[0,1,2].map(i=>st[i]||{what:"",when:"",who:""});
     chk("Next steps",st.length>=2,false,`${st.length} found${st.length<2?" (need at least 2)":""}`);
     if(s.ASK) S.ask=s.ASK; chk("Your ask",s.ASK,false);
-    if(s.PITCH) S.pitch=s.PITCH; chk("Your pitch",s.PITCH,true);
+    if("PITCH" in s) S.pitch=s.PITCH; chk("Your pitch",s.PITCH,true);
   }
   return C;
 }
@@ -1280,11 +1295,11 @@ function applyFull(txt){
 }
 function renderCheck(step, C){
   const msg=$("#fillmsg-"+step), reqMiss=C.filter(c=>!c.ok&&!c.opt);
-  if(!C.some(c=>c.ok)){ msg.innerHTML=`<p class="needmsg">Nothing matched. Make sure you pasted the AI's final answer, the part after “Copy everything below into the coach.”</p>`; return; }
+  if(!C.some(c=>c.ok)){ msg.innerHTML=`<p class="needmsg">Nothing matched. Make sure you pasted the AI's final box, the one that follows “Copy everything below into the coach.”</p>`; return; }
   let h=`<ul class="checklist">${C.map(c=>`<li class="${c.ok?"":c.opt?"opt":"no"}">${esc(c.label)}${c.detail?`: ${esc(c.detail)}`:""}${!c.ok&&c.opt?" (optional)":""}</li>`).join("")}</ul>`;
   if(step==="s2" && rated()>=8){ const t=matches()[0]; h+=`<p class="small" style="margin-top:6px">Your closest phenotype now: <b>${esc(PHENO[t.i].n)}</b>, match score ${score(t.r)}%. Your full results are below.</p>`; }
   if(step==="s3" && wanted()>=8){ const t=fits()[0]; h+=`<p class="small" style="margin-top:6px">Closest fit for the work you want: <b>${esc(PHENO[t.i].n)}</b>, fit score ${score(t.r)}%. See the suggestions below, then choose your goal.</p>`; }
-  if(reqMiss.length){ const fix=`Please give me the final answer again, in exactly the format from my first message: labels in capitals, one item per line, no extra formatting. I'm missing: ${reqMiss.map(c=>`${c.label}${c.detail?` (${c.detail})`:""}`).join("; ")}.`;
+  if(reqMiss.length){ const fix=`Please write the answer block again, in one code block, in exactly the format from my first message: every label in capitals, one item per line. I'm missing: ${reqMiss.map(c=>`${c.label}${c.detail?` (${c.detail})`:""}`).join("; ")}.`;
     h+=`<p class="small" style="margin-top:6px">Some required items are missing. Copy this message into the AI and paste its new answer here:</p><pre hidden id="fix-${step}">${esc(fix)}</pre><button type="button" class="tiny" data-copy="fix-${step}" style="margin-top:4px">Copy the fix-it message</button>`; }
   msg.innerHTML=h;
 }
@@ -1300,29 +1315,29 @@ const toolOptions = sel => Object.keys(TOOLS).map(k=>`<option value="${k}" ${k==
 const goStep = tk => tk==="other" ? "Click the button below to copy your prompt. Open your AI tool and paste it (Ctrl+V or ⌘V)."
   : `Click the button below to copy your prompt and open ${esc(TOOLS[tk].n)}. Paste it there (Ctrl+V or ⌘V).`;
 function goButton(key, tk){ return tk==="other"
-  ? `<button type="button" class="primary" data-copyprompt="${key}">Copy prompt</button><span class="small muted">Then paste it into your AI tool.</span>`
+  ? `<button type="button" class="primary" data-copyprompt="${key}">Copy prompt</button>`
   : `<a class="btn primary" href="${TOOLS[tk].u}" target="_blank" rel="noopener" data-copyprompt="${key}">Copy prompt and open ${esc(TOOLS[tk].n)} ↗</a>`; }
 function renderPref(){ $$("[data-pref]").forEach(b=>b.setAttribute("aria-pressed", String(S.pref===b.dataset.pref))); $("#pref-tool").hidden = S.pref!=="ai"; }
 function renderFork(step){
   const el=document.querySelector(`[data-fork="${step}"]`), m=modeFor(step), tk=toolFor(step);
   if(!m) el.innerHTML="";
-  else if(m==="self") el.innerHTML=`<div class="ai-band manual-band"><span class="ai-badge">Manual entry</span><h2>${SECTION[step]}</h2><span class="spacer"></span><button type="button" class="linkbtn ai-link" data-mode="ai" data-step="${step}">Use AI for this step instead</button></div>`;
+  else if(m==="self") el.innerHTML=`<div class="ai-band manual-band"><span class="badge">Manual entry</span><h2>${SECTION[step]}</h2><span class="spacer"></span><button type="button" class="linkbtn ai-link" data-mode="ai" data-step="${step}">Use AI for this step instead</button></div>`;
   else el.innerHTML=`<div class="ai">
-    <div class="ai-band"><span class="ai-badge">AI coaching</span><h2>${SECTION[step]}</h2><span class="spacer"></span><button type="button" class="linkbtn" data-mode="self" data-step="${step}">Do this step myself instead</button></div>
+    <div class="ai-band"><span class="badge">AI coaching</span><h2>${SECTION[step]}</h2><span class="spacer"></span><button type="button" class="linkbtn" data-mode="self" data-step="${step}">Do this step myself instead</button></div>
     <div class="ai-body">
     <p class="small muted">${AI_INTRO[step]}</p>
     <ol>
       <li>Confirm your preferred AI tool below.</li>
       <li>${goStep(tk)}</li>
-      <li>Chat with ${esc(toolName(tk))} until it sends you back here. It ends with “Copy everything below into the coach” and ${AI_RETURNS[step]}. New chat or same chat both work.</li>
-      <li>Paste that answer in the box, then click <b>Fill in my answers</b>.</li>
+      <li>Chat with ${esc(toolName(tk))} until it sends you back here. It ends with “Copy everything below into the coach” and a box with ${AI_RETURNS[step]}. New chat or same chat both work.</li>
+      <li>Copy that box (most AI tools put a Copy button on it), paste it below, then click <b>Fill in my answers</b>.</li>
     </ol>
     <div class="ai-controls">
       <div class="ctl"><span class="ctl-n">1</span><label class="toolpick" for="tool-${step}">AI tool <select class="toolsel" id="tool-${step}" data-steptool="${step}">${toolOptions(tk)}</select></label></div>
       <div class="ctl"><span class="ctl-n">2</span><div class="ai-go"><div class="row">${goButton(step,tk)}</div>
         <details class="peek"><summary>See the prompt</summary><pre class="prompt" id="prompt-${step}">${esc(prompts()[step])}</pre></details></div></div>
-      <div class="ctl"><span class="ctl-n">3</span><p class="ctl-wait">Chat in ${esc(toolName(tk))}. Come back when it writes “Copy everything below into the coach.”</p></div>
-      <div class="ctl"><span class="ctl-n">4</span><div class="ctl-body"><label for="paste-${step}">Answer from the AI<textarea id="paste-${step}" class="paste" data-fillsrc="fill-${step}" placeholder="Paste everything after “Copy everything below into the coach”"></textarea></label>
+      <div class="ctl"><span class="ctl-n">3</span><p class="ctl-wait">Chat in ${esc(toolName(tk))}. Come back when it writes “Copy everything below into the coach” and gives you a box.</p></div>
+      <div class="ctl"><span class="ctl-n">4</span><div class="ctl-body"><label for="paste-${step}">Answer from the AI<textarea id="paste-${step}" class="paste" data-fillsrc="fill-${step}" placeholder="Paste the box that follows “Copy everything below into the coach”"></textarea></label>
         <div class="row"><button type="button" class="primary" id="fill-${step}" data-fill="${step}" disabled>Fill in my answers</button></div><div class="fillmsg" id="fillmsg-${step}" role="status"></div></div></div>
     </div>
     <p class="small muted">Check what was filled in below and change anything that doesn't sound like you.</p></div></div>`;
@@ -1349,15 +1364,15 @@ function renderRecaps(){
     return `<div class="vs-goal"><span class="vs-label">Match with current work</span>${meter(r)}<span class="tag">${strength(r)}</span>${f!=null?`<span class="vs-label">Fit with work you want</span>${meter(f)}<span class="tag">${strength(f,"fit")}</span>`:""}</div>`; };
   const goalCard = () => { const n=goals[0], i=n?pIndex(n):-1; if(i<0) return "";
     return `<div class="goal-card">${art(n,"goalart")}<div class="goal-body"><span class="eyebrow">Goal phenotype</span><div class="ph-head">${pglyph(i,48)}<b>${esc(n)}</b></div>${vsGoal()}${goals[1]?`<span class="small muted">Also considering: ${esc(goals[1])}</span>`:""}${S.dream?`<div class="goal-dream"><span class="why-label">A project you'd love to lead</span><p>${esc(S.dream)}</p></div>`:""}</div></div>`; };
-  const merge = k => `<div class="merge" aria-hidden="true"><svg viewBox="0 0 40 100" preserveAspectRatio="none"><path vector-effect="non-scaling-stroke" d="${k>1?"M0 25 C24 25 16 50 40 50 M0 75 C24 75 16 50 40 50":"M0 50 L40 50"}"/></svg><i></i></div>`;
+  const connector = k => `<div class="merge" aria-hidden="true"><svg viewBox="0 0 40 100" preserveAspectRatio="none"><path vector-effect="non-scaling-stroke" d="${k>1?"M0 25 C24 25 16 50 40 50 M0 75 C24 75 16 50 40 50":"M0 50 L40 50"}"/></svg><i></i></div>`;
   const R={
-    s2:["From Step 1: Where are you now?",[["About you",profileLine()==="(not given)"?"":profileLine()],["Projects",projs],["Wanted to do",wantedTo],["Your setting",S.environment],["Summary",S.snapshot]]],
-    s3:["From Step 2: What's your current phenotype?",[["You now",S.identity],["Work you do most",topNow]],curCards],
-    s4:["Where you are and where you're headed",[],curCards&&goalCard()?`<div class="fcol">${curCards}</div>${merge(cur.length)}${goalCard()}`:curCards+goalCard()]
+    s2:["From "+SECTION.s1,[["About you",profileLine()==="(not given)"?"":profileLine()],["Projects",projs],["Wanted to do",wantedTo],["Your setting",S.environment],["Summary",S.snapshot]]],
+    s3:["From "+SECTION.s2,[["How you describe yourself",S.identity],["Work you do most",topNow]],curCards],
+    s4:["",[],curCards&&goalCard()?`<div class="fcol">${curCards}</div>${connector(cur.length)}${goalCard()}`:curCards+goalCard()]
   };
   Object.keys(R).forEach(step=>{ const el=document.querySelector(`[data-recap="${step}"]`), [title,rows,cards]=R[step], items=rows.filter(x=>x[1]);
     el.hidden=!items.length && !cards; if(el.hidden) return;
-    el.innerHTML=`${step==="s4"?"":`<h2>${title}</h2>`}${cards?`<div class="features${step==="s4"?" pair":""}">${cards}</div>`:""}${items.length?`<dl>${items.map(x=>row(...x)).join("")}</dl>`:""}`; });
+    el.innerHTML=`${title?`<h2>${title}</h2>`:""}${cards?`<div class="features${step==="s4"?" pair":""}">${cards}</div>`:""}${items.length?`<dl>${items.map(x=>row(...x)).join("")}</dl>`:""}`; });
 }
 function updatePrompts(){ const P=prompts(); STEPS.forEach(([k])=>{ const el=document.getElementById("prompt-"+k); if(el) el.textContent=P[k]; }); $("#prompt-full").textContent=fullPrompt(); }
 
@@ -1447,7 +1462,7 @@ function renderMatches(){
   const el=$("#matches"), n=rated(); $("#rate-count").textContent=`${answered()} of 20 answered`;
   if(n<8){ el.innerHTML=`<p class="small muted">Rate at least 8 kinds of work to see your matches. You've rated ${n}.</p>`; return; }
   const m=matches();
-  el.innerHTML = SCORE_NOTE("match") + `<p class="small"><b>Tick the ones that fit you, up to 2.</b> They'll show as your current phenotype in step 4 and on your report. If you tick none, your top match is used.</p>`
+  el.innerHTML = SCORE_NOTE("match") + `<p class="small"><b>Check the ones that fit you, up to 2.</b> They'll show as your current phenotype in step 4 and on your report. If you check none, your top match is used.</p>`
    + m.slice(0,3).map((x,j)=>{ const p=PHENO[x.i];
     return `<div class="match has-art"><div class="match-art">${art(p.n,"thumb")}${pglyph(x.i,48)}</div><div class="match-body"><div class="match-top"><span class="match-name">${j+1}. ${esc(p.n)}</span><span class="spacer"></span>${meter(x.r)}<span class="tag">${strength(x.r)}</span></div>
     <p class="small muted">${esc(p.d)}</p>${chips(x.i,3,2,"m")}
@@ -1462,7 +1477,7 @@ function goalButtons(n){ const i=S.target.indexOf(n);
   return `<button type="button" class="tiny ${S.target[0]?"":"primary"}" data-goal="1" data-name="${esc(n)}">Make this my goal</button>${S.target[0]?`<button type="button" class="tiny" data-goal="2" data-name="${esc(n)}">Second goal</button>`:""}`; }
 function renderFit(){
   $("#want-count").textContent=`${wantAnswered()} of 20 answered`;
-  ATTR.forEach((_,i)=>{ const el=document.getElementById("now-"+i); if(el) el.textContent = S.ratings[i]!==null ? `Now: ${S.ratings[i]}` : S.unsure[i] ? "Now: not sure" : ""; });
+  ATTR.forEach((_,i)=>{ const el=document.getElementById("now-"+i); if(el) el.textContent = S.ratings[i]!==null ? `Current: ${S.ratings[i]}` : S.unsure[i] ? "Current: not sure" : ""; });
   const has=wanted()>=8, f=has?fits():PHENO.map((_,i)=>({i,r:null})), cur=curName();
   $("#fit-list").innerHTML = !has ? '<p class="small muted">Answer at least 8 of the 20 to see which phenotypes fit.</p>'
     : SCORE_NOTE("fit") + f.slice(0,3).map((x,j)=>{ const p=PHENO[x.i];
@@ -1518,10 +1533,10 @@ function profileSVG(){
   const row=(d,i)=>{ const y=10+i*21; return `<text x="0" y="${y+9}" font-size="7.5" fill="#33434c">${short[i]}</text>
     <rect x="${lx}" y="${y}" width="${bw}" height="11" fill="#eef2f2"/><rect x="${lx}" y="${y}" width="${(d.um/5*bw).toFixed(1)}" height="11" fill="#1d6a83"/>
     ${d.tm!==null?`<line x1="${(lx+d.tm/5*bw).toFixed(1)}" x2="${(lx+d.tm/5*bw).toFixed(1)}" y1="${y-2}" y2="${y+13}" stroke="#a5650f" stroke-width="2"/>`:""}`; };
-  return `<svg class="profile" viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Average rating by type of work, now and for the goal">${g.map(row).join("")}
+  return `<svg class="profile" viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Average rating by area of work, current work and goal">${g.map(row).join("")}
    <text x="${lx}" y="${H-1}" font-size="6.5" fill="#5c6b73">0</text><text x="${lx+bw-6}" y="${H-1}" font-size="6.5" fill="#5c6b73">5</text>
-   <rect x="${lx+44}" y="${H-8}" width="8" height="6" fill="#1d6a83"/><text x="${lx+55}" y="${H-2}" font-size="6.5" fill="#5c6b73">you now</text>
-   ${tv?`<line x1="${lx+98}" x2="${lx+98}" y1="${H-9}" y2="${H-1}" stroke="#a5650f" stroke-width="2"/><text x="${lx+102}" y="${H-2}" font-size="6.5" fill="#5c6b73">goal</text>`:""}</svg>`;
+   <rect x="${lx+44}" y="${H-8}" width="8" height="6" fill="#1d6a83"/><text x="${lx+55}" y="${H-2}" font-size="6.5" fill="#5c6b73">current work</text>
+   ${tv?`<line x1="${lx+108}" x2="${lx+108}" y1="${H-9}" y2="${H-1}" stroke="#a5650f" stroke-width="2"/><text x="${lx+112}" y="${H-2}" font-size="6.5" fill="#5c6b73">goal</text>`:""}</svg>`;
 }
 function renderReport(){
   const p=S.profile, cur=currentPhenos(), g=growRows().slice(0,5), steps=S.steps.filter(s=>s.what), E='<span class="rp-empty">Not filled in yet</span>';
@@ -1530,7 +1545,7 @@ function renderReport(){
   const date=new Date(S.made+"T12:00:00").toLocaleDateString(undefined,{year:"numeric",month:"long",day:"numeric"});
   const method = STEPS.some(([s])=>modeFor(s)==="ai") ? "Self-assessment with AI coaching" : "Self-assessment";
   const fit=goalFit(), gr=goalR(), rpRows=compareRows();
-  const rpGlyphs = cur.length&&rpRows&&rated()>=8 ? `<div class="rp-glyphs">${glyph(scaled(PHENO[pIndex(cur[0])].w,S.ratings),{size:58,mini:true,you:S.ratings,label:"Signature now"})}<span aria-hidden="true">→</span>${glyph(rpRows.map(x=>x.t),{size:58,mini:true,you:S.ratings,goal:rpRows.map(x=>x.t),gaps:rpRows.map(x=>x.gap),label:"Signature of your goal, with gaps to grow"})}</div>` : "";
+  const rpGlyphs = cur.length&&rpRows&&rated()>=8 ? `<div class="rp-glyphs">${glyph(scaled(PHENO[pIndex(cur[0])].w,S.ratings),{size:58,mini:true,you:S.ratings,label:"Signature of my current work"})}<span aria-hidden="true">→</span>${glyph(rpRows.map(x=>x.t),{size:58,mini:true,you:S.ratings,goal:rpRows.map(x=>x.t),gaps:rpRows.map(x=>x.gap),label:"Signature of your goal, with gaps to grow"})}</div>` : "";
   $("#report-page").innerHTML = `
    <div class="rp-head" ${rpGlyphs?'style="grid-template-columns:minmax(0,1fr) auto auto"':""}><div><div class="sub">Clinical informatics career plan</div><h2>${esc(p.name)||"My informatics career plan"}</h2></div>
      ${rpGlyphs}<div class="rp-date">${esc(date)}<br>${method}</div></div>
@@ -1545,7 +1560,7 @@ function renderReport(){
        ${S.identity?`<div class="rp-quote">“${esc(S.identity)}”</div>`:""}
        ${strong.length?`<div><b>Strongest areas now:</b> ${strong.map(esc).join(", ")}</div>`:""}
      </div>
-     <div class="rp-sec"><h4>My work by area, now and for my goal</h4>${rated()>=8? profileSVG() : E}</div>
+     <div class="rp-sec"><h4>My work by area: current and goal</h4>${rated()>=8? profileSVG() : E}</div>
    </div>
    <div class="rp-two">
      <div class="rp-sec"><h4>Goal phenotype</h4>
@@ -1555,7 +1570,7 @@ function renderReport(){
        ${S.settings.length?`<div><b>Settings I'd consider:</b> ${esc(S.settings.join(", "))}</div>`:""}
      </div>
      <div class="rp-sec"><h4>Biggest differences from my goal</h4>
-       ${g.length?`<table><thead><tr><th>Kind of work</th><th>Current</th><th>Want</th><th>Goal</th><th>Gap</th></tr></thead><tbody>${g.map(r=>`<tr><td>${esc(r.a.n)}</td><td class="num">${r.you}</td><td class="num">${S.want[r.k]??"–"}</td><td class="num">${r.t.toFixed(1)}</td><td><span class="tag">${GAPLABEL[r.gap][0]}</span></td></tr>`).join("")}</tbody></table>`
+       ${g.length?`<table><thead><tr><th>Kind of work</th><th>Current</th><th>You want</th><th>Goal role</th><th>Gap</th></tr></thead><tbody>${g.map(r=>`<tr><td>${esc(r.a.n)}</td><td class="num">${r.you}</td><td class="num">${S.want[r.k]??"–"}</td><td class="num">${r.t.toFixed(1)}</td><td><span class="tag">${GAPLABEL[r.gap][0]}</span></td></tr>`).join("")}</tbody></table>`
          : (compareRows()&&rated()>=8? "<div>No big differences. Focus on scope and visibility.</div>" : E)}
      </div>
    </div>
@@ -1672,7 +1687,7 @@ document.addEventListener("change",e=>{
   else if(d.setting){ toggleIn(S.settings,d.setting,t.checked); save(); refresh(); }
   else if(d.reason){ toggleIn(S.unrealized.reasons,d.reason,t.checked); save(); updatePrompts(); }
   else if(d.steptool){ S.stepTool[d.steptool]= t.value===S.aiTool ? "" : t.value; save(); renderFork(d.steptool); toast(`This step now uses ${toolName(toolFor(d.steptool))}.`); }
-  else if(d.choose){ if(t.checked && S.chosen.length>=2){ t.checked=false; toast("You can tick up to 2. Untick one first."); return; }
+  else if(d.choose){ if(t.checked && S.chosen.length>=2){ t.checked=false; toast("You can check up to 2. Uncheck one first."); return; }
     toggleIn(S.chosen,d.choose,t.checked); save(); refresh(); }
 });
 const AFTERFILL = {s1:"#projects", s2:"#results", s3:"#fit", s4:"#gapdims"};
@@ -1690,11 +1705,11 @@ document.addEventListener("click",e=>{
     toast(ok? (el.tagName==="A"? "Prompt copied. Paste it into the new tab." : "Prompt copied.") : "Couldn't copy. Open “See the prompt” and copy it by hand."); return; }
   if((el=q("[data-copy]"))){ toast(copyText(document.getElementById(el.dataset.copy).textContent)?"Copied.":"Couldn't copy. Select the text and copy it by hand."); return; }
   if((el=q("[data-fill]"))){ const st=el.dataset.fill, txt=$("#paste-"+st).value;
-    if(!txt.trim()){ $("#fillmsg-"+st).innerHTML='<p class="needmsg">Paste the AI\'s answer first.</p>'; return; }
+    if(!txt.trim()) return;
     const C=applyPaste(st,txt); save(); fill(); refresh(); renderCheck(st,C);
     if(!C.some(c=>!c.ok&&!c.opt)) setTimeout(()=>scrollToEl(cardOf(AFTERFILL[st])),900); return; }
   if((el=q("[data-fillfull]"))){ const txt=$("#paste-full").value, msg=$("#fillmsg-full");
-    if(!txt.trim()){ msg.innerHTML='<p class="needmsg">Paste the export block first.</p>'; return; }
+    if(!txt.trim()) return;
     const C=applyFull(txt); afterLoad(); renderCheck("full",C); if(!C.some(c=>c.ok)) return;
     const b=blockerFor("report");
     msg.insertAdjacentHTML("beforeend", b ? `<div class="row" style="margin-top:8px"><a class="btn primary" href="#${b}" data-go="${b}">Finish ${STEPS.find(s=>s[0]===b)[1].toLowerCase()}</a><span class="small muted">A required item is missing there.</span></div>`
