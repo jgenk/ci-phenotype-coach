@@ -207,7 +207,7 @@ label.need input,label.need select,label.need textarea{border-color:var(--warn);
 .ai{border:1px solid var(--coach-rule);border-radius:var(--r);background:var(--coach-soft);overflow:hidden}
 .ai-band{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:var(--coach-band);color:var(--coach-band-ink);padding:10px 16px;border-bottom:1px solid var(--coach-rule)}
 .ai-band h2{font-size:1.15rem;color:var(--coach-band-ink)}
-.manual-band{border:1px solid var(--rule);border-radius:var(--r);background:var(--paper);color:var(--accent)}
+.manual-band{border:1px solid color-mix(in srgb,var(--accent) 35%,transparent);border-radius:var(--r);background:var(--accent-soft);color:var(--accent)}
 .manual-band h2{color:var(--ink)}
 .ai-badge{font:600 .68rem var(--f-mono);letter-spacing:.08em;text-transform:uppercase;border:1px solid currentColor;border-radius:3px;padding:2px 6px}
 .ai-body{display:grid;gap:12px;padding:16px}
@@ -724,7 +724,7 @@ svg.profile text{font-family:var(--f-mono)}
   </div>
 </section>
 <!-- BUILD TAG: bump on every deploy so you can tell which build people are seeing. -->
-<footer class="buildtag">PREVIEW · build v0.8.8 (2026-10-14)</footer>
+<footer class="buildtag">PREVIEW · build v0.8.9 (2026-10-14)</footer>
 </main>
 </div>
 
@@ -1685,7 +1685,7 @@ document.addEventListener("click",e=>{
   if((el=q("[data-pref]"))){ S.pref=el.dataset.pref; S.mode={s1:"",s2:"",s3:"",s4:""}; afterLoad();
     scrollToEl(S.pref==="ai" ? $("#pref-tool") : cardOf("#p-prof"), S.pref==="ai"?"center":"start"); return; }
   if((el=q("[data-mode]"))){ const st=el.dataset.step; S.mode[st]= el.dataset.mode===S.pref ? "" : el.dataset.mode; save(); renderFork(st); renderComparison(); renderRecaps(); markNeed(st); renderRail();
-    const f=document.querySelector(`[data-fork="${st}"]`); scrollToEl(el.dataset.mode==="ai" ? f.querySelector(".ai") : f.nextElementSibling); return; }
+    const f=document.querySelector(`[data-fork="${st}"]`); scrollToEl(el.dataset.mode==="ai" ? f.querySelector(".ai") : f); return; }
   if((el=q("[data-copyprompt]"))){ const k=el.dataset.copyprompt, ok=copyText(k==="full" ? fullPrompt() : prompts()[k]);
     toast(ok? (el.tagName==="A"? "Prompt copied. Paste it into the new tab." : "Prompt copied.") : "Couldn't copy. Open “See the prompt” and copy it by hand."); return; }
   if((el=q("[data-copy]"))){ toast(copyText(document.getElementById(el.dataset.copy).textContent)?"Copied.":"Couldn't copy. Select the text and copy it by hand."); return; }
