@@ -207,6 +207,8 @@ label.need input,label.need select,label.need textarea{border-color:var(--warn);
 .ai{border:1px solid var(--coach-rule);border-radius:var(--r);background:var(--coach-soft);overflow:hidden}
 .ai-band{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:var(--coach-band);color:var(--coach-band-ink);padding:10px 16px;border-bottom:1px solid var(--coach-rule)}
 .ai-band h2{font-size:1.15rem;color:var(--coach-band-ink)}
+.manual-band{border:1px solid var(--rule);border-radius:var(--r);background:var(--paper);color:var(--accent)}
+.manual-band h2{color:var(--ink)}
 .ai-badge{font:600 .68rem var(--f-mono);letter-spacing:.08em;text-transform:uppercase;border:1px solid currentColor;border-radius:3px;padding:2px 6px}
 .ai-body{display:grid;gap:12px;padding:16px}
 .ai ol{margin:0;padding-left:1.3em;display:grid;gap:10px}
@@ -220,16 +222,11 @@ label.need input,label.need select,label.need textarea{border-color:var(--warn);
 .ctl-wait{margin:0;padding-top:6px;font-size:.9rem;color:var(--muted);font-style:italic}
 .toolpick{padding-top:2px}
 button:disabled{opacity:.45;cursor:not-allowed}
-.modebar>p{margin:0;flex:1 1 320px}
 .ai .primary{background:var(--coach);border-color:var(--coach);color:var(--coach-ink)}
 .ai .linkbtn,.ai a:not(.btn){color:var(--coach)}
 .ai .linkbtn[data-mode="self"]{color:var(--accent)} /* leaving AI is navigation, so it stays blue */
 .ai textarea,.ai select,.ai .prompt{background:var(--sheet)}
-.modebar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.modebar label{display:flex;gap:8px;align-items:center;font-weight:600}
 select.toolsel{width:auto;font-size:.88rem;padding:5px 8px}
-.manualhead{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:baseline;justify-content:space-between;padding:4px 2px 2px;border-bottom:1px solid var(--rule)}
-.manualhead h2{font-size:1.25rem}
 .prompt{font:400 .8rem/1.5 var(--f-mono);white-space:pre-wrap;background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:10px 12px;max-height:240px;overflow:auto;margin:6px 0 0}
 details.peek summary{cursor:pointer;font-size:.85rem;color:var(--muted)}
 .fillmsg{font-size:.88rem}
@@ -727,7 +724,7 @@ svg.profile text{font-family:var(--f-mono)}
   </div>
 </section>
 <!-- BUILD TAG: bump on every deploy so you can tell which build people are seeing. -->
-<footer class="buildtag">PREVIEW · build v0.8.6 (2026-10-14)</footer>
+<footer class="buildtag">PREVIEW · build v0.8.7 (2026-10-14)</footer>
 </main>
 </div>
 
@@ -1309,11 +1306,11 @@ function renderPref(){ $$("[data-pref]").forEach(b=>b.setAttribute("aria-pressed
 function renderFork(step){
   const el=document.querySelector(`[data-fork="${step}"]`), m=modeFor(step), tk=toolFor(step);
   if(!m) el.innerHTML="";
-  else if(m==="self") el.innerHTML=`<div class="manualhead"><h2>${SECTION[step]}</h2><button type="button" class="linkbtn ai-link" data-mode="ai" data-step="${step}">Use AI for this step instead</button></div>`;
+  else if(m==="self") el.innerHTML=`<div class="ai-band manual-band"><span class="ai-badge">Manual entry</span><h2>${SECTION[step]}</h2><span class="spacer"></span><button type="button" class="linkbtn ai-link" data-mode="ai" data-step="${step}">Use AI for this step instead</button></div>`;
   else el.innerHTML=`<div class="ai">
-    <div class="ai-band"><span class="ai-badge">AI coaching</span><h2>${SECTION[step]}</h2></div>
+    <div class="ai-band"><span class="ai-badge">AI coaching</span><h2>${SECTION[step]}</h2><span class="spacer"></span><button type="button" class="linkbtn" data-mode="self" data-step="${step}">Do this step myself instead</button></div>
     <div class="ai-body">
-    <div class="modebar"><p class="small muted">${AI_INTRO[step]}</p><span class="spacer"></span><button type="button" class="linkbtn" data-mode="self" data-step="${step}">Do this step myself instead</button></div>
+    <p class="small muted">${AI_INTRO[step]}</p>
     <ol>
       <li>Confirm your preferred AI tool below.</li>
       <li>${goStep(tk)}</li>
