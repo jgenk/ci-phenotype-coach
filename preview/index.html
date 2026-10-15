@@ -211,6 +211,16 @@ label.need input,label.need select,label.need textarea{border-color:var(--warn);
 .ai-body{display:grid;gap:12px;padding:16px}
 .ai ol{margin:0;padding-left:1.3em;display:grid;gap:10px}
 .ai li::marker{font-weight:700;color:var(--coach)}
+.toolpick{display:inline-flex;flex-wrap:wrap;gap:8px;align-items:center;font-weight:600}
+.ai-go{display:grid;gap:4px}
+.ai-controls{display:grid;gap:14px;padding:14px;border:1px solid var(--coach-rule);border-radius:var(--r);background:var(--paper)}
+.ctl{display:grid;grid-template-columns:24px minmax(0,1fr);gap:10px;align-items:start;min-width:0}
+.ctl-n{width:22px;height:22px;border-radius:50%;background:var(--coach);color:var(--coach-ink);font:700 .75rem var(--f-mono);display:grid;place-items:center;margin-top:6px}
+.ctl-body{display:grid;gap:8px;min-width:0}
+.ctl-wait{margin:0;padding-top:6px;font-size:.9rem;color:var(--muted);font-style:italic}
+.toolpick{padding-top:2px}
+button:disabled{opacity:.45;cursor:not-allowed}
+.modebar>p{margin:0;flex:1 1 320px}
 .ai .primary{background:var(--coach);border-color:var(--coach);color:var(--coach-ink)}
 .ai .linkbtn,.ai a:not(.btn){color:var(--coach)}
 .ai .linkbtn[data-mode="self"]{color:var(--accent)} /* leaving AI is navigation, so it stays blue */
@@ -605,27 +615,26 @@ svg.profile text{font-family:var(--f-mono)}
   <div class="ai">
     <div class="ai-band"><span class="ai-badge">AI coaching</span><h2>Full session</h2></div>
     <div class="ai-body">
-      <div class="modebar"><label for="tool-full">Working with <select class="toolsel" id="tool-full" data-bind="aiTool" data-tools></select></label></div>
-      <ol>
-        <li><div class="row" id="full-go"></div>
-          <details class="peek"><summary>See the prompt</summary><pre class="prompt" id="prompt-full"></pre></details></li>
-        <li>In the AI tool, paste (Ctrl+V or ⌘V) and answer one question at a time. Plan on 45–90 minutes. The AI tells you which step you're on and checks with you before moving on.</li>
-        <li>At the end, the AI writes your one-page career plan in the chat. Copy it, save it, or print it from there.</li>
-      </ol>
-      <ul class="links small">
+      <ul class="links small muted">
         <li>You can upload or paste your CV, a portfolio, or a job description you're curious about. Remove anything sensitive first.</li>
         <li>Don't enter patient information or confidential details. Use the AI tool your organization allows.</li>
         <li>If your AI tool remembers past chats, it will use what it knows about you. For a blank slate, use a temporary or incognito chat.</li>
-        <li>Need to stop partway? Ask the AI for "the export block so far." Paste it below to save your progress here.</li>
       </ul>
+      <ol>
+        <li>Confirm your preferred AI tool below.</li>
+        <li id="full-gostep"></li>
+        <li>Chat with <span data-toolname></span>, one question at a time. Plan on 45–90 minutes. It tells you which step you're on, checks with you before moving on, and ends with your one-page career plan. Need to stop partway? Ask for "the export block so far."</li>
+        <li>Paste its export block in the box, then click <b>Fill in my answers</b>. That fills in all four steps here, with exact match scores and the printable report. (The AI's own scores are estimates.)</li>
+      </ol>
+      <div class="ai-controls">
+        <div class="ctl"><span class="ctl-n">1</span><label class="toolpick" for="tool-full">AI tool <select class="toolsel" id="tool-full" data-bind="aiTool" data-tools></select></label></div>
+        <div class="ctl"><span class="ctl-n">2</span><div class="ai-go"><div class="row" id="full-go"></div>
+          <details class="peek"><summary>See the prompt</summary><pre class="prompt" id="prompt-full"></pre></details></div></div>
+        <div class="ctl"><span class="ctl-n">3</span><p class="ctl-wait">Chat in <span data-toolname></span>. Come back when it writes “Copy everything below into the coach.”</p></div>
+        <div class="ctl"><span class="ctl-n">4</span><div class="ctl-body"><label for="paste-full">Answer from the AI<textarea id="paste-full" class="paste" data-fillsrc="fill-full" placeholder="Paste everything after “Copy everything below into the coach”"></textarea></label>
+          <div class="row"><button type="button" class="primary" id="fill-full" data-fillfull disabled>Fill in my answers</button></div><div class="fillmsg" id="fillmsg-full" role="status"></div></div></div>
+      </div>
     </div>
-  </div>
-  <div class="card">
-    <h2>Want exact scores and the printable report?</h2>
-    <p class="small">The AI ends with an export block. Paste it here, then click <b>Fill in the worksheet</b>. That fills in all four steps, so you can check exact match scores and print the formatted one-page report. The AI's own matches are estimates. This page calculates them exactly.</p>
-    <label for="paste-full">Export block from the AI<textarea id="paste-full" class="paste" placeholder="Paste everything after “Copy everything below into the coach”"></textarea></label>
-    <div class="row"><button type="button" class="primary" data-fillfull>Fill in the worksheet</button></div>
-    <div class="fillmsg" id="fillmsg-full" role="status"></div>
   </div>
 </section>
 
@@ -718,7 +727,7 @@ svg.profile text{font-family:var(--f-mono)}
   </div>
 </section>
 <!-- BUILD TAG: bump on every deploy so you can tell which build people are seeing. -->
-<footer class="buildtag">PREVIEW · build v0.8.5 (2026-10-14)</footer>
+<footer class="buildtag">PREVIEW · build v0.8.6 (2026-10-14)</footer>
 </main>
 </div>
 
@@ -1291,6 +1300,8 @@ const modeFor = step => S.mode[step] || S.pref;
 const toolFor = step => S.stepTool[step] || S.aiTool;
 const toolName = k => k==="other" ? "your AI tool" : TOOLS[k].n;
 const toolOptions = sel => Object.keys(TOOLS).map(k=>`<option value="${k}" ${k===sel?"selected":""}>${esc(TOOL_LABEL(k))}</option>`).join("");
+const goStep = tk => tk==="other" ? "Click the button below to copy your prompt. Open your AI tool and paste it (Ctrl+V or ⌘V)."
+  : `Click the button below to copy your prompt and open ${esc(TOOLS[tk].n)}. Paste it there (Ctrl+V or ⌘V).`;
 function goButton(key, tk){ return tk==="other"
   ? `<button type="button" class="primary" data-copyprompt="${key}">Click here to copy prompt</button><span class="small muted">Then paste it into your AI tool.</span>`
   : `<a class="btn primary" href="${TOOLS[tk].u}" target="_blank" rel="noopener" data-copyprompt="${key}">Click here to copy prompt and open ${esc(TOOLS[tk].n)} ↗</a>`; }
@@ -1302,18 +1313,25 @@ function renderFork(step){
   else el.innerHTML=`<div class="ai">
     <div class="ai-band"><span class="ai-badge">AI coaching</span><h2>${SECTION[step]}</h2></div>
     <div class="ai-body">
-    <div class="modebar"><label for="tool-${step}">Working with <select class="toolsel" id="tool-${step}" data-steptool="${step}">${toolOptions(tk)}</select></label><span class="spacer"></span><button type="button" class="linkbtn" data-mode="self" data-step="${step}">Do this step myself instead</button></div>
-    <p class="small muted">${AI_INTRO[step]}</p>
+    <div class="modebar"><p class="small muted">${AI_INTRO[step]}</p><span class="spacer"></span><button type="button" class="linkbtn" data-mode="self" data-step="${step}">Do this step myself instead</button></div>
     <ol>
-      <li><div class="row">${goButton(step,tk)}</div>
-        <details class="peek"><summary>See the prompt</summary><pre class="prompt" id="prompt-${step}">${esc(prompts()[step])}</pre></details></li>
-      <li>In ${esc(toolName(tk))}, paste (Ctrl+V or ⌘V) and answer its questions. At the end it gives you ${AI_RETURNS[step]}. New chat or same chat both work; the prompt carries your earlier answers.</li>
-      <li><label for="paste-${step}"><span>Paste the AI's final answer here, then click <b>Fill in my answers</b> to add it to this page.</span><textarea id="paste-${step}" class="paste" placeholder="Paste everything after “Copy everything below into the coach”"></textarea></label>
-        <div class="row" style="margin-top:8px"><button type="button" class="primary" data-fill="${step}">Fill in my answers</button></div><div class="fillmsg" id="fillmsg-${step}" role="status"></div></li>
-    </ol><p class="small muted">Check what was filled in below and change anything that doesn't sound like you.</p></div></div>`;
+      <li>Confirm your preferred AI tool below.</li>
+      <li>${goStep(tk)}</li>
+      <li>Chat with ${esc(toolName(tk))} until it sends you back here. It ends with “Copy everything below into the coach” and ${AI_RETURNS[step]}. New chat or same chat both work.</li>
+      <li>Paste that answer in the box, then click <b>Fill in my answers</b>.</li>
+    </ol>
+    <div class="ai-controls">
+      <div class="ctl"><span class="ctl-n">1</span><label class="toolpick" for="tool-${step}">AI tool <select class="toolsel" id="tool-${step}" data-steptool="${step}">${toolOptions(tk)}</select></label></div>
+      <div class="ctl"><span class="ctl-n">2</span><div class="ai-go"><div class="row">${goButton(step,tk)}</div>
+        <details class="peek"><summary>See the prompt</summary><pre class="prompt" id="prompt-${step}">${esc(prompts()[step])}</pre></details></div></div>
+      <div class="ctl"><span class="ctl-n">3</span><p class="ctl-wait">Chat in ${esc(toolName(tk))}. Come back when it writes “Copy everything below into the coach.”</p></div>
+      <div class="ctl"><span class="ctl-n">4</span><div class="ctl-body"><label for="paste-${step}">Answer from the AI<textarea id="paste-${step}" class="paste" data-fillsrc="fill-${step}" placeholder="Paste everything after “Copy everything below into the coach”"></textarea></label>
+        <div class="row"><button type="button" class="primary" id="fill-${step}" data-fill="${step}" disabled>Fill in my answers</button></div><div class="fillmsg" id="fillmsg-${step}" role="status"></div></div></div>
+    </div>
+    <p class="small muted">Check what was filled in below and change anything that doesn't sound like you.</p></div></div>`;
   visibility();
 }
-function renderCoachPage(){ $("#full-go").innerHTML=goButton("full",S.aiTool); $("#prompt-full").textContent=fullPrompt(); }
+function renderCoachPage(){ $("#full-go").innerHTML=goButton("full",S.aiTool); $("#full-gostep").innerHTML=goStep(S.aiTool); $$("[data-toolname]").forEach(e=>e.textContent=toolName(S.aiTool)); $("#prompt-full").textContent=fullPrompt(); }
 function renderForks(){ STEPS.forEach(([s])=>renderFork(s)); renderCoachPage(); }
 // A step's fields appear once it has a mode (in practice, once step 1's choice is made).
 function visibility(){ STEPS.forEach(([step])=>{ const m=modeFor(step); let after=false;
@@ -1336,8 +1354,8 @@ function renderRecaps(){
     return `<div class="goal-card">${art(n,"goalart")}<div class="goal-body"><span class="eyebrow">Goal phenotype</span><div class="ph-head">${pglyph(i,48)}<b>${esc(n)}</b></div>${vsGoal()}${goals[1]?`<span class="small muted">Also considering: ${esc(goals[1])}</span>`:""}${S.dream?`<div class="goal-dream"><span class="why-label">A project you'd love to lead</span><p>${esc(S.dream)}</p></div>`:""}</div></div>`; };
   const merge = k => `<div class="merge" aria-hidden="true"><svg viewBox="0 0 40 100" preserveAspectRatio="none"><path vector-effect="non-scaling-stroke" d="${k>1?"M0 25 C24 25 16 50 40 50 M0 75 C24 75 16 50 40 50":"M0 50 L40 50"}"/></svg><i></i></div>`;
   const R={
-    s2:["From step 1: where you are now",[["About you",profileLine()==="(not given)"?"":profileLine()],["Projects",projs],["Wanted to do",wantedTo],["Your setting",S.environment],["Summary",S.snapshot]]],
-    s3:["From step 2: who you are now",[["You now",S.identity],["Work you do most",topNow]],curCards],
+    s2:["From Step 1: Where are you now?",[["About you",profileLine()==="(not given)"?"":profileLine()],["Projects",projs],["Wanted to do",wantedTo],["Your setting",S.environment],["Summary",S.snapshot]]],
+    s3:["From Step 2: What's your current phenotype?",[["You now",S.identity],["Work you do most",topNow]],curCards],
     s4:["Where you are and where you're headed",[],curCards&&goalCard()?`<div class="fcol">${curCards}</div>${merge(cur.length)}${goalCard()}`:curCards+goalCard()]
   };
   Object.keys(R).forEach(step=>{ const el=document.querySelector(`[data-recap="${step}"]`), [title,rows,cards]=R[step], items=rows.filter(x=>x[1]);
@@ -1634,7 +1652,10 @@ window.addEventListener("hashchange",()=>{ const h=(location.hash||"#home").slic
    EVENTS
    ===================================================================== */
 document.addEventListener("input",e=>{
-  const t=e.target; if(!t.dataset.bind) return;
+  const t=e.target;
+  // A fill button stays off until its answer box has text in it.
+  if(t.dataset.fillsrc){ const b=document.getElementById(t.dataset.fillsrc); if(b) b.disabled=!t.value.trim(); return; }
+  if(!t.dataset.bind) return;
   setPath(S,t.dataset.bind,t.value); save();
   if(t.dataset.bind==="aiTool"){ $$("[data-tools]").forEach(s=>s.value=S.aiTool); renderForks(); }
   else if(t.tagName==="SELECT" || /^profile/.test(t.dataset.bind)) refresh();
