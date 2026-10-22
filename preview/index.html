@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>CI Career Phenotype Coach</title>
+<script>/* Workshop layer: /amia-2026/ (or ?event=amia-2026 for local testing) turns on the event version. Set before first paint. */
+(function(){ var m=location.pathname.match(/\/(amia-2026)\//), q=new URLSearchParams(location.search).get("event"), e=(m&&m[1])||q; if(e==="amia-2026") document.documentElement.setAttribute("data-event",e); })();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,500;7..72,650&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -105,7 +107,6 @@ main{max-width:880px;width:100%;margin:0;padding:24px 0 120px;min-width:0}
 .why[open] summary{margin-bottom:6px}
 .why-row{display:grid;grid-template-columns:7.5em minmax(0,1fr);gap:8px;align-items:start;margin-top:4px}
 .why-label{font-size:.8rem;font-weight:600;color:var(--muted);padding-top:2px}
-.goal-chosen{padding:8px 12px;border-radius:var(--r);background:var(--accent-soft)}
 .card .carry{border:0;padding:0;background:none;border-radius:0}
 .card .carry .features{margin-bottom:0}
 /* step 4: the goal card drops a blue stem into a blue-framed section that unpacks the goal */
@@ -383,6 +384,64 @@ svg.profile text{font-family:var(--f-mono)}
 .rp-glyphs{display:flex;align-items:center;gap:4px;color:#4d5d66;font-size:9pt}
 @media (max-width:560px){.match.has-art{grid-template-columns:76px minmax(0,1fr);column-gap:14px}.match-art .glyph{width:38px;height:38px}}
 
+/* AI mode: a step's answer forms sit behind one toggle (manual mode shows them open, with no toggle) */
+details.answers{display:block}
+details.answers[open]:not(.manual)>summary{margin-bottom:20px}
+details.answers>summary{cursor:pointer;list-style:none;font-size:.9rem;font-weight:600;color:var(--muted);padding:10px 14px;border:1px dashed var(--rule);border-radius:var(--r);background:var(--sheet)}
+details.answers>summary::-webkit-details-marker{display:none}
+details.answers>summary::before{content:"▸ ";color:var(--muted)}
+details.answers[open]>summary::before{content:"▾ "}
+details.answers.manual>summary{display:none}
+.answers-in{display:grid;gap:20px}
+details.carry>summary{cursor:pointer;font-weight:600;font-size:.92rem;color:var(--muted)}
+details.carry[open]>summary{margin-bottom:10px}
+.fill-ok{display:grid;gap:8px;padding:10px 12px;border-radius:var(--r);background:var(--ok-soft);color:var(--ink)}
+.fill-ok b{color:var(--ok)}
+.ai .fill-ok .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)} /* moving on is navigation: blue */
+/* step 1 choice, when it hasn't been made on Home */
+.choose-first{display:grid;gap:10px}
+/* "Not sure what you want yet?" callout at the top of step 3 */
+.callout{display:grid;gap:8px;border:1px solid var(--accent);border-left-width:4px;border-radius:var(--r);background:var(--accent-soft);padding:12px 16px}
+.callout h2{font-size:1.05rem}
+/* step 2 and 3: the top three as picture cards */
+.top3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:760px){.top3{grid-template-columns:minmax(0,1fr)}
+  .top3 .tcard{grid-template-columns:92px minmax(0,1fr);grid-template-rows:none} .top3 .tcard .art{aspect-ratio:auto;width:100%;height:100%;min-height:110px}}
+.tcard{display:grid;grid-template-rows:auto 1fr;border:1px solid var(--rule);border-radius:var(--r);background:var(--sheet);overflow:hidden;min-width:0}
+.tcard.first{border:2px solid var(--accent)}
+.tcard .art{aspect-ratio:16/9}
+.tcard-body{display:grid;gap:8px;padding:10px 12px 12px;align-content:start}
+.tcard .rank{font:600 .7rem var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.tcard .ph-head b{font-size:.98rem}
+.tcard.sel{border-color:var(--ok);box-shadow:0 0 0 1px var(--ok)}
+.allrank{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:4px;font-size:.88rem}
+.allrank li{display:grid;grid-template-columns:2em minmax(0,1fr) auto;gap:8px;align-items:center}
+.allrank .num{font:500 .78rem var(--f-mono);color:var(--muted)}
+/* step 3 goal card */
+.goalpick{display:grid;grid-template-columns:120px minmax(0,1fr);gap:14px;align-items:center;border:2px solid var(--accent);border-radius:var(--r);background:var(--sheet);overflow:hidden}
+.goalpick .art{height:100%;min-height:96px}
+.goalpick-body{display:grid;gap:6px;padding:10px 12px 10px 0}
+@media (max-width:560px){.goalpick{grid-template-columns:84px minmax(0,1fr)}}
+/* workshop layer: shown only when the page runs for an event (html[data-event]) */
+html:not([data-event]) .ev-only{display:none!important}
+html[data-event] .gen-only{display:none!important}
+.pause{display:grid;gap:6px;border:2px solid var(--ink);border-radius:var(--r);background:var(--sheet);padding:14px 16px}
+.pause .eyebrow{color:var(--ink)}
+.pause h2{font-size:1.1rem}
+.pause .early{font-size:.86rem;color:var(--muted);border-top:1px dashed var(--rule);padding-top:6px;margin-top:2px}
+html[data-event] #consent-card{order:1} html[data-event] #pref-card{order:2} html[data-event] #home>.card:last-child{order:3} /* the pre-survey comes before step 1 */
+.consent .draft{font:600 .66rem var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--warn);border:1px solid var(--warn);border-radius:3px;padding:1px 5px;margin-left:6px;vertical-align:middle}
+.qr{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:center}
+.qr svg{width:132px;height:132px;background:#fff;padding:6px;border-radius:4px;border:1px solid var(--rule)}
+.qr code{font:500 .85rem var(--f-mono);word-break:break-all}
+/* wrap-up order for the room screen: what to do next first, background last */
+html[data-event] #resources>.head{order:0} html[data-event] .res-wrap{order:1} html[data-event] .res-train{order:2} html[data-event] .res-comm{order:3}
+html[data-event] .res-ai{order:4} html[data-event] .res-what{order:5} html[data-event] .res-about{order:6} html[data-event] .res-lib{order:7}
+html[data-event] .res-attrs{order:8} html[data-event] .res-refs{order:9}
+.refs li:target,.refs li.flash{background:var(--accent-soft);border-radius:3px}
+sup a{text-decoration:none;font-weight:600;padding:0 1px}
+.evtag{font:600 .68rem var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--accent);border:1px solid var(--accent);border-radius:3px;padding:2px 6px}
+
 @media print{
   .buildtag{display:none}
   @page{size:letter;margin:0}
@@ -400,6 +459,7 @@ svg.profile text{font-family:var(--f-mono)}
 <header class="topbar">
   <div class="topbar-in">
     <a class="brand" href="#home" data-go="home">CI Career Phenotype Coach</a>
+    <span class="evtag ev-only">AMIA 2026</span>
     <span class="spacer"></span>
     <details class="menu"><summary><span aria-hidden="true">≡</span> Menu</summary>
       <div class="menu-list">
@@ -419,22 +479,41 @@ svg.profile text{font-family:var(--f-mono)}
 
 <!-- HOME -->
 <section class="page" id="home">
-  <figure class="art hero"><img src="img/home.jpg" alt="" onerror="this.parentNode.remove()"></figure>
+  <figure class="art hero"><img data-img="home.jpg" alt="" onerror="this.parentNode.remove()"></figure>
   <div class="head">
-    <span class="eyebrow">Clinical informatics career planning</span>
+    <span class="eyebrow gen-only">Clinical informatics career planning</span>
+    <span class="eyebrow ev-only">AMIA 2026 Annual Symposium · The Strategic Clinical Informaticist</span>
     <h1 tabindex="-1">Plan your next move in clinical informatics.</h1>
-    <p class="lede">Describe your current work, see which informatics roles it resembles, choose one to aim for, and plan how to get there. You finish with a one-page report to share with a mentor.</p>
+    <p class="lede">See which kinds of informatics roles your work resembles, choose one to aim for, and plan how to get there. You leave with a one-page plan.</p>
   </div>
-  <div class="card">
+  <div class="card" id="pref-card">
     <ol class="links">
-      <li><b>Where you are now.</b> Your projects and your setting.</li>
-      <li><b>Your current phenotype.</b> Rate 20 kinds of work to see the roles yours resembles.</li>
-      <li><b>Your goal phenotype.</b> Describe the work you want in 3–5 years and choose a goal.</li>
-      <li><b>Gaps and plan.</b> See what's different, then plan 2–3 next steps.</li>
+      <li><b>Where you are now:</b> your projects and setting.</li>
+      <li><b>Current phenotype:</b> the kind of informatics work you do now.</li>
+      <li><b>Goal phenotype:</b> the work you want in 3–5 years.</li>
+      <li><b>Gaps and plan:</b> what's different, and 2–3 next steps.</li>
     </ol>
-    <p class="small muted">About 45–90 minutes. Your answers save in this browser, so you can stop and come back. Use AI or not, as you prefer, for any step.</p>
-    <p class="small muted">If you use AI: tools that remember your past chats will bring that context into the coaching. For a blank slate, use a temporary or incognito chat.</p>
-    <div class="row"><a class="btn primary" href="#s1" data-go="s1">Start step 1</a><a class="btn ai-btn" href="#coach" data-go="coach">Or do it all in one AI conversation</a></div>
+    <h2>How do you want to work? <span class="req">Required</span></h2>
+    <div class="choice">
+      <button type="button" data-pref="ai">With an AI tool <span class="ev-only">(recommended)</span><span>The AI asks you questions and drafts your answers. You copy them back here.</span></button>
+      <button type="button" data-pref="self">On my own<span>Fill in each step yourself. No AI needed.</span></button>
+    </div>
+    <label for="aiTool" id="pref-tool" hidden>Which AI tool? <span class="hint">Free accounts work. Use the one your organization allows.</span>
+      <select id="aiTool" data-bind="aiTool" data-tools></select></label>
+    <ul class="links small muted">
+      <li>Don't enter patient information or confidential details, here or in an AI tool. Nothing is sent from this page. (AI privacy settings: <a href="https://privacy.claude.com/" target="_blank" rel="noopener">Claude</a> · <a href="https://help.openai.com/en/articles/7730893-data-controls-faq" target="_blank" rel="noopener">ChatGPT</a> · <a href="https://support.google.com/gemini/answer/13594961" target="_blank" rel="noopener">Gemini</a>)</li>
+      <li>An AI tool that remembers you can point out where your answers don't match what it knows about your work. For a blank slate, use a temporary chat.</li>
+      <li>Your answers save in this browser, so you can stop and come back.<span class="gen-only"> Most people take 45–90 minutes.</span></li>
+    </ul>
+    <div class="row"><a class="btn primary" href="#s1" data-go="s1" id="start-btn">Start step 1</a><a class="btn ai-btn gen-only" href="#coach" data-go="coach">Or do it all in one AI conversation</a></div>
+  </div>
+  <div class="card consent ev-only" id="consent-card">
+    <h2>Help us improve this workshop <span class="req">Optional</span><span class="draft">Draft</span></h2>
+    <p class="small">We're asking participants to answer two short anonymous surveys, one now and one at the end. They don't ask for your name, email, or anything that identifies you, and nothing you enter in this coach is collected. We'll use the combined answers to improve the workshop and may share them in a presentation or publication. Taking part is voluntary.</p>
+    <div class="row" id="consent-row"></div>
+  </div>
+  <div class="card ev-only">
+    <div class="qr"><div id="qr-home"></div><div class="stack" style="gap:6px"><h2>Open it on your own device</h2><p class="small muted">Scan the code or type the address. Your answers stay in the browser you use.</p><code id="ev-url"></code></div></div>
   </div>
 </section>
 
@@ -443,22 +522,7 @@ svg.profile text{font-family:var(--f-mono)}
   <div class="head">
     <span class="eyebrow">Step 1 of 4</span>
     <h1 tabindex="-1">Where you are now</h1>
-    <p class="lede">Describe what you actually do. If you're new to informatics, start with your clinical work and the problems you notice.</p>
-  </div>
-  <div class="card" id="pref-card">
-    <h2>How do you want to work? <span class="req">Required</span></h2>
-    <p class="small muted">This sets the default for all four steps. You can switch, or change the AI tool, in any step.</p>
-    <div class="choice">
-      <button type="button" data-pref="ai">With an AI tool<span>The AI asks you questions and drafts your answers. You paste them back here and edit.</span></button>
-      <button type="button" data-pref="self">On my own<span>Fill in each step yourself. No AI needed.</span></button>
-    </div>
-    <label for="aiTool" id="pref-tool" hidden>Which AI tool? <span class="hint">Use the one your organization allows.</span>
-      <select id="aiTool" data-bind="aiTool" data-tools></select></label>
-    <ul class="links small">
-      <li>Don't enter patient information or confidential details, here or in an AI tool.</li>
-      <li>Nothing is sent from this page. With AI, you copy a prompt into the AI tool yourself. Check its privacy settings: <a href="https://privacy.claude.com/" target="_blank" rel="noopener">Claude</a> · <a href="https://help.openai.com/en/articles/7730893-data-controls-faq" target="_blank" rel="noopener">ChatGPT</a> · <a href="https://support.google.com/gemini/answer/13594961" target="_blank" rel="noopener">Gemini</a>.</li>
-      <li>Treat what the AI says as a draft. Change anything that doesn't fit you.</li>
-    </ul>
+    <p class="lede">What you actually do now. If you're new to informatics, start with your clinical work and the problems you notice.</p>
   </div>
   <div class="card">
     <h2>Where are you in your career?</h2>
@@ -476,6 +540,7 @@ svg.profile text{font-family:var(--f-mono)}
     </div>
   </div>
   <div class="fork" data-fork="s1"></div>
+  <details class="answers" data-answers="s1"><summary>Review or edit your answers</summary><div class="answers-in">
   <div class="card">
     <h2>Which projects have mattered most to you? <span class="req">At least one required</span></h2>
     <p class="small muted">Up to three. Clinical, operational, research, teaching, or informatics.</p>
@@ -492,6 +557,8 @@ svg.profile text{font-family:var(--f-mono)}
     <p class="small muted">4–6 sentences in your own words. The AI can draft this for you.</p>
     <textarea id="snap" class="tall" data-bind="snapshot" aria-label="Summary of where you are now"></textarea>
   </div>
+  </div></details>
+  <div class="pause ev-only"><span class="eyebrow">Pause · pair share</span><h2>Share your summary with a partner.</h2><p class="small">What surprised you? What did your partner notice that you didn't?</p><p class="early">If you finish early: skim the 20 phenotypes in <a href="#resources" data-go="resources">Resources</a>.</p></div>
 </section>
 
 <!-- STEP 2 -->
@@ -499,11 +566,12 @@ svg.profile text{font-family:var(--f-mono)}
   <div class="head">
     <span class="eyebrow">Step 2 of 4</span>
     <h1 tabindex="-1">Your current phenotype</h1>
-    <p class="lede">A phenotype is a common pattern of informatics work, such as "clinician builder" or "informatics researcher." Most people match more than one. It describes your work; it isn't a test result.</p>
-    <details class="peek"><summary>How the matching works</summary><p class="small" style="margin-top:6px">You rate how often your work involves 20 kinds of activity. The tool compares your ratings with the typical mix for each of the 20 phenotypes and lists the closest. It compares the mix of your work, not how busy you are. <a href="#resources" data-go="resources">See all 20 phenotypes</a>.</p></details>
+    <p class="lede">A phenotype is a common pattern of informatics work, such as "clinician builder." Most people match more than one. It describes your work, not you.</p>
+    <details class="peek"><summary>How the matching works</summary><p class="small" style="margin-top:6px">You rate how often your work involves 20 kinds of activity. The page compares your mix of work (not how busy you are) with the typical mix for each of the 20 phenotypes. <a href="#resources" data-go="resources">See all 20 phenotypes</a>.</p></details>
   </div>
-  <div class="carry" data-recap="s2" hidden></div>
+  <details class="carry" data-recap="s2" hidden></details>
   <div class="fork" data-fork="s2"></div>
+  <details class="answers" data-answers="s2"><summary>Review or edit your answers</summary><div class="answers-in">
   <div class="card">
     <h2>Who are you now, in a sentence or two?</h2>
     <label for="identity"><span>Describe yourself by what you do <span class="req">Required</span></span> <span class="hint">For example: "A hospitalist who fixes clinical workflows by building EHR tools." You can revise it after you see your results.</span><textarea id="identity" data-bind="identity"></textarea></label>
@@ -513,10 +581,12 @@ svg.profile text{font-family:var(--f-mono)}
     <p class="scale-key">0 Never · 1 About once a year · 2 About monthly · 3 About weekly · 4 A few times a week · 5 Daily. Choose "Not sure" to leave one out.</p>
     <div id="ratings"></div>
   </div>
+  </div></details>
   <div class="card hi" id="results">
     <h2>Which of these fit you?</h2>
     <div id="matches"></div>
   </div>
+  <div class="pause ev-only"><span class="eyebrow">Pause · table discussion</span><h2>Do your matches describe your work?</h2><p class="small">Go around the table: your top match, whether it fits, and anything that surprised you.</p><p class="early">If you finish early: open "See how you matched on all 20" and find a phenotype you'd never considered.</p></div>
 </section>
 
 <!-- STEP 3 -->
@@ -524,14 +594,16 @@ svg.profile text{font-family:var(--f-mono)}
   <div class="head">
     <span class="eyebrow">Step 3 of 4</span>
     <h1 tabindex="-1">Your goal phenotype</h1>
-    <p class="lede">Describe the work you want to be doing in 3–5 years. The tool shows the phenotypes that fit that work, and you choose one as your goal.</p>
+    <p class="lede">The work you want in 3–5 years. The page shows the phenotypes that fit it, and you choose one as your goal.</p>
   </div>
-  <div class="carry" data-recap="s3" hidden></div>
+  <div class="callout" id="explore">
+    <h2>Not sure what you want yet? That's fine.</h2>
+    <p class="small">Start from the work you enjoy, not a job title. See what exists, then pick the closest. Your goal can change as you learn.</p>
+    <div class="row"><a class="btn primary" href="#resources" data-go="resources" data-lib>Browse the 20 phenotypes</a></div>
+  </div>
+  <details class="carry" data-recap="s3" hidden></details>
   <div class="fork" data-fork="s3"></div>
-  <details class="recap" id="explore">
-    <summary>Not sure what you want yet?</summary>
-    <p class="small" style="margin-top:8px">That's common, and it's fine to explore first. Start from the work you enjoy, not a job title. <a href="#resources" data-go="resources">Browse the 20 phenotypes</a> to see what exists, then rate how much of each kind of work you'd like. If you're torn between a few, pick the closest and revisit it at your next check-in. Your goal can change as you learn.</p>
-  </details>
+  <details class="answers" data-answers="s3"><summary>Review or edit your answers</summary><div class="answers-in">
   <div class="card">
     <label for="dream">A project you'd love to lead <span class="hint">If you could do anything in informatics in the next 3–5 years, what would it be?</span><textarea id="dream" data-bind="dream"></textarea></label>
     <fieldset><legend>Where would you like to work? <span class="hint">Choose any that appeal to you.</span></legend><div class="checks" id="settings"></div></fieldset>
@@ -542,13 +614,14 @@ svg.profile text{font-family:var(--f-mono)}
     <p class="scale-key">0 Never · 1 About once a year · 2 About monthly · 3 About weekly · 4 A few times a week · 5 Daily</p>
     <div id="wants"></div>
   </div>
+  </div></details>
   <div class="card hi" id="fit">
     <h2>Which phenotype do you want to aim for? <span class="req">Required</span></h2>
-    <p class="small muted">Choose "Make this my goal" on one of the top three, or pick from all 20 below. Add a second if you're torn.</p>
     <div id="goal-now"></div>
     <div id="fit-list"></div>
-    <details class="peek"><summary>See all 20 phenotypes, sorted by fit</summary><div class="stack" style="margin-top:8px"><div class="small muted" id="picker-note"></div><div class="picker" id="picker"></div></div></details>
+    <details class="peek" id="picker-wrap"><summary>See all 20 phenotypes, sorted by fit</summary><div class="stack" style="margin-top:8px"><div class="small muted" id="picker-note"></div><div class="picker" id="picker"></div></div></details>
   </div>
+  <div class="pause ev-only"><span class="eyebrow">Pause · pair share</span><h2>Tell a partner your goal and the project you'd love to lead.</h2><p class="small">Ask them: does that sound like you? What would you have guessed?</p><p class="early">If you finish early: add a second possible goal and see how step 4 changes.</p></div>
 </section>
 
 <!-- STEP 4 -->
@@ -556,7 +629,7 @@ svg.profile text{font-family:var(--f-mono)}
   <div class="head">
     <span class="eyebrow">Step 4 of 4</span>
     <h1 tabindex="-1">Gaps and plan</h1>
-    <p class="lede">See your current and goal phenotypes side by side, look at what's different, and plan 2–3 next steps to close the gap.</p>
+    <p class="lede">What's different between your work now and your goal, and 2–3 next steps to close the gap.</p>
   </div>
   <div class="card hi" id="s4cmp">
     <h2>How does your current work compare with your goal?</h2>
@@ -569,6 +642,7 @@ svg.profile text{font-family:var(--f-mono)}
     </div>
   </div>
   <div class="fork" data-fork="s4"></div>
+  <details class="answers" data-answers="s4"><summary>Review or edit your answers</summary><div class="answers-in">
   <div class="card">
     <h2>What are your gaps? <span class="req">At least one required</span></h2>
     <p class="small muted">Fill in the ones that apply. For each, is it possible at your current workplace?</p>
@@ -597,6 +671,8 @@ svg.profile text{font-family:var(--f-mono)}
     <h2>How would you tell your story in 30 seconds?</h2>
     <label for="pitch"><span>About 30 seconds out loud: who you are now, where you're headed, and what you need. <span class="req">Optional</span></span><textarea id="pitch" class="tall" data-bind="pitch"></textarea></label>
   </div>
+  </div></details>
+  <div class="pause ev-only"><span class="eyebrow">Pause · pair share</span><h2>Say your 30-second pitch out loud to a partner.</h2><p class="small">Then trade one suggestion each: what would make it clearer or bolder?</p><p class="early">If you finish early: open your <a href="#report" data-go="report">report</a> and save it as a PDF.</p></div>
 </section>
 
 <!-- REPORT -->
@@ -619,62 +695,46 @@ svg.profile text{font-family:var(--f-mono)}
   <div class="head">
     <span class="eyebrow">Full AI coach</span>
     <h1 tabindex="-1">Do it all in one AI conversation</h1>
-    <p class="lede">A more flexible, conversational version of the same four steps. One prompt starts a coaching conversation in the AI tool you use. You can share your CV or other files, talk through what matters to you, and go deeper where you want. The AI checks in after each step and finishes by writing your one-page plan.</p>
+    <p class="lede">The same four steps as one conversation in your AI tool. Share your CV or other files, go deeper where you want, and finish with your one-page plan.</p>
   </div>
-  <div class="ai">
-    <div class="ai-band"><span class="badge">AI coaching</span><h2>Full session</h2></div>
-    <div class="ai-body">
-      <ul class="links small muted">
-        <li>You can upload or paste your CV, a portfolio, or a job description you're curious about. Remove anything sensitive first.</li>
-        <li>Don't enter patient information or confidential details. Use the AI tool your organization allows.</li>
-        <li>If your AI tool remembers past chats, it will use what it knows about you. For a blank slate, use a temporary or incognito chat.</li>
-      </ul>
-      <ol>
-        <li>Confirm your preferred AI tool below.</li>
-        <li id="full-gostep"></li>
-        <li>Chat with <span data-toolname></span>, one question at a time. Plan on 45–90 minutes. It tells you which step you're on, checks with you before moving on, and ends with your one-page career plan. Need to stop partway? Ask for "the export block so far."</li>
-        <li>Copy the box that comes after your plan (most AI tools put a Copy button on it), paste it below, then click <b>Fill in my answers</b>. That fills in all four steps here, with exact match scores and the printable report. (The AI's own scores are estimates.)</li>
-      </ol>
-      <div class="ai-controls">
-        <div class="ctl"><span class="ctl-n">1</span><label class="toolpick" for="tool-full">AI tool <select class="toolsel" id="tool-full" data-bind="aiTool" data-tools></select></label></div>
-        <div class="ctl"><span class="ctl-n">2</span><div class="ai-go"><div class="row" id="full-go"></div>
-          <details class="peek"><summary>See the prompt</summary><pre class="prompt" id="prompt-full"></pre></details></div></div>
-        <div class="ctl"><span class="ctl-n">3</span><p class="ctl-wait">Chat in <span data-toolname></span>. Come back when it writes “Copy everything below into the coach” and gives you a box.</p></div>
-        <div class="ctl"><span class="ctl-n">4</span><div class="ctl-body"><label for="paste-full">Answer from the AI<textarea id="paste-full" class="paste" data-fillsrc="fill-full" placeholder="Paste the box that follows “Copy everything below into the coach”"></textarea></label>
-          <div class="row"><button type="button" class="primary" id="fill-full" data-fillfull disabled>Fill in my answers</button></div><div class="fillmsg" id="fillmsg-full" role="status"></div></div></div>
-      </div>
-    </div>
-  </div>
+  <div id="full-panel"></div>
 </section>
 
 <!-- RESOURCES -->
 <section class="page" id="resources" hidden>
   <div class="head">
-    <span class="eyebrow">Resources</span>
-    <h1 tabindex="-1">Resources</h1>
-    <p class="lede">The phenotypes, the 20 kinds of work, competency frameworks, training and certification options, communities, and references. Links go to publicly available pages.</p>
+    <span class="eyebrow gen-only">Resources</span>
+    <span class="eyebrow ev-only">Resources and wrap-up</span>
+    <h1 tabindex="-1"><span class="gen-only">Resources</span><span class="ev-only">Resources &amp; Wrap Up</span></h1>
+    <p class="lede gen-only">The phenotypes, the 20 kinds of work, training and certification, communities, and references.</p>
+    <p class="lede ev-only">Where to go next: training, certification, and communities, plus the phenotypes and the work behind them.</p>
   </div>
-  <div class="card">
+  <div class="card ev-only res-wrap">
+    <h2>Before you go</h2>
+    <ul class="links">
+      <li>Save your plan: open your <a href="#report" data-go="report">report</a> and print it or save it as a PDF.</li>
+      <li>Your answers stay in this browser. To keep a copy, use Menu → "Save my answers to a file."</li>
+      <li>Share your plan with a mentor, and check in on it at the time you chose in step 4.</li>
+    </ul>
+    <div class="row" id="consent-post"></div>
+  </div>
+  <div class="card res-about">
     <h2>About the phenotypes</h2>
     <p>A phenotype is a common pattern of informatics work: the activities, skills, setting, and way of contributing that tend to go together. Phenotypes overlap. They aren't personality types or validated categories. Use them to reflect, talk with mentors, and plan.</p>
-    <p class="small muted">How they were made: a group of informatics faculty and fellows drafted them from experience across several fellowship programs and from earlier work describing informatics roles (KOI Pond, the CI Domains of Practice, #MyInformaticsProfile). About 100 informaticians answered a survey through Physicians in AMIA, a regional informatics group, and academic faculty groups (90 usable responses). The weights for each phenotype came from the survey and were adjusted by expert review. This supports using them for reflection, not for classifying people.</p>
-    <p class="note warn small">Prototype limits: the survey and phenotypes come from physicians. Role names here are written for all clinicians, but there are no nurse-, APP-, or pharmacist-specific phenotypes yet.</p>
+    <p class="small muted">How they were made: informatics faculty and fellows drafted them from experience across several fellowship programs and from earlier ways of describing informatics work: the CI Domains of Practice<sup><a href="#resources" data-ref="1">1</a></sup>, KOI Pond<sup><a href="#resources" data-ref="7">7</a></sup>, and #MyInformaticsProfile<sup><a href="#resources" data-ref="8">8</a></sup>. About 100 informaticians answered a survey through Physicians in AMIA, a regional informatics group, and academic faculty groups (90 usable responses). The weights for each phenotype came from the survey and were adjusted by expert review<sup><a href="#resources" data-ref="12">12</a></sup>. They were first used with fellows at AMIA's Clinical Informatics Conference retreats in 2023 and 2025<sup><a href="#resources" data-ref="12">12</a>,<a href="#resources" data-ref="13">13</a></sup>. This supports using them for reflection, not for classifying people.</p>
+    <p class="note warn small">Limits: the survey and phenotypes come from physicians. Role names are written for all clinicians, but there are no nurse-, APP-, or pharmacist-specific phenotypes yet.</p>
   </div>
-  <div class="card">
+  <div class="card res-lib" id="lib">
+    <div class="row" id="lib-return" hidden><a class="btn primary" href="#s3" data-go="s3">← Back to step 3: choose your goal</a></div>
     <h2>The 20 phenotypes</h2>
-    <p class="small muted">Each phenotype has a signature drawn from its typical mix of work: one petal for each of the 20 kinds of work, clockwise from the top in five groups. A longer petal means more of that kind of work.</p>
+    <p class="small muted">Each signature shows a phenotype's typical mix of work: one petal for each of the 20 kinds of work, clockwise from the top in five groups. A longer petal means more of that kind of work.</p>
     <div class="picker" id="lib-phenos"></div>
   </div>
-  <div class="card">
+  <div class="card res-attrs">
     <h2>The 20 kinds of work</h2>
-    <p class="small muted">"Domain" is the matching area of the Clinical Informatics Domains of Practice: D1 fundamentals, D2 improving care delivery and outcomes, D3 enterprise information systems, D4 data governance and analytics, D5 leadership and professionalism.</p>
     <div class="tablewrap"><table class="t" id="lib-attrs"></table></div>
   </div>
-  <div class="card">
-    <h2>Full AI coach</h2>
-    <p class="small">Prefer one conversation? The <a class="ai-link" href="#coach" data-go="coach">full AI coach</a> runs the whole session in any AI tool from a single prompt.</p>
-  </div>
-  <div class="card">
+  <div class="card res-what">
     <h2>What informaticians do</h2>
     <ul class="links">
       <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7647208/" target="_blank" rel="noopener">Clinical Informatics Domains of Practice</a> (physician subspecialty, 2019): 5 domains, 42 tasks, 139 knowledge and skill statements. The basis of the board exam.</li>
@@ -685,7 +745,7 @@ svg.profile text{font-family:var(--f-mono)}
       <li><a href="https://www.aaronneinstein.com/post/myinformaticsprofile" target="_blank" rel="noopener">#MyInformaticsProfile</a>: show where your time goes across areas of informatics.</li>
     </ul>
   </div>
-  <div class="card">
+  <div class="card res-ai">
     <h2>AI in clinical informatics</h2>
     <p class="small">Clinical AI is a growing part of informatics work: choosing, evaluating, putting into use, and governing AI tools in care.</p>
     <ul class="links">
@@ -693,7 +753,7 @@ svg.profile text{font-family:var(--f-mono)}
       <li><a href="https://amia.org/education-events/10x10-virtual-courses/introduction-biomedical-informatics-ai/course-overview" target="_blank" rel="noopener">AMIA 10x10: Introduction to Biomedical Informatics and AI</a> (short online course)</li>
     </ul>
   </div>
-  <div class="card">
+  <div class="card res-train">
     <h2>Training and certification</h2>
     <ul class="links">
       <li><a href="https://www.theabpm.org/become-certified/subspecialties/clinical-informatics/" target="_blank" rel="noopener">Clinical Informatics board certification</a> (physicians, ABPM). Requires an ACGME-accredited fellowship. The practice pathway is closed.</li>
@@ -705,7 +765,7 @@ svg.profile text{font-family:var(--f-mono)}
       <li>Also useful: Lean or Six Sigma training, project management training, and your EHR vendor's builder training.</li>
     </ul>
   </div>
-  <div class="card">
+  <div class="card res-comm">
     <h2>Communities</h2>
     <ul class="links">
       <li><a href="https://amia.org/communities/physicians-amia" target="_blank" rel="noopener">Physicians in AMIA (PINA)</a></li>
@@ -713,10 +773,9 @@ svg.profile text{font-family:var(--f-mono)}
       <li><a href="https://www.ania.org/" target="_blank" rel="noopener">American Nursing Informatics Association (ANIA)</a></li>
       <li><a href="https://amdis.org/" target="_blank" rel="noopener">AMDIS</a> (physician informatics leaders)</li>
       <li><a href="https://www.amia.org/career-development" target="_blank" rel="noopener">AMIA career development</a> (includes the AMIA job board)</li>
-      <li><a href="https://myidp.sciencecareers.org/" target="_blank" rel="noopener">myIDP</a>: a free career-planning tool for scientists. It uses a similar self-assessment approach.</li>
     </ul>
   </div>
-  <div class="card">
+  <div class="card res-refs">
     <h2>References</h2>
     <ol class="refs">
       <li>Silverman HD, Steen EB, Carpenito JN, et al. Domains, tasks, and knowledge for clinical informatics subspecialty practice: results of a practice analysis. <i>JAMIA</i>. 2019;26(7):586-593. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7647208/" target="_blank" rel="noopener">Free full text</a></li>
@@ -736,7 +795,7 @@ svg.profile text{font-family:var(--f-mono)}
   </div>
 </section>
 <!-- BUILD TAG: bump on every deploy so you can tell which build people are seeing. -->
-<footer class="buildtag">PREVIEW · build v0.9.0 (2026-10-14)</footer>
+<footer class="buildtag">PREVIEW · build v0.10.0 (2026-10-22)</footer>
 </main>
 </div>
 
@@ -831,21 +890,31 @@ const TOOLS = {
  copilot:{n:"Copilot",u:"https://copilot.microsoft.com/"},
  other:{n:"your AI tool",u:""}
 };
-const TOOL_LABEL = k => ({copilot:"Microsoft Copilot (including your organization's version)",other:"Another tool (copy the prompt)"}[k] || TOOLS[k].n);
+const TOOL_LABEL = k => ({copilot:"Microsoft Copilot",other:"Another tool"}[k] || TOOLS[k].n);
 const STEPS = [["s1","Where you are now"],["s2","Current phenotype"],["s3","Goal phenotype"],["s4","Gaps and plan"]];
 const SECTION = {s1:"Step 1: Where are you now?",s2:"Step 2: What work do you do now?",s3:"Step 3: What work do you want?",s4:"Step 4: What are your gaps, and what will you do next?"};
 const AI_INTRO = {
-  s1:"The AI asks you about your work and drafts your answers.",
-  s2:"The AI helps you describe yourself, then asks about your work and suggests ratings you can change.",
-  s3:"The AI asks about the work you want, your priorities, and where you'd like to work, then suggests ratings you can change.",
-  s4:"The AI helps you name gaps and drafts your steps, ask, and pitch."
+  s1:"The AI asks about your work and drafts your answers.",
+  s2:"The AI helps you describe yourself and suggests ratings for 20 kinds of work.",
+  s3:"The AI asks about the work you want and suggests ratings.",
+  s4:"The AI helps you name your gaps and drafts your next steps and pitch.",
+  full:"One conversation covers all four steps. You can share your CV or a job description (remove anything sensitive first). Need to stop partway? Ask for \"the export block so far.\""
 };
-const AI_RETURNS = {s1:"your projects, setting, and summary",s2:"a short description of you and your ratings",s3:"ratings for the work you want, the settings you'd consider, and a project you'd love to lead",s4:"your gaps, next steps, ask, and pitch"};
+// Workshop layer. The <head><meta name="robots" content="noindex"> script sets html[data-event]; CSS shows .ev-only and hides .gen-only.
+// surveys.pre/post: anonymous Google Form links (empty = "link coming soon"). Set on:false to remove consent and surveys.
+const EVENTS = {
+  "amia-2026":{name:"AMIA 2026", url:"https://jgenk.github.io/ci-phenotype-coach/amia-2026/", surveys:{on:true, pre:"", post:""},
+    pace:"I'm doing this in a timed workshop, so keep it brisk: aim to finish this step in about 10 minutes."}
+};
+const EVENT = document.documentElement.dataset.event || "", EV = EVENTS[EVENT] || null;
+const IMG = /\/amia-2026\//.test(location.pathname) ? "../img/" : "img/"; // the event copy shares the site's images
+// QR code for EVENTS["amia-2026"].url, made by tools/qr.py.
+const QR_SVG = `<svg viewBox="0 0 33 33" role="img" aria-label="QR code for the AMIA 2026 coach" shape-rendering="crispEdges"><path fill="#000" d="M0 0h1v1h-1zM1 0h1v1h-1zM2 0h1v1h-1zM3 0h1v1h-1zM4 0h1v1h-1zM5 0h1v1h-1zM6 0h1v1h-1zM8 0h1v1h-1zM12 0h1v1h-1zM16 0h1v1h-1zM17 0h1v1h-1zM18 0h1v1h-1zM19 0h1v1h-1zM20 0h1v1h-1zM23 0h1v1h-1zM24 0h1v1h-1zM26 0h1v1h-1zM27 0h1v1h-1zM28 0h1v1h-1zM29 0h1v1h-1zM30 0h1v1h-1zM31 0h1v1h-1zM32 0h1v1h-1zM0 1h1v1h-1zM6 1h1v1h-1zM8 1h1v1h-1zM9 1h1v1h-1zM10 1h1v1h-1zM12 1h1v1h-1zM14 1h1v1h-1zM18 1h1v1h-1zM20 1h1v1h-1zM22 1h1v1h-1zM23 1h1v1h-1zM24 1h1v1h-1zM26 1h1v1h-1zM32 1h1v1h-1zM0 2h1v1h-1zM2 2h1v1h-1zM3 2h1v1h-1zM4 2h1v1h-1zM6 2h1v1h-1zM9 2h1v1h-1zM12 2h1v1h-1zM13 2h1v1h-1zM14 2h1v1h-1zM16 2h1v1h-1zM18 2h1v1h-1zM20 2h1v1h-1zM23 2h1v1h-1zM26 2h1v1h-1zM28 2h1v1h-1zM29 2h1v1h-1zM30 2h1v1h-1zM32 2h1v1h-1zM0 3h1v1h-1zM2 3h1v1h-1zM3 3h1v1h-1zM4 3h1v1h-1zM6 3h1v1h-1zM8 3h1v1h-1zM9 3h1v1h-1zM10 3h1v1h-1zM11 3h1v1h-1zM12 3h1v1h-1zM18 3h1v1h-1zM19 3h1v1h-1zM22 3h1v1h-1zM23 3h1v1h-1zM24 3h1v1h-1zM26 3h1v1h-1zM28 3h1v1h-1zM29 3h1v1h-1zM30 3h1v1h-1zM32 3h1v1h-1zM0 4h1v1h-1zM2 4h1v1h-1zM3 4h1v1h-1zM4 4h1v1h-1zM6 4h1v1h-1zM9 4h1v1h-1zM12 4h1v1h-1zM16 4h1v1h-1zM19 4h1v1h-1zM20 4h1v1h-1zM21 4h1v1h-1zM24 4h1v1h-1zM26 4h1v1h-1zM28 4h1v1h-1zM29 4h1v1h-1zM30 4h1v1h-1zM32 4h1v1h-1zM0 5h1v1h-1zM6 5h1v1h-1zM9 5h1v1h-1zM10 5h1v1h-1zM12 5h1v1h-1zM13 5h1v1h-1zM14 5h1v1h-1zM15 5h1v1h-1zM16 5h1v1h-1zM19 5h1v1h-1zM21 5h1v1h-1zM24 5h1v1h-1zM26 5h1v1h-1zM32 5h1v1h-1zM0 6h1v1h-1zM1 6h1v1h-1zM2 6h1v1h-1zM3 6h1v1h-1zM4 6h1v1h-1zM5 6h1v1h-1zM6 6h1v1h-1zM8 6h1v1h-1zM10 6h1v1h-1zM12 6h1v1h-1zM14 6h1v1h-1zM16 6h1v1h-1zM18 6h1v1h-1zM20 6h1v1h-1zM22 6h1v1h-1zM24 6h1v1h-1zM26 6h1v1h-1zM27 6h1v1h-1zM28 6h1v1h-1zM29 6h1v1h-1zM30 6h1v1h-1zM31 6h1v1h-1zM32 6h1v1h-1zM8 7h1v1h-1zM9 7h1v1h-1zM12 7h1v1h-1zM15 7h1v1h-1zM16 7h1v1h-1zM17 7h1v1h-1zM18 7h1v1h-1zM19 7h1v1h-1zM23 7h1v1h-1zM0 8h1v1h-1zM2 8h1v1h-1zM3 8h1v1h-1zM5 8h1v1h-1zM6 8h1v1h-1zM7 8h1v1h-1zM9 8h1v1h-1zM10 8h1v1h-1zM11 8h1v1h-1zM14 8h1v1h-1zM15 8h1v1h-1zM16 8h1v1h-1zM17 8h1v1h-1zM18 8h1v1h-1zM19 8h1v1h-1zM21 8h1v1h-1zM26 8h1v1h-1zM29 8h1v1h-1zM31 8h1v1h-1zM32 8h1v1h-1zM0 9h1v1h-1zM1 9h1v1h-1zM3 9h1v1h-1zM4 9h1v1h-1zM7 9h1v1h-1zM10 9h1v1h-1zM11 9h1v1h-1zM13 9h1v1h-1zM16 9h1v1h-1zM17 9h1v1h-1zM18 9h1v1h-1zM19 9h1v1h-1zM23 9h1v1h-1zM26 9h1v1h-1zM27 9h1v1h-1zM29 9h1v1h-1zM30 9h1v1h-1zM31 9h1v1h-1zM32 9h1v1h-1zM0 10h1v1h-1zM2 10h1v1h-1zM3 10h1v1h-1zM6 10h1v1h-1zM8 10h1v1h-1zM9 10h1v1h-1zM11 10h1v1h-1zM12 10h1v1h-1zM13 10h1v1h-1zM18 10h1v1h-1zM20 10h1v1h-1zM23 10h1v1h-1zM25 10h1v1h-1zM27 10h1v1h-1zM28 10h1v1h-1zM29 10h1v1h-1zM31 10h1v1h-1zM32 10h1v1h-1zM0 11h1v1h-1zM3 11h1v1h-1zM4 11h1v1h-1zM7 11h1v1h-1zM9 11h1v1h-1zM12 11h1v1h-1zM16 11h1v1h-1zM17 11h1v1h-1zM23 11h1v1h-1zM24 11h1v1h-1zM26 11h1v1h-1zM27 11h1v1h-1zM29 11h1v1h-1zM31 11h1v1h-1zM0 12h1v1h-1zM2 12h1v1h-1zM3 12h1v1h-1zM6 12h1v1h-1zM7 12h1v1h-1zM8 12h1v1h-1zM9 12h1v1h-1zM14 12h1v1h-1zM15 12h1v1h-1zM16 12h1v1h-1zM20 12h1v1h-1zM22 12h1v1h-1zM23 12h1v1h-1zM24 12h1v1h-1zM25 12h1v1h-1zM27 12h1v1h-1zM28 12h1v1h-1zM29 12h1v1h-1zM31 12h1v1h-1zM2 13h1v1h-1zM3 13h1v1h-1zM4 13h1v1h-1zM7 13h1v1h-1zM9 13h1v1h-1zM11 13h1v1h-1zM12 13h1v1h-1zM13 13h1v1h-1zM14 13h1v1h-1zM19 13h1v1h-1zM20 13h1v1h-1zM24 13h1v1h-1zM27 13h1v1h-1zM29 13h1v1h-1zM30 13h1v1h-1zM31 13h1v1h-1zM0 14h1v1h-1zM1 14h1v1h-1zM3 14h1v1h-1zM5 14h1v1h-1zM6 14h1v1h-1zM10 14h1v1h-1zM11 14h1v1h-1zM12 14h1v1h-1zM13 14h1v1h-1zM14 14h1v1h-1zM17 14h1v1h-1zM18 14h1v1h-1zM19 14h1v1h-1zM21 14h1v1h-1zM24 14h1v1h-1zM26 14h1v1h-1zM27 14h1v1h-1zM29 14h1v1h-1zM0 15h1v1h-1zM1 15h1v1h-1zM3 15h1v1h-1zM5 15h1v1h-1zM8 15h1v1h-1zM9 15h1v1h-1zM11 15h1v1h-1zM12 15h1v1h-1zM15 15h1v1h-1zM19 15h1v1h-1zM21 15h1v1h-1zM22 15h1v1h-1zM23 15h1v1h-1zM25 15h1v1h-1zM26 15h1v1h-1zM27 15h1v1h-1zM29 15h1v1h-1zM30 15h1v1h-1zM2 16h1v1h-1zM3 16h1v1h-1zM5 16h1v1h-1zM6 16h1v1h-1zM8 16h1v1h-1zM11 16h1v1h-1zM12 16h1v1h-1zM13 16h1v1h-1zM16 16h1v1h-1zM20 16h1v1h-1zM21 16h1v1h-1zM22 16h1v1h-1zM25 16h1v1h-1zM26 16h1v1h-1zM28 16h1v1h-1zM30 16h1v1h-1zM3 17h1v1h-1zM4 17h1v1h-1zM5 17h1v1h-1zM9 17h1v1h-1zM10 17h1v1h-1zM11 17h1v1h-1zM12 17h1v1h-1zM13 17h1v1h-1zM15 17h1v1h-1zM20 17h1v1h-1zM22 17h1v1h-1zM23 17h1v1h-1zM24 17h1v1h-1zM25 17h1v1h-1zM26 17h1v1h-1zM28 17h1v1h-1zM29 17h1v1h-1zM32 17h1v1h-1zM0 18h1v1h-1zM3 18h1v1h-1zM6 18h1v1h-1zM11 18h1v1h-1zM12 18h1v1h-1zM14 18h1v1h-1zM15 18h1v1h-1zM16 18h1v1h-1zM18 18h1v1h-1zM20 18h1v1h-1zM21 18h1v1h-1zM27 18h1v1h-1zM28 18h1v1h-1zM30 18h1v1h-1zM31 18h1v1h-1zM0 19h1v1h-1zM1 19h1v1h-1zM2 19h1v1h-1zM7 19h1v1h-1zM9 19h1v1h-1zM10 19h1v1h-1zM14 19h1v1h-1zM16 19h1v1h-1zM17 19h1v1h-1zM18 19h1v1h-1zM22 19h1v1h-1zM23 19h1v1h-1zM24 19h1v1h-1zM25 19h1v1h-1zM26 19h1v1h-1zM28 19h1v1h-1zM31 19h1v1h-1zM1 20h1v1h-1zM5 20h1v1h-1zM6 20h1v1h-1zM12 20h1v1h-1zM14 20h1v1h-1zM15 20h1v1h-1zM16 20h1v1h-1zM19 20h1v1h-1zM20 20h1v1h-1zM21 20h1v1h-1zM22 20h1v1h-1zM29 20h1v1h-1zM30 20h1v1h-1zM32 20h1v1h-1zM0 21h1v1h-1zM3 21h1v1h-1zM7 21h1v1h-1zM8 21h1v1h-1zM11 21h1v1h-1zM14 21h1v1h-1zM15 21h1v1h-1zM16 21h1v1h-1zM17 21h1v1h-1zM19 21h1v1h-1zM23 21h1v1h-1zM24 21h1v1h-1zM26 21h1v1h-1zM30 21h1v1h-1zM32 21h1v1h-1zM2 22h1v1h-1zM5 22h1v1h-1zM6 22h1v1h-1zM7 22h1v1h-1zM10 22h1v1h-1zM11 22h1v1h-1zM13 22h1v1h-1zM14 22h1v1h-1zM15 22h1v1h-1zM18 22h1v1h-1zM20 22h1v1h-1zM23 22h1v1h-1zM27 22h1v1h-1zM29 22h1v1h-1zM31 22h1v1h-1zM32 22h1v1h-1zM1 23h1v1h-1zM3 23h1v1h-1zM5 23h1v1h-1zM7 23h1v1h-1zM9 23h1v1h-1zM11 23h1v1h-1zM12 23h1v1h-1zM13 23h1v1h-1zM14 23h1v1h-1zM15 23h1v1h-1zM18 23h1v1h-1zM19 23h1v1h-1zM25 23h1v1h-1zM26 23h1v1h-1zM27 23h1v1h-1zM29 23h1v1h-1zM0 24h1v1h-1zM2 24h1v1h-1zM3 24h1v1h-1zM4 24h1v1h-1zM6 24h1v1h-1zM8 24h1v1h-1zM9 24h1v1h-1zM11 24h1v1h-1zM12 24h1v1h-1zM17 24h1v1h-1zM20 24h1v1h-1zM22 24h1v1h-1zM23 24h1v1h-1zM24 24h1v1h-1zM25 24h1v1h-1zM26 24h1v1h-1zM27 24h1v1h-1zM28 24h1v1h-1zM31 24h1v1h-1zM8 25h1v1h-1zM9 25h1v1h-1zM12 25h1v1h-1zM15 25h1v1h-1zM19 25h1v1h-1zM21 25h1v1h-1zM22 25h1v1h-1zM23 25h1v1h-1zM24 25h1v1h-1zM28 25h1v1h-1zM29 25h1v1h-1zM0 26h1v1h-1zM1 26h1v1h-1zM2 26h1v1h-1zM3 26h1v1h-1zM4 26h1v1h-1zM5 26h1v1h-1zM6 26h1v1h-1zM8 26h1v1h-1zM9 26h1v1h-1zM10 26h1v1h-1zM11 26h1v1h-1zM12 26h1v1h-1zM13 26h1v1h-1zM14 26h1v1h-1zM17 26h1v1h-1zM18 26h1v1h-1zM19 26h1v1h-1zM23 26h1v1h-1zM24 26h1v1h-1zM26 26h1v1h-1zM28 26h1v1h-1zM0 27h1v1h-1zM6 27h1v1h-1zM8 27h1v1h-1zM9 27h1v1h-1zM10 27h1v1h-1zM12 27h1v1h-1zM13 27h1v1h-1zM14 27h1v1h-1zM15 27h1v1h-1zM17 27h1v1h-1zM18 27h1v1h-1zM21 27h1v1h-1zM22 27h1v1h-1zM23 27h1v1h-1zM24 27h1v1h-1zM28 27h1v1h-1zM29 27h1v1h-1zM30 27h1v1h-1zM32 27h1v1h-1zM0 28h1v1h-1zM2 28h1v1h-1zM3 28h1v1h-1zM4 28h1v1h-1zM6 28h1v1h-1zM10 28h1v1h-1zM11 28h1v1h-1zM15 28h1v1h-1zM16 28h1v1h-1zM17 28h1v1h-1zM18 28h1v1h-1zM19 28h1v1h-1zM21 28h1v1h-1zM23 28h1v1h-1zM24 28h1v1h-1zM25 28h1v1h-1zM26 28h1v1h-1zM27 28h1v1h-1zM28 28h1v1h-1zM30 28h1v1h-1zM31 28h1v1h-1zM0 29h1v1h-1zM2 29h1v1h-1zM3 29h1v1h-1zM4 29h1v1h-1zM6 29h1v1h-1zM8 29h1v1h-1zM9 29h1v1h-1zM10 29h1v1h-1zM12 29h1v1h-1zM16 29h1v1h-1zM23 29h1v1h-1zM24 29h1v1h-1zM27 29h1v1h-1zM29 29h1v1h-1zM32 29h1v1h-1zM0 30h1v1h-1zM2 30h1v1h-1zM3 30h1v1h-1zM4 30h1v1h-1zM6 30h1v1h-1zM8 30h1v1h-1zM14 30h1v1h-1zM15 30h1v1h-1zM16 30h1v1h-1zM17 30h1v1h-1zM18 30h1v1h-1zM21 30h1v1h-1zM22 30h1v1h-1zM23 30h1v1h-1zM24 30h1v1h-1zM26 30h1v1h-1zM27 30h1v1h-1zM29 30h1v1h-1zM30 30h1v1h-1zM0 31h1v1h-1zM6 31h1v1h-1zM14 31h1v1h-1zM17 31h1v1h-1zM18 31h1v1h-1zM19 31h1v1h-1zM20 31h1v1h-1zM23 31h1v1h-1zM24 31h1v1h-1zM26 31h1v1h-1zM27 31h1v1h-1zM28 31h1v1h-1zM29 31h1v1h-1zM32 31h1v1h-1zM0 32h1v1h-1zM1 32h1v1h-1zM2 32h1v1h-1zM3 32h1v1h-1zM4 32h1v1h-1zM5 32h1v1h-1zM6 32h1v1h-1zM8 32h1v1h-1zM10 32h1v1h-1zM12 32h1v1h-1zM13 32h1v1h-1zM14 32h1v1h-1zM16 32h1v1h-1zM17 32h1v1h-1zM18 32h1v1h-1zM19 32h1v1h-1zM21 32h1v1h-1zM23 32h1v1h-1zM26 32h1v1h-1zM28 32h1v1h-1zM30 32h1v1h-1z"/></svg>`;
 
 /* =====================================================================
    STATE (saved in this browser; can be saved to and loaded from a file)
    ===================================================================== */
-const KEY = "ciPhenotypeCoach.v2" + (/\/preview\//.test(location.pathname) ? ".preview" : ""); // never change the live key
+const KEY = "ciPhenotypeCoach.v2" + (/\/preview\//.test(location.pathname) ? ".preview" : "") + (EVENT ? "."+EVENT : ""); // never change the live key
 const blank = () => ({
   pref:"", aiTool:"chatgpt", mode:{s1:"",s2:"",s3:"",s4:""}, stepTool:{s1:"",s2:"",s3:"",s4:""},
   profile:{name:"",profession:"",setting:"",stage:"",experience:"",time:""},
@@ -855,7 +924,7 @@ const blank = () => ({
   dream:"", settings:[], want:Array(20).fill(null), wantUnsure:Array(20).fill(false), target:["",""],
   gaps:Object.fromEntries(GAPDIMS.map(g=>[g[0],{t:"",p:""}])),
   steps:[{what:"",when:"",who:""},{what:"",when:"",who:""},{what:"",when:"",who:""}],
-  ask:"", checkin:"", pitch:"", made:""
+  ask:"", checkin:"", pitch:"", made:"", consent:""
 });
 // Worked example (a fictional nurse practitioner), used by "Fill with an example" one step at a time.
 const EXAMPLE = () => Object.assign(blank(), {
@@ -896,7 +965,7 @@ const $$ = s => document.querySelectorAll(s);
 const esc = s => String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const clone = o => JSON.parse(JSON.stringify(o));
 const code = i => "A"+String(i+1).padStart(2,"0");
-const attrLabel = i => `${ATTR[i].n} (${code(i)})`;
+const attrLabel = i => ATTR[i].n;
 const pIndex = n => PHENO.findIndex(p=>p.n===n);
 const plural = (n,w) => `${n} ${w}${n===1?"":"s"}`;
 function getPath(o,p){ return p.split(".").reduce((a,k)=>a==null?a:a[k],o); }
@@ -977,7 +1046,7 @@ const isNew = () => { const p=S.profile; return p.experience===EXPERIENCE[0]||p.
 // the end (any order), and a fixed finish (summarize, confirm, then the answer block the page reads).
 const COACH_STYLE = `Think of a trusted senior colleague over coffee: curious, warm, direct, and on my side.`;
 const TALK = `- Have a conversation, not an interview. Respond to what I said before you ask the next thing: reflect it back, name a theme or tension you notice, or offer a short observation or example when it helps.
-- Ask one or two questions at a time, whatever feels natural. Most replies should be a few sentences; go longer when I've shared something worth unpacking.
+- Be concise. Most replies are 2–4 sentences and then one or two questions. No long lists or headings until the final summary. Go longer only when I've shared something worth unpacking.
 - Follow my lead. If I go somewhere useful, go with me, then steer us back when it's time.`;
 const MEMORY = `- If you remember things about me from other conversations, ask before you use them.`;
 const SAFETY = `- Don't ask for patient information or confidential details. If I share any, ask me to remove it.`;
@@ -990,11 +1059,14 @@ ${TALK}
 - Call each kind of work by its name. Codes like (A01) are only for the answer block at the end.
 ${MEMORY}
 - If it would save time, invite me to paste or upload a CV, role description, or job posting. Remind me to remove anything sensitive first.
-${SAFETY}`; }
+${SAFETY}${EV?`\n- ${EV.pace}`:""}`; }
 const NEED = "What you need by the end (cover these in whatever order fits our conversation, and skip anything I've already told you):";
 // The answer comes back in a code block: AI tools put a Copy button on it and don't restyle what's inside.
 const BLOCK_RULES = "My coach page reads this block automatically, so: put the whole block in one code block (```) with nothing else inside it; use every label below, in capitals, in this order, one item per line; write \"none\" for anything I chose to skip.";
-const finish = what => `When you have enough, tell me in a few sentences ${what}, and ask whether it's right. Once I confirm, write "Copy everything below into the coach" and then the answer block below. ${BLOCK_RULES} If anything is missing, ask me instead of guessing.`;
+// A link back to the coach at the end of the AI's answer (only when the page is on the web; a local file can't be linked).
+const backUrl = hash => /^https?:$/.test(location.protocol) ? location.origin+location.pathname+location.search+"#"+hash : "";
+const backLine = hash => backUrl(hash) ? ` After the code block, end with this line, as a clickable link: "Back to the coach: ${backUrl(hash)}"` : "";
+const finish = (what, step) => `When you have enough, tell me in a few sentences ${what}, and ask whether it's right. Once I confirm, write "Copy everything below into the coach" and then the answer block below. ${BLOCK_RULES}${backLine(step)} If anything is missing, ask me instead of guessing.`;
 const draftRatings = fromNow => `Don't go through the 20 kinds of work one at a time. Once we've talked, draft ratings for all 20 in one message, grouped as they're listed${fromNow?", starting from my current ratings and changing only what should change":""}, and mark the few you're least sure of. Ask me to correct them, then ask about only the ones you couldn't judge.`;
 const ratingsFormat = label => `${label}:
 Clinical work (A01) = 3
@@ -1026,7 +1098,7 @@ ${NEED}
 - something I wanted to do but didn't, and what got in the way
 - what my workplace makes easy or hard, and who makes informatics decisions
 
-${finish("what you're hearing about where I am now")}
+${finish("what you're hearing about where I am now","s1")}
 PROJECTS:
 1. project title | my role (I led it / I did the work / I advised / I was kept informed) | why it mattered
 WANTED TO DO: one sentence
@@ -1046,7 +1118,7 @@ ${attrList()}
 
 ${draftRatings(false)}
 
-${finish("who you think I am now and which kinds of work stand out")}
+${finish("who you think I am now and which kinds of work stand out","s2")}
 IDENTITY: 1–2 sentences
 ${ratingsFormat("RATINGS")}`;
  const curLines = DISPLAY.map(i=>`- ${ATTR[i].n} (${code(i)}): now ${S.ratings[i]??"not sure"}`).join("\n");
@@ -1070,7 +1142,7 @@ ${NEED}
 
 ${draftRatings(true)}
 
-${finish("the work you hear me wanting")}
+${finish("the work you hear me wanting","s3")}
 ${ratingsFormat("WANT RATINGS")}
 SETTING: the settings I'd consider, from the list above
 DREAM PROJECT: one sentence`;
@@ -1093,7 +1165,7 @@ ${NEED}
 
 Realistic options include ${IDEAS_TEXT}. Push back gently if a step is vague or too big, and help me make it specific enough to start next month.
 
-${finish("my plan")}
+${finish("my plan","s4")}
 GAPS:
 Skills: the gap | Possible: Yes / With changes / Not likely
 Experience: the gap | Possible: ...
@@ -1126,7 +1198,7 @@ ${SAFETY}
 - If I say I need to stop, give me the export block (described at the end) with everything so far.
 
 HOW TO START
-Open with a short welcome (4–5 sentences): what we'll do together (look at where I am now, the kind of informatics work I do, the work I want, and a plan to get there), that it takes about 45–90 minutes and I can stop anytime, and that I'll leave with a one-page plan. Then ask whether you should use anything you remember about me from other conversations, and whether I'd like to start by sharing a CV or just by talking.
+Open with a short welcome (3–4 sentences): what we'll do together (look at where I am now, the kind of informatics work I do, the work I want, and a plan to get there), that ${EV?"we'll move briskly because I'm in a timed workshop":"it takes about 45–90 minutes"} and I can stop anytime, and that I'll leave with a one-page plan. Then ask whether you should use anything you remember about me from other conversations, and whether I'd like to start by sharing a CV or just by talking.
 
 THROUGHOUT
 - Keep the destination in view: a goal I chose and 2–3 next steps I can act on in the next 6 months. When something I say connects to that, point it out.
@@ -1175,7 +1247,7 @@ Realistic ideas include ${IDEAS_TEXT}. Push back gently if a step is vague or to
 
 FINISH
 1. Write my one-page career plan with these headings: About me; Where I am now; Current phenotype (what fits and what to grow); Goal phenotype (why it fits); Biggest gaps; Next steps (a table: step, by when, who can help); My ask; My pitch. Keep it to one page, in plain language.
-2. Then write "Copy everything below into the coach" and this export block. ${BLOCK_RULES} Before writing it, check you have every item; if something is missing, ask me instead of guessing.
+2. Then write "Copy everything below into the coach" and this export block. ${BLOCK_RULES}${backLine("coach")} Before writing it, check you have every item; if something is missing, ask me instead of guessing.
 PROFESSION: one of ${PROFESSIONS.join(", ")}
 SPECIALTY AND SETTING: one line
 CAREER STAGE: one of ${STAGES.join(", ")}
@@ -1212,10 +1284,12 @@ PITCH: about 75 words`; }
 const LABELS = ["PROFESSION","SPECIALTY AND SETTING","CAREER STAGE","INFORMATICS EXPERIENCE","INFORMATICS SHARE","CURRENT PHENOTYPE","PROJECTS","WANTED TO DO","WHAT GOT IN THE WAY","MY SETTING","SUMMARY","WANT RATINGS","RATINGS","SETTING","IDENTITY","DREAM PROJECT","SECOND GOAL","GOAL","GAPS","NEXT STEPS","ASK","PITCH"];
 // Splits an answer into labeled sections. Tolerates markdown bold, headings, bullets, and code fences.
 function sections(txt){
-  const out={}; let cur=null;
+  const out={}; let cur=null, fences=0;
   const re=new RegExp("^[\\s>*#_-]*("+LABELS.join("|")+")[\\s*_]*:\\s*(.*)$","i");
   txt.replace(/\r/g,"").split("\n").forEach(line=>{
-    if(/^\s*(```|~~~)/.test(line)) return;
+    // A closing fence ends the block, so chat text after it (like "Back to the coach: …") isn't added to the last item.
+    if(/^\s*(```|~~~)/.test(line)){ if(++fences%2===0) cur=null; return; }
+    if(/^\W*back to the coach\b/i.test(line)){ cur=null; return; }
     const m=line.match(re);
     if(m){ cur=m[1].toUpperCase(); out[cur]=(m[2]||"").replace(/\*\*/g,"").trim(); }
     else if(cur){ out[cur]+=(out[cur]?"\n":"")+line.replace(/\*\*/g,"").trim(); }
@@ -1296,9 +1370,16 @@ function applyFull(txt){
 function renderCheck(step, C){
   const msg=$("#fillmsg-"+step), reqMiss=C.filter(c=>!c.ok&&!c.opt);
   if(!C.some(c=>c.ok)){ msg.innerHTML=`<p class="needmsg">Nothing matched. Make sure you pasted the AI's final box, the one that follows “Copy everything below into the coach.”</p>`; return; }
+  // Everything required arrived: a short confirmation and the way forward. The details stay behind "Review or edit your answers".
+  if(!reqMiss.length && step!=="full"){
+    const skipped=C.filter(c=>!c.ok).map(c=>c.label.toLowerCase());
+    const next = step==="s1" ? `<a class="btn primary" href="#s2" data-go="s2">Next: Current phenotype →</a>`
+      : step==="s4" ? `<a class="btn primary" href="#report" data-go="report">See my report →</a>` : "";
+    const found = step==="s2" && rated()>=8 ? ` Your closest phenotype now: <b>${esc(PHENO[matches()[0].i].n)}</b>. See your matches below.`
+      : step==="s3" && wanted()>=8 ? ` Closest fit for the work you want: <b>${esc(PHENO[fits()[0].i].n)}</b>. Choose your goal below.` : "";
+    msg.innerHTML=`<div class="fill-ok"><p><b>✓ Filled in.</b>${found}</p>${skipped.length?`<p class="small muted">Skipped (optional): ${esc(skipped.join(", "))}.</p>`:""}${next?`<div class="row">${next}</div>`:""}<p class="small muted">To change something, tell the AI and paste its new box, or open "Review or edit your answers" below.</p></div>`;
+    return; }
   let h=`<ul class="checklist">${C.map(c=>`<li class="${c.ok?"":c.opt?"opt":"no"}">${esc(c.label)}${c.detail?`: ${esc(c.detail)}`:""}${!c.ok&&c.opt?" (optional)":""}</li>`).join("")}</ul>`;
-  if(step==="s2" && rated()>=8){ const t=matches()[0]; h+=`<p class="small" style="margin-top:6px">Your closest phenotype now: <b>${esc(PHENO[t.i].n)}</b>, match score ${score(t.r)}%. Your full results are below.</p>`; }
-  if(step==="s3" && wanted()>=8){ const t=fits()[0]; h+=`<p class="small" style="margin-top:6px">Closest fit for the work you want: <b>${esc(PHENO[t.i].n)}</b>, fit score ${score(t.r)}%. See the suggestions below, then choose your goal.</p>`; }
   if(reqMiss.length){ const fix=`Please write the answer block again, in one code block, in exactly the format from my first message: every label in capitals, one item per line. I'm missing: ${reqMiss.map(c=>`${c.label}${c.detail?` (${c.detail})`:""}`).join("; ")}.`;
     h+=`<p class="small" style="margin-top:6px">Some required items are missing. Copy this message into the AI and paste its new answer here:</p><pre hidden id="fix-${step}">${esc(fix)}</pre><button type="button" class="tiny" data-copy="fix-${step}" style="margin-top:4px">Copy the fix-it message</button>`; }
   msg.innerHTML=h;
@@ -1312,42 +1393,45 @@ const modeFor = step => S.mode[step] || S.pref;
 const toolFor = step => S.stepTool[step] || S.aiTool;
 const toolName = k => k==="other" ? "your AI tool" : TOOLS[k].n;
 const toolOptions = sel => Object.keys(TOOLS).map(k=>`<option value="${k}" ${k===sel?"selected":""}>${esc(TOOL_LABEL(k))}</option>`).join("");
-const goStep = tk => tk==="other" ? "Click the button below to copy your prompt. Open your AI tool and paste it (Ctrl+V or ⌘V)."
-  : `Click the button below to copy your prompt and open ${esc(TOOLS[tk].n)}. Paste it there (Ctrl+V or ⌘V).`;
 function goButton(key, tk){ return tk==="other"
   ? `<button type="button" class="primary" data-copyprompt="${key}">Copy prompt</button>`
   : `<a class="btn primary" href="${TOOLS[tk].u}" target="_blank" rel="noopener" data-copyprompt="${key}">Copy prompt and open ${esc(TOOLS[tk].n)} ↗</a>`; }
-function renderPref(){ $$("[data-pref]").forEach(b=>b.setAttribute("aria-pressed", String(S.pref===b.dataset.pref))); $("#pref-tool").hidden = S.pref!=="ai"; }
+function renderPref(){ $$("[data-pref]").forEach(b=>b.setAttribute("aria-pressed", String(S.pref===b.dataset.pref))); $("#pref-tool").hidden = S.pref!=="ai"; if(S.pref) $("#pref-card").classList.remove("need"); }
+// The AI panel: three numbered controls (copy the prompt, chat, paste back). key is a step id or "full".
+function aiPanel(key, title, tk, prompt, modeSwitch){
+  const tool = key==="full" ? `<select class="toolsel" id="tool-full" data-bind="aiTool" aria-label="AI tool">${toolOptions(tk)}</select>`
+    : `<select class="toolsel" id="tool-${key}" data-steptool="${key}" aria-label="AI tool">${toolOptions(tk)}</select>`;
+  const fillAttr = key==="full" ? "data-fillfull" : `data-fill="${key}"`;
+  return `<div class="ai">
+    <div class="ai-band"><span class="badge">AI coaching</span><h2>${title}</h2><span class="spacer"></span>${modeSwitch||""}</div>
+    <div class="ai-body">
+    <p class="small muted">${AI_INTRO[key]}</p>
+    <div class="ai-controls">
+      <div class="ctl"><span class="ctl-n">1</span><div class="ai-go"><div class="row">${goButton(key,tk)}<label class="toolpick small">Using ${tool}</label></div>
+        <details class="peek"><summary>See the prompt</summary><pre class="prompt" id="prompt-${key}">${esc(prompt)}</pre></details></div></div>
+      <div class="ctl"><span class="ctl-n">2</span><p class="ctl-wait">Chat with ${esc(toolName(tk))}. When you're done, it gives you a box that follows “Copy everything below into the coach.”${key==="full"?"":" A new chat or the same chat both work."}</p></div>
+      <div class="ctl"><span class="ctl-n">3</span><div class="ctl-body"><label for="paste-${key}">Paste the box here<textarea id="paste-${key}" class="paste" data-fillsrc="fill-${key}" placeholder="Paste the box that follows “Copy everything below into the coach”"></textarea></label>
+        <div class="row"><button type="button" class="primary" id="fill-${key}" ${fillAttr} disabled>Fill in my answers</button></div><div class="fillmsg" id="fillmsg-${key}" role="status"></div></div></div>
+    </div></div></div>`; }
 function renderFork(step){
   const el=document.querySelector(`[data-fork="${step}"]`), m=modeFor(step), tk=toolFor(step);
-  if(!m) el.innerHTML="";
+  // Step 1 without a choice (someone skipped Home): ask here.
+  if(!m) el.innerHTML = step==="s1" ? `<div class="card choose-first"><h2>How do you want to work? <span class="req">Required</span></h2><div class="choice">
+      <button type="button" data-pref="ai">With an AI tool<span>The AI asks you questions and drafts your answers.</span></button>
+      <button type="button" data-pref="self">On my own<span>Fill in each step yourself. No AI needed.</span></button></div></div>` : "";
   else if(m==="self") el.innerHTML=`<div class="ai-band manual-band"><span class="badge">Manual entry</span><h2>${SECTION[step]}</h2><span class="spacer"></span><button type="button" class="linkbtn ai-link" data-mode="ai" data-step="${step}">Use AI for this step instead</button></div>`;
-  else el.innerHTML=`<div class="ai">
-    <div class="ai-band"><span class="badge">AI coaching</span><h2>${SECTION[step]}</h2><span class="spacer"></span><button type="button" class="linkbtn" data-mode="self" data-step="${step}">Do this step myself instead</button></div>
-    <div class="ai-body">
-    <p class="small muted">${AI_INTRO[step]}</p>
-    <ol>
-      <li>Confirm your preferred AI tool below.</li>
-      <li>${goStep(tk)}</li>
-      <li>Chat with ${esc(toolName(tk))} until it sends you back here. It ends with “Copy everything below into the coach” and a box with ${AI_RETURNS[step]}. New chat or same chat both work.</li>
-      <li>Copy that box (most AI tools put a Copy button on it), paste it below, then click <b>Fill in my answers</b>.</li>
-    </ol>
-    <div class="ai-controls">
-      <div class="ctl"><span class="ctl-n">1</span><label class="toolpick" for="tool-${step}">AI tool <select class="toolsel" id="tool-${step}" data-steptool="${step}">${toolOptions(tk)}</select></label></div>
-      <div class="ctl"><span class="ctl-n">2</span><div class="ai-go"><div class="row">${goButton(step,tk)}</div>
-        <details class="peek"><summary>See the prompt</summary><pre class="prompt" id="prompt-${step}">${esc(prompts()[step])}</pre></details></div></div>
-      <div class="ctl"><span class="ctl-n">3</span><p class="ctl-wait">Chat in ${esc(toolName(tk))}. Come back when it writes “Copy everything below into the coach” and gives you a box.</p></div>
-      <div class="ctl"><span class="ctl-n">4</span><div class="ctl-body"><label for="paste-${step}">Answer from the AI<textarea id="paste-${step}" class="paste" data-fillsrc="fill-${step}" placeholder="Paste the box that follows “Copy everything below into the coach”"></textarea></label>
-        <div class="row"><button type="button" class="primary" id="fill-${step}" data-fill="${step}" disabled>Fill in my answers</button></div><div class="fillmsg" id="fillmsg-${step}" role="status"></div></div></div>
-    </div>
-    <p class="small muted">Check what was filled in below and change anything that doesn't sound like you.</p></div></div>`;
-  visibility();
+  else el.innerHTML=aiPanel(step, SECTION[step], tk, prompts()[step], `<button type="button" class="linkbtn" data-mode="self" data-step="${step}">Do this step myself instead</button>`);
+  renderPref(); visibility();
 }
-function renderCoachPage(){ $("#full-go").innerHTML=goButton("full",S.aiTool); $("#full-gostep").innerHTML=goStep(S.aiTool); $$("[data-toolname]").forEach(e=>e.textContent=toolName(S.aiTool)); $("#prompt-full").textContent=fullPrompt(); }
+function renderCoachPage(){ $("#full-panel").innerHTML=aiPanel("full","Full session",S.aiTool,fullPrompt()); }
 function renderForks(){ STEPS.forEach(([s])=>renderFork(s)); renderCoachPage(); }
-// A step's fields appear once it has a mode (in practice, once step 1's choice is made).
-function visibility(){ STEPS.forEach(([step])=>{ const m=modeFor(step); let after=false;
-  [...document.getElementById(step).children].forEach(ch=>{ if(ch.matches(".fork")){ after=true; return; } if(after && !ch.matches("[data-recap]")) ch.hidden=!m; }); }); }
+// A step's fields appear once it has a mode. In AI mode the answer forms sit behind a closed toggle
+// (what the AI filled in shows up in the next step's recap); in manual mode they're open, with no toggle.
+function visibility(){ STEPS.forEach(([step])=>{ const m=modeFor(step), sec=document.getElementById(step); let after=false;
+  [...sec.children].forEach(ch=>{ if(ch.matches(".fork")){ after=true; return; } if(after && !ch.matches("[data-recap]")) ch.hidden=!m; });
+  const d=sec.querySelector("details.answers"); if(!d) return;
+  if(d.dataset.mode!==m){ d.open = m==="self"; d.dataset.mode=m; }
+  d.classList.toggle("manual", m==="self"); }); }
 // Carry-forward card: a read-only display of the previous step's answers, shown at the top of steps 2-4.
 function renderRecaps(){
   const row=(k,v)=>v?`<dt>${k}</dt><dd>${esc(v)}</dd>`:"";
@@ -1365,14 +1449,16 @@ function renderRecaps(){
   const goalCard = () => { const n=goals[0], i=n?pIndex(n):-1; if(i<0) return "";
     return `<div class="goal-card">${art(n,"goalart")}<div class="goal-body"><span class="eyebrow">Goal phenotype</span><div class="ph-head">${pglyph(i,48)}<b>${esc(n)}</b></div>${vsGoal()}${goals[1]?`<span class="small muted">Also considering: ${esc(goals[1])}</span>`:""}${S.dream?`<div class="goal-dream"><span class="why-label">A project you'd love to lead</span><p>${esc(S.dream)}</p></div>`:""}</div></div>`; };
   const connector = k => `<div class="merge" aria-hidden="true"><svg viewBox="0 0 40 100" preserveAspectRatio="none"><path vector-effect="non-scaling-stroke" d="${k>1?"M0 25 C24 25 16 50 40 50 M0 75 C24 75 16 50 40 50":"M0 50 L40 50"}"/></svg><i></i></div>`;
+  // Steps 2 and 3 open with a collapsed recap (a toggle); step 4's is the comparison itself, always shown.
   const R={
-    s2:["From "+SECTION.s1,[["About you",profileLine()==="(not given)"?"":profileLine()],["Projects",projs],["Wanted to do",wantedTo],["Your setting",S.environment],["Summary",S.snapshot]]],
-    s3:["From "+SECTION.s2,[["How you describe yourself",S.identity],["Work you do most",topNow]],curCards],
+    s2:["Review step 1: where you are now",[["About you",profileLine()==="(not given)"?"":profileLine()],["Projects",projs],["Wanted to do",wantedTo],["Your setting",S.environment],["Summary",S.snapshot]]],
+    s3:[`Review step 2: your current phenotype${cur.length?` (${cur.join(", ")})`:""}`,[["How you describe yourself",S.identity],["Work you do most",topNow]],curCards],
     s4:["",[],curCards&&goalCard()?`<div class="fcol">${curCards}</div>${connector(cur.length)}${goalCard()}`:curCards+goalCard()]
   };
   Object.keys(R).forEach(step=>{ const el=document.querySelector(`[data-recap="${step}"]`), [title,rows,cards]=R[step], items=rows.filter(x=>x[1]);
     el.hidden=!items.length && !cards; if(el.hidden) return;
-    el.innerHTML=`${title?`<h2>${title}</h2>`:""}${cards?`<div class="features${step==="s4"?" pair":""}">${cards}</div>`:""}${items.length?`<dl>${items.map(x=>row(...x)).join("")}</dl>`:""}`; });
+    const body=`${cards?`<div class="features${step==="s4"?" pair":""}">${cards}</div>`:""}${items.length?`<dl>${items.map(x=>row(...x)).join("")}</dl>`:""}`;
+    el.innerHTML = el.tagName==="DETAILS" ? `<summary>${esc(title)}</summary>${body}` : body; });
 }
 function updatePrompts(){ const P=prompts(); STEPS.forEach(([k])=>{ const el=document.getElementById("prompt-"+k); if(el) el.textContent=P[k]; }); $("#prompt-full").textContent=fullPrompt(); }
 
@@ -1411,7 +1497,7 @@ function glyph(w, o={}){
 // Illustrations: img/<slug>.jpg next to this page, one per phenotype (see illustrations.json and tools/illustrate.py).
 // A missing image (a new or renamed phenotype) quietly drops out; the glyph still shows.
 const slug = n => n.toLowerCase().replace(/\(.*?\)/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,""); // must match tools/illustrate.py
-const art = (n, cls) => `<figure class="art ${cls}"><img src="img/${slug(n)}.jpg" alt="" loading="lazy" onerror="this.parentNode.remove()"></figure>`;
+const art = (n, cls) => `<figure class="art ${cls}"><img src="${IMG}${slug(n)}.jpg" alt="" loading="lazy" onerror="this.parentNode.remove()"></figure>`;
 const pglyph = (i, size) => glyph(PHENO[i].w,{size,mini:size<100,name:PHENO[i].n});
 const GLYPH_LEGEND = `<div class="g-legend small"><span><i class="k-petal"></i>Phenotype (typical mix of work)</span><span><i class="k-you"></i>Your current work</span><span><i class="k-gap"></i>Gap to grow</span></div>`;
 // Builds the parts of the page that come from the data lists. Runs once.
@@ -1445,8 +1531,11 @@ function renderStatic(){
    </div>`).join("");
   STEPS.forEach(([id])=>document.querySelector(`#${id} .head`).insertAdjacentHTML("afterend",`<div class="stepbar"><button type="button" class="tiny" data-example="${id}">Fill with an example</button><button type="button" class="tiny" data-clearstep="${id}">Clear this step</button></div>`));
   $("#lib-phenos").innerHTML = PHENO.map((p,i)=>{ const top=p.w.map((v,k)=>({v,k})).sort((a,b)=>b.v-a.v).slice(0,4).map(x=>ATTR[x.k].n.toLowerCase());
-    return `<div class="pcard art-card">${art(p.n,"banner")}<div class="ph-head">${pglyph(i,56)}<b>${esc(p.n)}</b></div><p>${esc(p.d)}</p><p><b>Most of the work:</b> ${top.map(esc).join(", ")}.</p>${p.o!==p.n?`<p class="small"><i>Original name: ${esc(p.o)}</i></p>`:""}</div>`; }).join("");
-  $("#lib-attrs").innerHTML = `<thead><tr><th>Kind of work</th><th>What it covers</th><th>Domain</th></tr></thead><tbody>${DISPLAY.map(i=>`<tr><td>${esc(ATTR[i].n)}</td><td>${esc(ATTR[i].d)}</td><td class="num">${ATTR[i].dop}</td></tr>`).join("")}</tbody>`;
+    return `<div class="pcard art-card">${art(p.n,"banner")}<div class="ph-head">${pglyph(i,56)}<b>${esc(p.n)}</b></div><p>${esc(p.d)}</p><p><b>Most of the work:</b> ${top.map(esc).join(", ")}.</p></div>`; }).join("");
+  $("#lib-attrs").innerHTML = `<thead><tr><th>Kind of work</th><th>What it covers</th></tr></thead><tbody>${GROUPS.map((g,gi)=>`<tr><th colspan="2">${esc(g)}</th></tr>`+DISPLAY.filter(i=>ATTR[i].g===gi).map(i=>`<tr><td>${esc(ATTR[i].n)}</td><td>${esc(ATTR[i].d)}</td></tr>`).join("")).join("")}</tbody>`;
+  $$("[data-img]").forEach(im=>{ im.src=IMG+im.dataset.img; });
+  $$("#resources .refs li").forEach((li,k)=>{ li.id="ref-"+(k+1); });
+  if(EV){ $("#ev-url").textContent=EV.url.replace(/^https:\/\//,""); $("#qr-home").innerHTML=QR_SVG; }
 }
 // Puts state values into the form controls.
 function fill(){
@@ -1462,31 +1551,39 @@ function renderMatches(){
   const el=$("#matches"), n=rated(); $("#rate-count").textContent=`${answered()} of 20 answered`;
   if(n<8){ el.innerHTML=`<p class="small muted">Rate at least 8 kinds of work to see your matches. You've rated ${n}.</p>`; return; }
   const m=matches();
-  el.innerHTML = SCORE_NOTE("match") + `<p class="small"><b>Check the ones that fit you, up to 2.</b> They'll show as your current phenotype in step 4 and on your report. If you check none, your top match is used.</p>`
-   + m.slice(0,3).map((x,j)=>{ const p=PHENO[x.i];
-    return `<div class="match has-art"><div class="match-art">${art(p.n,"thumb")}${pglyph(x.i,48)}</div><div class="match-body"><div class="match-top"><span class="match-name">${j+1}. ${esc(p.n)}</span><span class="spacer"></span>${meter(x.r)}<span class="tag">${strength(x.r)}</span></div>
-    <p class="small muted">${esc(p.d)}</p>${chips(x.i,3,2,"m")}
-    <label class="pick" for="ch${x.i}"><input type="checkbox" id="ch${x.i}" data-choose="${esc(p.n)}" ${S.chosen.includes(p.n)?"checked":""}>This fits me</label></div></div>`; }).join("")
-   + `<div class="match"><p class="small"><b>Also close:</b></p><ul class="near">${m.slice(3,7).map(x=>`<li><span>${esc(PHENO[x.i].n)}</span>${meter(x.r)}</li>`).join("")}</ul></div>`;
+  el.innerHTML = `<p class="small">Check up to 2 that fit you. If you check none, your top match is used.</p>`
+   + `<div class="top3">${m.slice(0,3).map((x,j)=>tcard(x, j, `<label class="pick" for="ch${x.i}"><input type="checkbox" id="ch${x.i}" data-choose="${esc(PHENO[x.i].n)}" ${S.chosen.includes(PHENO[x.i].n)?"checked":""}>This fits me</label>`, "m", S.chosen.includes(PHENO[x.i].n))).join("")}</div>`
+   + SCORE_NOTE("match")
+   + allRanked(m, "See how you matched on all 20 phenotypes", "allm");
 }
+// A top-three result as a picture card. extra = the card's action (a checkbox or goal buttons).
+function tcard(x, j, extra, ctx, sel){ const p=PHENO[x.i];
+  return `<div class="tcard ${j===0?"first":""} ${sel?"sel":""}">${art(p.n,"")}<div class="tcard-body"><span class="rank">${j===0?"Closest":"#"+(j+1)}</span>
+    <div class="ph-head">${pglyph(x.i,44)}<b>${esc(p.n)}</b></div>
+    <div class="row">${meter(x.r)}<span class="tag">${strength(x.r, ctx==="m"?"match":"fit")}</span></div>
+    <p class="small muted">${esc(p.d)}</p>${chips(x.i,3,2,ctx)}<div class="row">${extra}</div></div></div>`; }
+// Every phenotype's score, ranked, behind a toggle that stays open across re-renders.
+function allRanked(m, label, key){ return `<details class="peek" data-why="${key}" ${WHY_OPEN.has(key)?"open":""}><summary>${label}</summary><ol class="allrank">${m.map((x,k)=>`<li><span class="num">${k+1}</span><span>${esc(PHENO[x.i].n)}</span>${meter(x.r)}</li>`).join("")}</ol></details>`; }
 
 /* step 3 */
+// A second goal is for people torn between two; it stays out of the way until asked for.
+let secondOpen = false;
+const showSecond = () => secondOpen || !!S.target[1];
 function goalButtons(n){ const i=S.target.indexOf(n);
-  if(i===0) return '<span class="tag">Your goal</span><button type="button" class="tiny" data-goal="clear1">Remove</button>';
+  if(i===0) return '<span class="tag">Your goal</span>';
   if(i===1) return '<span class="tag">Second goal</span><button type="button" class="tiny" data-goal="clear2">Remove</button>';
-  return `<button type="button" class="tiny ${S.target[0]?"":"primary"}" data-goal="1" data-name="${esc(n)}">Make this my goal</button>${S.target[0]?`<button type="button" class="tiny" data-goal="2" data-name="${esc(n)}">Second goal</button>`:""}`; }
+  return `<button type="button" class="tiny ${S.target[0]?"":"primary"}" data-goal="1" data-name="${esc(n)}">${S.target[0]?"Make this my goal instead":"Make this my goal"}</button>${S.target[0]&&showSecond()&&!S.target[1]?`<button type="button" class="tiny" data-goal="2" data-name="${esc(n)}">Second goal</button>`:""}`; }
 function renderFit(){
   $("#want-count").textContent=`${wantAnswered()} of 20 answered`;
   ATTR.forEach((_,i)=>{ const el=document.getElementById("now-"+i); if(el) el.textContent = S.ratings[i]!==null ? `Current: ${S.ratings[i]}` : S.unsure[i] ? "Current: not sure" : ""; });
   const has=wanted()>=8, f=has?fits():PHENO.map((_,i)=>({i,r:null})), cur=curName();
   $("#fit-list").innerHTML = !has ? '<p class="small muted">Answer at least 8 of the 20 to see which phenotypes fit.</p>'
-    : SCORE_NOTE("fit") + f.slice(0,3).map((x,j)=>{ const p=PHENO[x.i];
-    return `<div class="match has-art"><div class="match-art">${art(p.n,"thumb")}${pglyph(x.i,48)}</div><div class="match-body"><div class="match-top"><span class="match-name">${j+1}. ${esc(p.n)}</span><span class="spacer"></span>${meter(x.r)}<span class="tag">${strength(x.r,"fit")}</span></div>
-      <div class="row">${p.n===cur?'<span class="tag">Same as your current phenotype</span>':""}</div>
-      <p class="small muted">${esc(p.d)}</p>${chips(x.i,3,2,"f")}
-      <div class="row">${goalButtons(p.n)}</div></div></div>`; }).join("");
-  const g=S.target.filter(Boolean);
-  $("#goal-now").innerHTML = g.length ? `<p class="goal-chosen">Your goal: ${g.map(n=>`<b>${esc(n)}</b>`).join(" and ")}</p>` : "";
+    : `<p class="small">${S.target[0]?"Closest fits for the work you want:":"Choose one of these, or any of the 20 below."}</p><div class="top3">${f.slice(0,3).map((x,j)=>tcard(x, j, (PHENO[x.i].n===cur?'<span class="tag neutral">Your current phenotype</span>':"")+goalButtons(PHENO[x.i].n), "f", S.target.includes(PHENO[x.i].n))).join("")}</div>` + SCORE_NOTE("fit");
+  // The chosen goal leads the card, wherever it was picked (top three or all 20).
+  const g0=S.target[0], gi=g0?pIndex(g0):-1, gf=gi>=0&&has?pearson(S.want,PHENO[gi].w):null;
+  $("#goal-now").innerHTML = gi<0 ? "" : `<div class="goalpick">${art(g0,"")}<div class="goalpick-body"><span class="eyebrow">Your goal</span><div class="ph-head">${pglyph(gi,40)}<b>${esc(g0)}</b></div>${gf!=null?scoreLine(gf,"fit with the work you want"):""}
+    <div class="row">${S.target[1]?`<span class="small muted">Second goal: <b>${esc(S.target[1])}</b></span><button type="button" class="tiny" data-goal="clear2">Remove</button>`
+      : showSecond()?'<span class="small muted">Choose "Second goal" on another phenotype below.</span>':'<button type="button" class="linkbtn small" data-second>Torn between two? Add a second goal</button>'}<span class="spacer"></span><button type="button" class="tiny" data-goal="clear1">Change goal</button></div></div></div>`;
   $("#picker-note").innerHTML = has ? "Sorted by fit with the work you want." : "Answer the questions above to sort these by fit.";
   $("#picker").innerHTML = f.map(x=>{ const p=PHENO[x.i];
     return `<div class="pcard ${S.target.includes(p.n)?"sel":""}"><div class="ph-head">${pglyph(x.i,40)}<b>${esc(p.n)}</b></div>${has?`<div class="row">${meter(x.r)}</div>`:""}
@@ -1547,7 +1644,7 @@ function renderReport(){
   const fit=goalFit(), gr=goalR(), rpRows=compareRows();
   const rpGlyphs = cur.length&&rpRows&&rated()>=8 ? `<div class="rp-glyphs">${glyph(scaled(PHENO[pIndex(cur[0])].w,S.ratings),{size:58,mini:true,you:S.ratings,label:"Signature of my current work"})}<span aria-hidden="true">→</span>${glyph(rpRows.map(x=>x.t),{size:58,mini:true,you:S.ratings,goal:rpRows.map(x=>x.t),gaps:rpRows.map(x=>x.gap),label:"Signature of your goal, with gaps to grow"})}</div>` : "";
   $("#report-page").innerHTML = `
-   <div class="rp-head" ${rpGlyphs?'style="grid-template-columns:minmax(0,1fr) auto auto"':""}><div><div class="sub">Clinical informatics career plan</div><h2>${esc(p.name)||"My informatics career plan"}</h2></div>
+   <div class="rp-head" ${rpGlyphs?'style="grid-template-columns:minmax(0,1fr) auto auto"':""}><div><div class="sub">Clinical informatics career plan${EV?` · ${esc(EV.name)}`:""}</div><h2>${esc(p.name)||"My informatics career plan"}</h2></div>
      ${rpGlyphs}<div class="rp-date">${esc(date)}<br>${method}</div></div>
    <div class="rp-meta">
      <div><span>Profession</span>${esc(p.profession)||"–"}</div><div><span>Specialty and setting</span>${esc(p.setting)||"–"}</div>
@@ -1595,6 +1692,17 @@ function renderReport(){
    </div>`;
 }
 
+// Workshop surveys: links appear only after "I agree". The coach itself never sends or collects anything.
+function surveyBtn(which){ const u=EV.surveys[which], label=which==="pre"?"Take the start-of-session survey":"Take the end-of-session survey";
+  return u ? `<a class="btn primary" href="${esc(u)}" target="_blank" rel="noopener">${label} ↗</a>` : `<span class="small muted">${label}: link coming soon.</span>`; }
+function renderConsent(){
+  const on=!!(EV&&EV.surveys.on); $("#consent-card").hidden=!on; if(!on){ $("#consent-post").innerHTML=""; return; }
+  const ask=`<button type="button" data-consent="yes">I agree, show the surveys</button><button type="button" data-consent="no">No thanks</button>`;
+  $("#consent-row").innerHTML = S.consent==="yes" ? `<span class="small">Thank you.</span>${surveyBtn("pre")}<button type="button" class="linkbtn small" data-consent="">Undo</button>`
+    : S.consent==="no" ? `<span class="small muted">No problem.</span><button type="button" class="linkbtn small" data-consent="">Change my mind</button>` : ask;
+  $("#consent-post").innerHTML = S.consent==="yes" ? surveyBtn("post")
+    : S.consent==="no" ? "" : `<span class="small">Would you help us improve this workshop? Two short anonymous surveys.</span><button type="button" class="tiny" data-go="home">Read about it on Home</button>`; }
+
 // Re-renders everything that depends on answers.
 function refresh(){ renderMatches(); renderFit(); renderComparison(); renderIdeas(); visibility(); renderRecaps(); if(isStep(cur)) markNeed(cur); renderRail(); updatePrompts(); if(cur==="report") renderReport(); }
 
@@ -1602,7 +1710,7 @@ function refresh(){ renderMatches(); renderFit(); renderComparison(); renderIdea
    REQUIRED ITEMS AND NAVIGATION
    ===================================================================== */
 function reqs(step){ const r=[], add=(ok,label,anchor)=>r.push({ok:!!ok,label,anchor});
-  if(step==="s1"){ add(S.pref,"How you want to work","#pref-card"); add(S.profile.profession,"Profession","#p-prof"); add(S.profile.stage,"Career stage","#p-stage"); add(S.profile.experience,"Informatics experience","#p-exp");
+  if(step==="s1"){ add(S.pref,"How you want to work",'[data-fork="s1"]'); add(S.profile.profession,"Profession","#p-prof"); add(S.profile.stage,"Career stage","#p-stage"); add(S.profile.experience,"Informatics experience","#p-exp");
     add(S.projects.some(p=>p.title.trim()),"At least one project","#projects"); add(S.snapshot.trim(),"Summary","#snap"); }
   if(step==="s2"){ add(S.identity.trim(),"Description of you","#identity"); add(answered()===20 && rated()>=8,"Answer all 20 (at least 8 with a number)","#ratings"); }
   if(step==="s3"){ add(wantAnswered()===20 && wanted()>=8,"Answer all 20 (at least 8 with a number)","#wants"); add(S.target[0],"A goal","#goal-now"); }
@@ -1621,6 +1729,7 @@ const needTarget = sel => { const el=document.querySelector(sel); return el && (
 function markNeed(step){ document.getElementById(step).querySelectorAll(".need").forEach(x=>x.classList.remove("need"));
   if(flagged[step]) missingIn(step).forEach(m=>{ const c=needTarget(m.anchor); if(c) c.classList.add("need"); }); }
 function showMissing(step){ flagged[step]=true; markNeed(step); const m=missingIn(step); if(!m.length) return;
+  const hid=document.querySelector(m[0].anchor), box=hid&&hid.closest("details.answers"); if(box) box.open=true; // AI mode: open the toggle that holds it
   scrollToEl(cardOf(m[0].anchor));
   const f=document.querySelector(m[0].anchor); if(f && f.matches("input,select,textarea")) setTimeout(()=>f.focus({preventScroll:true}),350);
   toast(m.length===1? `Still needed: ${m[0].label.toLowerCase()}.` : `${m.length} required items still needed.`); }
@@ -1634,7 +1743,7 @@ function renderRail(){
   $("#rail").innerHTML = railLink("home",`${HOME_ICON}<span class="lbl">Home</span>`)
    + STEPS.map(([id,l],i)=>railLink(id,`<span class="n">${i+1}</span>${l}`, stepDone(id)?"done":"")).join("")
    + railLink("report",`<span class="n">5</span>Report`)
-   + railLink("resources",`<span class="n">${BOOK_ICON}</span>Resources`)
+   + railLink("resources",`<span class="n">${BOOK_ICON}</span>${EV?"Resources &amp; Wrap Up":"Resources"}`)
    + `<span class="rail-div" aria-hidden="true"></span>` + railLink("coach","Full AI coach","coachchip");
   const rail=$("#rail"), act=$("#rail [aria-current]"); if(act && rail.scrollWidth>rail.clientWidth) rail.scrollLeft = act.offsetLeft - 16;
   // bottom Back/Next bar
@@ -1690,15 +1799,24 @@ document.addEventListener("change",e=>{
   else if(d.choose){ if(t.checked && S.chosen.length>=2){ t.checked=false; toast("You can check up to 2. Uncheck one first."); return; }
     toggleIn(S.chosen,d.choose,t.checked); save(); refresh(); }
 });
-const AFTERFILL = {s1:"#projects", s2:"#results", s3:"#fit", s4:"#gapdims"};
+const AFTERFILL = {s2:"#results", s3:"#fit"}; // steps 1 and 4 show a Next button in the confirmation instead
 const stepHasData = step => STEPFIELDS[step].some(k=>JSON.stringify(S[k])!==JSON.stringify(blank()[k]));
 function setStep(step, src){ STEPFIELDS[step].forEach(k=>{ S[k]=clone(src[k]); }); save(); fill(); refresh(); }
-function afterLoad(){ save(); fill(); renderPref(); renderForks(); refresh(); }
+function afterLoad(){ save(); fill(); renderPref(); renderForks(); refresh(); renderConsent(); }
+// Another tab of the coach saved (for example one opened from the AI's "Back to the coach" link): take its answers,
+// so an older tab never writes stale answers over newer ones.
+window.addEventListener("storage", e=>{ if(e.key!==KEY || !e.newValue) return; try{ S=merge(JSON.parse(e.newValue)); fill(); renderPref(); renderForks(); refresh(); renderConsent(); }catch(err){} });
 document.addEventListener("click",e=>{
   const q=s=>e.target.closest(s); let el;
-  if((el=q("[data-go]"))){ e.preventDefault(); $("details.menu").open=false; go(el.dataset.go); return; }
+  if((el=q("[data-ref]"))){ e.preventDefault(); const li=document.getElementById("ref-"+el.dataset.ref); if(li){ scrollToEl(li,"center"); li.classList.add("flash"); setTimeout(()=>li.classList.remove("flash"),1800); } return; }
+  if((el=q("[data-go]"))){ e.preventDefault(); $("details.menu").open=false;
+    if(el.id==="start-btn" && !S.pref){ $("#pref-card").classList.add("need"); scrollToEl($("#pref-card .choice"),"center"); toast("Choose how you want to work first."); return; }
+    const fromStep3 = el.hasAttribute("data-lib");
+    go(el.dataset.go); $("#lib-return").hidden=!fromStep3; if(fromStep3) setTimeout(()=>scrollToEl($("#lib")),50); return; }
   if((el=q("[data-pref]"))){ S.pref=el.dataset.pref; S.mode={s1:"",s2:"",s3:"",s4:""}; afterLoad();
-    scrollToEl(S.pref==="ai" ? $("#pref-tool") : cardOf("#p-prof"), S.pref==="ai"?"center":"start"); return; }
+    if(cur==="home" && S.pref==="ai") scrollToEl($("#pref-tool"),"center"); return; }
+  if((el=q("[data-second]"))){ secondOpen=true; renderFit(); const p=$("#picker-wrap"); if(p){ p.open=true; scrollToEl(p); } return; }
+  if((el=q("[data-consent]"))){ S.consent=el.dataset.consent; save(); renderConsent(); return; }
   if((el=q("[data-mode]"))){ const st=el.dataset.step; S.mode[st]= el.dataset.mode===S.pref ? "" : el.dataset.mode; save(); renderFork(st); renderComparison(); renderRecaps(); markNeed(st); renderRail();
     const f=document.querySelector(`[data-fork="${st}"]`); scrollToEl(el.dataset.mode==="ai" ? f.querySelector(".ai") : f); return; }
   if((el=q("[data-copyprompt]"))){ const k=el.dataset.copyprompt, ok=copyText(k==="full" ? fullPrompt() : prompts()[k]);
@@ -1707,7 +1825,7 @@ document.addEventListener("click",e=>{
   if((el=q("[data-fill]"))){ const st=el.dataset.fill, txt=$("#paste-"+st).value;
     if(!txt.trim()) return;
     const C=applyPaste(st,txt); save(); fill(); refresh(); renderCheck(st,C);
-    if(!C.some(c=>!c.ok&&!c.opt)) setTimeout(()=>scrollToEl(cardOf(AFTERFILL[st])),900); return; }
+    if(!C.some(c=>!c.ok&&!c.opt) && AFTERFILL[st]) setTimeout(()=>scrollToEl(cardOf(AFTERFILL[st])),900); return; }
   if((el=q("[data-fillfull]"))){ const txt=$("#paste-full").value, msg=$("#fillmsg-full");
     if(!txt.trim()) return;
     const C=applyFull(txt); afterLoad(); renderCheck("full",C); if(!C.some(c=>c.ok)) return;
@@ -1719,7 +1837,10 @@ document.addEventListener("click",e=>{
     save(); refresh(); if(v==="1"||v==="2") scrollToEl($("#goal-now").closest(".card")); return; }
   if((el=q("[data-example]"))){ const st=el.dataset.example;
     if(stepHasData(st) && !confirm("Replace what you've entered in this step with the example?")) return;
-    if(!S.pref){ S.pref="self"; renderPref(); } setStep(st, EXAMPLE()); renderForks(); toast("Example filled in. Edit it or clear the step to start fresh."); return; }
+    if(!S.pref){ S.pref="self"; renderPref(); } setStep(st, EXAMPLE()); renderForks();
+    // Steps 1 and 4 have no results to show, so in AI mode open the answers so the example is visible.
+    const box=document.querySelector(`details[data-answers="${st}"]`); if(box && (st==="s1"||st==="s4")) box.open=true;
+    toast("Example filled in. Edit it or clear the step to start fresh."); return; }
   if((el=q("[data-clearstep]"))){ const st=el.dataset.clearstep;
     if(stepHasData(st) && !confirm("Clear everything in this step?")) return;
     setStep(st, blank()); toast("Step cleared."); return; }
@@ -1747,7 +1868,7 @@ $("#btn-copy-report").addEventListener("click",()=>{ renderReport(); toast(copyT
    ===================================================================== */
 function setHdr(){ document.documentElement.style.setProperty("--hdr", $(".topbar").offsetHeight+"px"); } // steps stick just below the header
 window.addEventListener("resize", setHdr);
-renderStatic(); fill(); renderPref(); renderForks(); refresh(); setHdr();
+renderStatic(); fill(); renderPref(); renderForks(); refresh(); renderConsent(); setHdr();
 go((location.hash||"#home").slice(1), false, true);
 try{ localStorage.setItem(KEY+".probe","1"); localStorage.removeItem(KEY+".probe"); }catch(e){ storageOK=false; $("#storage-warn").hidden=false; }
 </script>
