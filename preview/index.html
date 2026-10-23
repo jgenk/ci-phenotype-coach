@@ -66,7 +66,7 @@ details.menu{position:relative}
 details.menu summary{list-style:none;cursor:pointer;font-size:.88rem;font-weight:600;padding:4px 10px;border:1px solid var(--rule);border-radius:4px}
 details.menu summary::-webkit-details-marker{display:none}
 .menu-list{position:absolute;right:0;top:calc(100% + 6px);background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r);box-shadow:var(--shadow);padding:6px;display:grid;min-width:220px;z-index:20}
-.menu-list button{justify-content:flex-start;border:0;background:transparent;font-weight:500;padding:8px 10px}
+.menu-list button{justify-content:flex-start;text-align:left;white-space:nowrap;border:0;background:transparent;font-weight:500;padding:8px 10px}
 .menu-list button:hover{background:var(--accent-soft)}
 
 /* layout: sidebar steps on desktop, chip row on narrow screens */
@@ -480,7 +480,7 @@ sup a{text-decoration:none;font-weight:600;padding:0 1px}
       <div class="menu-list">
         <button type="button" id="m-save">Save my answers to a file</button>
         <button type="button" id="m-load">Open a saved file</button>
-        <button type="button" id="m-example">Fill every step with the example</button>
+        <button type="button" id="m-example">Fill all steps with the example</button>
         <button type="button" id="m-clear">Start over</button>
       </div>
     </details>
@@ -814,7 +814,7 @@ sup a{text-decoration:none;font-weight:600;padding:0 1px}
   </div>
 </section>
 <!-- BUILD TAG: bump on every deploy so you can tell which build people are seeing. -->
-<footer class="buildtag">PREVIEW · build v0.10.3 (2026-10-23)</footer>
+<footer class="buildtag">PREVIEW · build v0.10.4 (2026-10-23)</footer>
 </main>
 </div>
 
