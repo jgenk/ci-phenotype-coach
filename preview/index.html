@@ -830,7 +830,7 @@ sup a{text-decoration:none;font-weight:600;padding:0 1px}
   </div>
 </section>
 <!-- BUILD TAG: bump on every deploy so you can tell which build people are seeing. -->
-<footer class="buildtag">PREVIEW · build v0.10.10 (2026-10-23)</footer>
+<footer class="buildtag">PREVIEW · build v0.10.11 (2026-10-23)</footer>
 </main>
 </div>
 
@@ -1843,7 +1843,7 @@ function surveyCard(phase){ const a=S.survey[phase], pre=phase==="pre";
     <h2>${pre?"Before you start: a 1-minute survey":"Before you go: the end-of-session survey"}</h2>
     <p class="small muted">How confident do you feel ${pre?"today":"now"} about each of these? 1 Not at all · 2 Slightly · 3 Moderately · 4 Very · 5 Extremely confident. Skip any you like.</p>
     <div>${SV_CONF.map(([k,l])=>svRate(phase,"conf",k,l,SV_SCALE)).join("")}</div>
-    ${pre ? svOne("pre","aiBefore","Have you used an AI tool for career planning before?",["Yes","No","Not sure"]) + svText("pre","hope","What do you most hope to get from this session?","Optional")
+    ${pre ? svText("pre","hope","What do you most hope to get from this session?","Optional") + svOne("pre","aiBefore","Have you used an AI tool for career planning before?",["Yes","No","Not sure"])
       : `<p class="small muted" style="margin-top:6px">How useful was each part of the session? 1 Not at all · 5 Extremely useful.</p><div>${SV_USE.map(([k,l])=>svRate("post","use",k,l,SV_SCALE,true)).join("")}</div>`
         + intent + svText("post","step30","One step you'll take in the next 30 days","Optional") + svText("post","change","What should we change about this session?","Optional") + svText("post","aiConcern","Did anything about using AI concern you?","Optional")}
     <p class="small muted">Also sent: your profession, career stage, and informatics experience${pre?"":", plus how you used the coach and which AI tool"}. No name, email, or anything else from the coach. Please leave names and patient details out of your comments.</p>
@@ -1859,7 +1859,7 @@ const toolUsed = () => (S.flow==="full" || STEPS.some(([s])=>modeFor(s)==="ai"))
 function svPayload(phase){ const p=S.profile, a=S.survey[phase];
   const f={rid:S.survey.rid, phase, build:(document.querySelector(".buildtag").textContent.match(/v[\d.]+/)||[""])[0], profession:p.profession, stage:p.stage, experience:p.experience};
   SV_CONF.forEach(([k])=>{ f["conf_"+k]=a.conf[k]||""; });
-  if(phase==="pre"){ f.ai_before=a.aiBefore; f.hope=a.hope; }
+  if(phase==="pre"){ f.hope=a.hope; f.ai_before=a.aiBefore; }
   else { SV_USE.forEach(([k])=>{ f["use_"+k]=a.use[k]||""; }); f.intent=a.intent; f.step30=a.step30; f.change=a.change; f.ai_concern=a.aiConcern; f.how=howUsed(); f.tool=toolUsed(); }
   return f; }
 // Answers go out when the person moves on: the pre-survey when they leave step 1, the post-survey when they press
