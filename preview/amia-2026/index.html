@@ -518,7 +518,7 @@ sup a{text-decoration:none;font-weight:600;padding:0 1px}
   <div class="card consent" id="consent-card">
     <h2>Help us improve this workshop <span class="req">Optional</span><span class="draft">Draft</span></h2>
     <p class="small">Two short anonymous surveys inside the coach: one in step 1 and one at the wrap-up.</p>
-    <details class="peek"><summary>What's involved?</summary><p class="small" style="margin-top:6px">They ask how confident you feel about planning your informatics career, how useful the session was, and your profession, career stage, and informatics experience. Nothing else from the coach is sent, and only when you press Submit. There's no name or email; a random code links your two surveys. We'll use the combined answers to improve the workshop and may share them in a presentation or publication. Taking part is voluntary, and you can skip any question.</p></details>
+    <details class="peek"><summary>What's involved?</summary><p class="small" style="margin-top:6px">They ask how confident you feel about planning your informatics career, how useful the session was, and your profession, career stage, and informatics experience. Nothing else from the coach is sent. Your answers are sent when you move on from each survey. There's no name or email; a random code links your two surveys. We'll use the combined answers to improve the workshop and may share them in a presentation or publication. Taking part is voluntary, and you can skip any question.</p></details>
     <div class="row" id="consent-row"></div>
   </div>
   </div>
@@ -740,7 +740,7 @@ sup a{text-decoration:none;font-weight:600;padding:0 1px}
       <li><b>Before you leave:</b> tell your table the one step you'll take in the next 30 days.</li>
     </ul>
   </div>
-  <div class="card ev-only res-wrap" id="survey-ask" hidden><h2>Help us improve this workshop <span class="req">Optional</span></h2><p class="small">Would you answer a 2-minute anonymous survey? There's no name or email, and only your survey answers are sent, when you press Submit.</p><div class="row"><button type="button" data-consent="yes">I agree</button><button type="button" data-consent="no">No thanks</button></div></div>
+  <div class="card ev-only res-wrap" id="survey-ask" hidden><h2>Help us improve this workshop <span class="req">Optional</span></h2><p class="small">Would you answer a 2-minute anonymous survey? There's no name or email, and only your survey answers are sent.</p><div class="row"><button type="button" data-consent="yes">I agree</button><button type="button" data-consent="no">No thanks</button></div></div>
   <div class="card ev-only res-wrap survey" id="survey-post" hidden></div>
   <div class="card res-about">
     <h2>About the phenotypes</h2>
@@ -819,7 +819,7 @@ sup a{text-decoration:none;font-weight:600;padding:0 1px}
   </div>
 </section>
 <!-- BUILD TAG: bump on every deploy so you can tell which build people are seeing. -->
-<footer class="buildtag">PREVIEW · build v0.10.7 (2026-10-23)</footer>
+<footer class="buildtag">PREVIEW · build v0.10.8 (2026-10-23)</footer>
 </main>
 </div>
 
@@ -965,7 +965,7 @@ const blank = () => ({
   gaps:Object.fromEntries(GAPDIMS.map(g=>[g[0],{t:"",p:""}])),
   steps:[{what:"",when:"",who:""},{what:"",when:"",who:""},{what:"",when:"",who:""}],
   ask:"", checkin:"", pitch:"", made:"", consent:"", flow:"",
-  survey:{rid:"", pre:{conf:{}, aiBefore:"", hope:"", sent:""}, post:{conf:{}, use:{}, intent:"", step30:"", change:"", aiConcern:"", sent:""}}
+  survey:{rid:"", pre:{conf:{}, aiBefore:"", hope:"", sent:"", sentHash:""}, post:{conf:{}, use:{}, intent:"", step30:"", change:"", aiConcern:"", sent:"", sentHash:""}}
 });
 // Worked example (a fictional nurse practitioner), used by "Fill with an example" one step at a time.
 const EXAMPLE = () => Object.assign(blank(), {
@@ -1827,7 +1827,6 @@ function svOne(phase, key, label, opts){ const v=S.survey[phase][key]||"", nm=`s
   return `<fieldset class="rate"><legend>${esc(label)}</legend><div class="seg">${opts.map(o=>`<label><input type="radio" name="${nm}" value="${esc(o)}" data-sv="${phase}.${key}" ${v===o?"checked":""}><span>${esc(o)}</span></label>`).join("")}</div></fieldset>`; }
 const svText = (phase, key, label, hint) => `<label for="sv-${phase}-${key}">${esc(label)} ${hint?`<span class="hint">${esc(hint)}</span>`:""}<textarea id="sv-${phase}-${key}" data-bind="survey.${phase}.${key}" style="min-height:64px">${esc(S.survey[phase][key]||"")}</textarea></label>`;
 function surveyCard(phase){ const a=S.survey[phase], pre=phase==="pre";
-  if(a.sent) return `<p class="small"><b>✓ Thank you.</b> Your ${pre?"start-of-session":"end-of-session"} survey is in.</p>`;
   const intent = `<fieldset class="rate"><legend>How likely are you to take at least one of your next steps in the next 3 months?</legend><div class="seg">${SV_LIKELY.map((s,i)=>`<label><input type="radio" name="sv-post-intent" value="${i+1}" data-sv="post.intent" ${a.intent===String(i+1)?"checked":""}><span>${i+1}<i> ${esc(s)}</i></span></label>`).join("")}</div></fieldset>`;
   return `<span class="eyebrow">Optional · anonymous · about ${pre?1:2} min</span>
     <h2>${pre?"Before you start: a 1-minute survey":"Before you go: the end-of-session survey"}</h2>
@@ -1837,7 +1836,8 @@ function surveyCard(phase){ const a=S.survey[phase], pre=phase==="pre";
       : `<p class="small muted" style="margin-top:6px">How useful was each part of the session? 1 Not at all · 5 Extremely useful.</p><div>${SV_USE.map(([k,l])=>svRate("post","use",k,l,SV_SCALE,true)).join("")}</div>`
         + intent + svText("post","step30","One step you'll take in the next 30 days","Optional") + svText("post","change","What should we change about this session?","Optional") + svText("post","aiConcern","Did anything about using AI concern you?","Optional")}
     <p class="small muted">Also sent: your profession, career stage, and informatics experience${pre?"":", plus how you used the coach and which AI tool"}. No name, email, or anything else from the coach. Please leave names and patient details out of your comments.</p>
-    <div class="row"><button type="button" class="primary" data-svsubmit="${phase}">Submit</button></div>`; }
+    ${pre ? `<p class="small" id="sv-status-pre">${a.sent?"<b>✓ Sent.</b> If you change an answer, it's sent again when you move on.":"Your answers are sent when you move on from step 1."}${svConnected()?"":" <i>(This preview isn't connected yet: answers stay in this browser.)</i>"}</p>`
+      : `<div class="row"><button type="button" class="primary" data-svsubmit="post">I'm finished: send my answers</button><span class="small muted">${a.sent?"✓ Sent. Thank you.":"Also sent if you leave this page."}${svConnected()?"":" <i>(Not connected yet in this preview.)</i>"}</span></div>`}`; }
 function renderSurveys(){ const on=svOn();
   [["pre","#survey-pre"],["post","#survey-post"]].forEach(([ph,sel])=>{ const el=$(sel); if(!el) return; el.hidden=!on; el.innerHTML= on ? surveyCard(ph) : ""; });
   // At the wrap-up, someone who never answered on Home can still opt in there.
@@ -1851,11 +1851,23 @@ function svPayload(phase){ const p=S.profile, a=S.survey[phase];
   if(phase==="pre"){ f.ai_before=a.aiBefore; f.hope=a.hope; }
   else { SV_USE.forEach(([k])=>{ f["use_"+k]=a.use[k]||""; }); f.intent=a.intent; f.step30=a.step30; f.change=a.change; f.ai_concern=a.aiConcern; f.how=howUsed(); f.tool=toolUsed(); }
   return f; }
-async function svSubmit(phase){ const cfg=EV.surveys;
-  if(!cfg.form || !Object.keys(cfg.fields||{}).length){ toast("The survey isn't connected yet. Your answers are saved in this browser."); return; }
-  const body=new URLSearchParams(); Object.entries(svPayload(phase)).forEach(([k,v])=>{ if(cfg.fields[k]) body.append(cfg.fields[k], v??""); });
-  try{ await fetch(cfg.form,{method:"POST",mode:"no-cors",body}); S.survey[phase].sent=new Date().toISOString(); save(); renderSurveys(); toast("Thank you. Your survey is in."); }
-  catch(err){ toast("Couldn't send. Check your connection and try again."); } }
+// Answers go out when the person moves on: the pre-survey when they leave step 1, the post-survey when they press
+// "I'm finished" or leave the page. Only once something is answered, and again only if an answer changed (the Sheet keeps
+// every send; analysis keeps the latest row per rid + phase). Google doesn't let the page see a reply, so delivery can't be confirmed.
+const svConnected = () => !!(EV && EV.surveys.form && Object.keys(EV.surveys.fields||{}).length);
+function svAnswered(phase){ const a=S.survey[phase];
+  return Object.values(a.conf).some(Boolean) || (phase==="pre" ? !!(a.aiBefore||a.hope) : Object.values(a.use).some(Boolean) || !!(a.intent||a.step30||a.change||a.aiConcern)); }
+function svSend(phase, {beacon=false, quiet=true}={}){
+  if(!svOn() || !svAnswered(phase)) return;
+  const a=S.survey[phase], data=svPayload(phase), hash=JSON.stringify(data);
+  if(hash===a.sentHash){ if(!quiet) toast("Already sent. Thank you."); return; }
+  if(!svConnected()){ if(!quiet) toast("The survey isn't connected yet. Your answers are saved in this browser."); return; }
+  const cfg=EV.surveys, body=new URLSearchParams(); Object.entries(data).forEach(([k,v])=>{ if(cfg.fields[k]) body.append(cfg.fields[k], v??""); });
+  let ok=true;
+  if(beacon && navigator.sendBeacon) ok=navigator.sendBeacon(cfg.form, body); // survives the page closing
+  else fetch(cfg.form,{method:"POST",mode:"no-cors",keepalive:true,body}).catch(()=>{});
+  if(ok){ a.sent=new Date().toISOString(); a.sentHash=hash; save(); if(!beacon) renderSurveys(); if(!quiet) toast("Thank you. Your answers are sent."); } }
+window.addEventListener("pagehide",()=>{ svSend("pre",{beacon:true}); svSend("post",{beacon:true}); });
 function renderConsent(){
   const on=!!(EV&&EV.surveys.on); $("#consent-card").hidden=!on;
   if(on && S.consent==="yes" && !S.survey.rid){ const b=new Uint8Array(6); crypto.getRandomValues(b); S.survey.rid=[...b].map(x=>x.toString(36).padStart(2,"0")).join("").slice(0,10); save(); }
@@ -1928,6 +1940,7 @@ function go(id, push=true, quiet=false){
   if(!PAGES.includes(id)) id="home";
   const b=blockerFor(id); if(b){ if(cur!==b) go(b,push,true); if(!quiet) showMissing(b); return; }
   const prev=cur; cur=id;
+  if(prev==="s1" && id!=="s1") svSend("pre"); if(prev==="resources" && id!=="resources") svSend("post"); // surveys go out as you move on
   // A finished step's AI box shrinks to one line: re-render the step you're leaving and the one you're entering.
   if(isStep(prev) && prev!==id){ REDO.delete(prev); renderFork(prev); }
   if(isStep(id)){ REDO.delete(id); renderFork(id); }
@@ -2000,7 +2013,7 @@ document.addEventListener("click",e=>{
     scrollToEl(cardOf(el.dataset.jump)); if(t && t.matches("input,select,textarea")) setTimeout(()=>t.focus({preventScroll:true}),350); return; }
   if((el=q("[data-redo]"))){ const st=el.dataset.redo; REDO.add(st); renderFork(st); scrollToEl(document.querySelector(`[data-fork="${st}"]`)); return; }
   if((el=q("[data-second]"))){ secondOpen=true; renderFit(); const p=$("#picker-wrap"); if(p){ p.open=true; scrollToEl(p); } return; }
-  if((el=q("[data-svsubmit]"))){ svSubmit(el.dataset.svsubmit); return; }
+  if((el=q("[data-svsubmit]"))){ svSend(el.dataset.svsubmit,{quiet:false}); return; }
   if((el=q("[data-consent]"))){ S.consent=el.dataset.consent; save(); renderConsent(); return; }
   if((el=q("[data-mode]"))){ const st=el.dataset.step; S.mode[st]= el.dataset.mode===S.pref ? "" : el.dataset.mode; save(); renderFork(st); renderComparison(); renderRecaps(); markNeed(st); renderRail();
     const f=document.querySelector(`[data-fork="${st}"]`); scrollToEl(el.dataset.mode==="ai" ? f.querySelector(".ai") : f); return; }
