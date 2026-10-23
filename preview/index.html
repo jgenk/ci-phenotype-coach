@@ -814,7 +814,7 @@ sup a{text-decoration:none;font-weight:600;padding:0 1px}
   </div>
 </section>
 <!-- BUILD TAG: bump on every deploy so you can tell which build people are seeing. -->
-<footer class="buildtag">PREVIEW · build v0.10.2 (2026-10-22)</footer>
+<footer class="buildtag">PREVIEW · build v0.10.3 (2026-10-23)</footer>
 </main>
 </div>
 
@@ -968,6 +968,43 @@ const EXAMPLE = () => Object.assign(blank(), {
   checkin:"Every 3 months",
   pitch:"I'm a primary care NP who redesigns workflows and EHR tools from the front line. I cut refill turnaround from three days to one and helped lead our clinic's go-live. Next, I want to lead a system-wide inbox redesign that gives clinicians their evenings back. I'm looking for a sponsor who can get me a seat at the governance table."
 });
+// Test cases from the 2026-10-22 persona review, opened with ?scenario=<name> (they replace the answers in that browser).
+// They exercise the gap rules: "Your choice" (nurse-exec) and the scaling floor (resident). All fictional.
+const SCENARIOS = {
+  np: EXAMPLE,
+  "nurse-exec": () => Object.assign(EXAMPLE(), {
+    profile:{name:"Alex Morgan, DNP (scenario)",profession:"Registered nurse",setting:"Nursing informatics, regional health system",stage:"Senior or executive",experience:EXPERIENCE[3],time:"Over 75%"},
+    projects:[{title:"Led the nursing documentation redesign across 6 hospitals",role:"I led it",why:"Cut charting time and standardized care across sites"},{title:"Chair of the clinical decision support committee",role:"I led it",why:"Brought nursing into every CDS decision"},{title:"Sepsis early-warning rollout",role:"I advised",why:"First AI tool our nurses used every day"}],
+    unrealized:{text:"A seat at the system's executive table",reasons:["Not an organizational priority","No sponsor"]},
+    environment:"Strong CNO support. The CMIO and CIO set the informatics agenda; there's no CNIO role yet.",
+    snapshot:"I'm a nurse informatics director who leads large documentation and decision-support programs across our system. I no longer see patients. I want a system-level executive role that puts nursing at the table.",
+    identity:"A nurse informatics leader who redesigns how clinicians document and decide, at system scale.",
+    ratings:[0,3,3,1,0,3,5,5,4,4,0,2,1,1,0,1,3,2,0,1], unsure:Array(20).fill(false), chosen:[],
+    dream:"Become our system's first CNIO and lead a nursing-wide AI and documentation strategy.",
+    settings:["Community or regional health system","Academic health system"],
+    want:[0,3,4,2,1,4,5,4,4,3,0,2,1,0,0,1,3,3,0,1], wantUnsure:Array(20).fill(false), target:["Informatics executive, community or regional system",""],
+    gaps:{skills:{t:"Budgeting and enterprise strategy",p:"With changes"},projects:{t:"A system-wide program I own end to end",p:"Yes"},leadership:{t:"An executive-level seat",p:"With changes"},mentorship:{t:"An executive sponsor outside nursing",p:"Yes"},environment:{t:"No CNIO role exists yet",p:"Not likely"}},
+    steps:[{what:"Write the business case for a CNIO role with my CNO",when:"Next 60 days",who:"CNO"},{what:"Join the system AI governance committee",when:"This quarter",who:"CMIO"},{what:"Take an executive finance course",when:"By summer",who:"Education funds"}],
+    ask:"Ask our CNO to sponsor a CNIO proposal to the executive team.", checkin:"Every 3 months",
+    pitch:"I'm a nurse informatics director who has redesigned documentation and decision support across six hospitals. Next, I want to be our first CNIO and bring nursing's voice to every AI and EHR decision. I'm looking for an executive sponsor."
+  }),
+  resident: () => Object.assign(EXAMPLE(), {
+    profile:{name:"Sam Lee, MD (scenario)",profession:"Physician",setting:"Internal medicine residency, academic medical center",stage:"Trainee",experience:EXPERIENCE[0],time:"Under 10%"},
+    projects:[{title:"Gave feedback on a new sepsis order set",role:"I advised",why:"First time I saw how EHR tools get built"},{title:"Superuser for a week during a go-live",role:"I did the work",why:"I liked helping colleagues get unstuck"},{title:"",role:"",why:""}],
+    unrealized:{text:"Build my own note template",reasons:["Didn't know how to start","Time"]},
+    environment:"Busy residency. Informatics decisions sit with a CMIO office I haven't met.",
+    snapshot:"I'm a PGY-1 in internal medicine. Most of my time is patient care. I've given feedback on one order set and helped during a go-live, and I want to learn how to build tools that fix the problems I see on the wards.",
+    identity:"A resident who notices workflow problems and wants to learn to fix them.",
+    ratings:[5,1,0,0,0,0,1,1,1,0,0,1,0,1,0,0,0,0,0,0], unsure:Array(20).fill(false), chosen:[],
+    dream:"Build EHR tools that make inpatient work safer and faster for residents.",
+    settings:["Academic health system"],
+    want:[4,2,1,0,0,0,2,2,2,1,0,2,0,4,0,0,1,1,0,0], wantUnsure:Array(20).fill(false), target:["Clinician builder",""],
+    gaps:{skills:{t:"EHR build basics",p:"Yes"},projects:{t:"A small build I own",p:"With changes"},leadership:{t:"",p:""},mentorship:{t:"An informatics mentor",p:"Yes"},environment:{t:"Protected time",p:"With changes"}},
+    steps:[{what:"Ask the CMIO office for 20 minutes to learn what they do",when:"This month",who:"Program director"},{what:"Take the EHR vendor's builder training",when:"By spring",who:"CMIO office"},{what:"Volunteer as a superuser for the next upgrade",when:"Next go-live",who:"Unit manager"}],
+    ask:"Ask my program director for an informatics elective.", checkin:"Every 3 months",
+    pitch:"I'm an internal medicine resident who keeps seeing fixable problems in our EHR. I want to learn to build the tools that fix them, starting with builder training and a small project. I'm looking for an informatics mentor."
+  })
+};
 // Which parts of the state belong to each step (for "Fill with an example" and "Clear this step").
 const STEPFIELDS = {s1:["profile","projects","unrealized","environment","snapshot"],s2:["identity","ratings","unsure","chosen"],s3:["dream","settings","want","wantUnsure","target"],s4:["gaps","steps","ask","checkin","pitch"]};
 
@@ -1038,7 +1075,12 @@ function compareRows(){ const tv=targetVec(); if(!tv) return null; const t=scale
     // If you said you want no more of it than you do now (e.g. a nurse executive and clinical work), it's your choice, not a gap.
     if((gap==="big"||gap==="small") && declined(k)) gap="choice";
     return {k,a,you,t:t[k],g,gap}; }); }
-const declined = k => S.want[k]!=null && S.ratings[k]!=null && S.want[k]<=S.ratings[k];
+// Only once step 3's ratings differ from the copy of current work somewhere: untouched, "want = now" would hide every gap.
+const wantsEdited = () => S.want.some((v,i)=>v!==S.ratings[i]);
+const declined = k => wantsEdited() && S.want[k]!=null && S.ratings[k]!=null && S.want[k]<=S.ratings[k];
+// True when someone's overall activity is light enough that the goal is held at the floor (see scaled()).
+function floorActive(){ const tv=targetVec(), um=S.ratings.filter(v=>v!==null); if(!tv||!um.length) return false;
+  const uMean=um.reduce((a,b)=>a+b,0)/um.length, wMean=tv.reduce((a,b)=>a+b,0)/tv.length; return wMean>0 && uMean/wMean<SCALE_FLOOR; }
 const GAPLABEL = {big:["Big gap","big"],small:["Small gap","warn"],ok:["On track","ok"],more:["Goal uses less","neutral"],choice:["Your choice","neutral"],"":["Not rated","neutral"]};
 // Gaps worth planning around: the goal does this at least about monthly (level 2), and you haven't declined it.
 const growRows = () => (compareRows()||[]).filter(x=>(x.gap==="big"||x.gap==="small") && x.t>=1.5).sort((a,b)=>b.g-a.g);
@@ -1186,7 +1228,7 @@ What this step is for: ${PURPOSE.s4}.
 Who I am now: ${S.identity||S.snapshot||"(not written yet)"}
 My current phenotype: ${curName()||"(not scored yet)"}
 My goal phenotype: ${S.target.filter(Boolean).join(" and ")||"(not chosen yet)"}${S.dream?`\nA project I'd love to lead: ${S.dream}`:""}${S.settings.length?`\nSettings I'd consider: ${S.settings.join(", ")}`:""}
-${grows?`Biggest differences between my current work and my goal (0 never to 5 daily):\n${grows}\n`:""}${chose.length?`My goal role does more of these than I do: ${chose.join("; ")}, but I've said I don't want more. Treat that as my choice, not a gap.\n`:""}My workplace: ${S.environment||"(not given)"}
+${grows?`Biggest differences between my current work and my goal (0 never to 5 daily):\n${grows}\n`:""}${chose.length?`My goal role does more of these than I do: ${chose.join("; ")}, but I've said I don't want more. Don't plan around these as gaps; ask me once whether that's a dealbreaker for this goal or a role I'd shape differently.\n`:""}My workplace: ${S.environment||"(not given)"}
 
 ${NEED}
 - my gaps in five areas: skills, experience, leadership, mentors and sponsors, and my setting; for each, whether it's possible at my current workplace (Yes / With changes / Not likely)
@@ -1655,7 +1697,11 @@ function renderComparison(){
      <p class="small">${takeaway}</p>
      <div class="chips"><span class="chip">On track: ${c.ok}</span><span class="chip up">Small gap: ${c.small}</span><span class="chip up">Big gap: ${c.big}</span><span class="chip neutral">Goal uses less: ${c.more}</span>${c.choice?`<span class="chip neutral" title="The goal does more of this, but you said you don't want more">Your choice: ${c.choice}</span>`:""}</div>
      ${ti.length===1?chips(ti[0],4,3,"g"):""}${GLYPH_LEGEND}</div></div>`;
-  $("#compare").innerHTML = `${ti.some(i=>S.chosen.includes(PHENO[i].n)) ? '<p class="small">Your goal is a phenotype you already identify with. Your gaps are about scope and depth, not a change of direction.</p>' : ""}
+  // Work the goal usually involves but you said you don't want more of: not a gap to close, a tension to think about.
+  const chose = rows.filter(x=>x.gap==="choice").sort((a,b)=>b.g-a.g).map(x=>x.a.n);
+  const tension = chose.length ? `<p class="note small"><b>A question for you:</b> this goal usually involves more ${esc(chose.slice(0,3).join("; ").toLowerCase())} than you want. Is that a dealbreaker, or a role you'd shape differently? (These are marked "Your choice" below, not gaps.)</p>` : "";
+  const floorNote = floorActive() ? `<p class="small muted">Your informatics work is light overall right now, so your goal is shown close to its usual level. Expect more gaps than someone further along; that's the distance, not a verdict.</p>` : "";
+  $("#compare").innerHTML = `${tension}${floorNote}${ti.some(i=>S.chosen.includes(PHENO[i].n)) ? '<p class="small">Your goal is a phenotype you already identify with. Your gaps are about scope and depth, not a change of direction.</p>' : ""}
    ${top.length?`<h3 class="subhead">Biggest differences</h3>${compareTable(top)}`:'<p class="small">No big differences. Focus on scope, leadership, and making your work visible.</p>'}
    ${modeFor("s4")==="ai" ? "" : '<p class="note">This page shows where the gaps are. It doesn\'t coach you on closing them. For specific ideas, use the AI option for this step, or take this to a mentor.</p>'}
    <details class="peek"><summary>See all 20 kinds of work</summary><p class="small muted" style="margin:8px 0">"Now" is your step 2 rating, "Want" your step 3 answer (0 never to 5 daily). "Goal" is the typical level for your goal phenotype, adjusted to how busy you are overall (never below 80% of its typical level). The gap is between now and goal. "Your choice" means the goal does more of it, but you said you don't want more.</p>${compareTable([...rows].sort((a,b)=>(b.g??-9)-(a.g??-9)))}</details>`;
@@ -1941,6 +1987,11 @@ $("#btn-copy-report").addEventListener("click",()=>{ renderReport(); toast(copyT
 function setHdr(){ document.documentElement.style.setProperty("--hdr", $(".topbar").offsetHeight+"px"); } // steps stick just below the header
 window.addEventListener("resize", setHdr);
 renderStatic(); fill(); renderPref(); renderForks(); refresh(); renderConsent(); setHdr();
+// ?scenario=<name>: load a test case, then drop the parameter so a reload doesn't load it again.
+(()=>{ const q=new URLSearchParams(location.search), name=q.get("scenario"), make=SCENARIOS[name]; if(!make) return;
+  q.delete("scenario"); try{ history.replaceState(null,"",location.pathname+(q.toString()?"?"+q:"")+"#s4"); }catch(e){}
+  if(STEPS.some(([s])=>stepHasData(s)) && !confirm(`Replace the answers in this browser with the "${name}" test case?`)) return;
+  const sc=make(); STEPS.forEach(([s])=>STEPFIELDS[s].forEach(k=>{ S[k]=clone(sc[k]); })); if(!S.pref) S.pref="ai"; afterLoad(); })();
 go((location.hash||"#home").slice(1), false, true);
 try{ localStorage.setItem(KEY+".probe","1"); localStorage.removeItem(KEY+".probe"); }catch(e){ storageOK=false; $("#storage-warn").hidden=false; }
 </script>
