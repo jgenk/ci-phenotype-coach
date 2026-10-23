@@ -368,7 +368,7 @@ svg.profile text{font-family:var(--f-mono)}
 /* illustrations (img/<slug>.jpg, made by tools/illustrate.py) and glyph placement */
 .art{margin:0;overflow:hidden;background:var(--paper)}
 .art img{display:block;width:100%;height:100%;object-fit:cover}
-.art.hero{aspect-ratio:3/1;border-radius:var(--r);border:1px solid var(--rule)}
+.art.hero{aspect-ratio:4/1;border-radius:var(--r);border:1px solid var(--rule)}
 .art.banner{aspect-ratio:5/2;margin:0 -12px}
 .art.thumb{aspect-ratio:4/3;border-radius:4px;border:1px solid var(--rule)}
 .art-card{padding-top:0;overflow:hidden;gap:8px}
@@ -465,6 +465,7 @@ sup a{text-decoration:none;font-weight:600;padding:0 1px}
       <div class="menu-list">
         <button type="button" id="m-save">Save my answers to a file</button>
         <button type="button" id="m-load">Open a saved file</button>
+        <button type="button" id="m-example">Fill every step with the example</button>
         <button type="button" id="m-clear">Start over</button>
       </div>
     </details>
@@ -487,6 +488,8 @@ sup a{text-decoration:none;font-weight:600;padding:0 1px}
     <p class="lede">See which kinds of informatics roles your work resembles, choose one to aim for, and plan how to get there. You leave with a one-page plan.</p>
   </div>
   <div class="card" id="pref-card">
+    <h2>What you'll do</h2>
+    <p class="small muted">A <b>phenotype</b> is a common pattern of informatics work, such as "clinician builder" or "informatics educator." There are 20.</p>
     <ol class="links">
       <li><b>Where you are now:</b> your projects and setting.</li>
       <li><b>Current phenotype:</b> the kind of informatics work you do now.</li>
@@ -509,7 +512,8 @@ sup a{text-decoration:none;font-weight:600;padding:0 1px}
   </div>
   <div class="card consent ev-only" id="consent-card">
     <h2>Help us improve this workshop <span class="req">Optional</span><span class="draft">Draft</span></h2>
-    <p class="small">We're asking participants to answer two short anonymous surveys, one now and one at the end. They don't ask for your name, email, or anything that identifies you, and nothing you enter in this coach is collected. We'll use the combined answers to improve the workshop and may share them in a presentation or publication. Taking part is voluntary.</p>
+    <p class="small">Two short anonymous surveys, one now and one at the end.</p>
+    <details class="peek"><summary>What's involved?</summary><p class="small" style="margin-top:6px">The surveys don't ask for your name, email, or anything that identifies you, and nothing you enter in this coach is collected. We'll use the combined answers to improve the workshop and may share them in a presentation or publication. Taking part is voluntary.</p></details>
     <div class="row" id="consent-row"></div>
   </div>
   <div class="card ev-only">
@@ -795,7 +799,7 @@ sup a{text-decoration:none;font-weight:600;padding:0 1px}
   </div>
 </section>
 <!-- BUILD TAG: bump on every deploy so you can tell which build people are seeing. -->
-<footer class="buildtag">PREVIEW · build v0.10.0 (2026-10-22)</footer>
+<footer class="buildtag">PREVIEW · build v0.10.1 (2026-10-22)</footer>
 </main>
 </div>
 
@@ -892,7 +896,6 @@ const TOOLS = {
 };
 const TOOL_LABEL = k => ({copilot:"Microsoft Copilot",other:"Another tool"}[k] || TOOLS[k].n);
 const STEPS = [["s1","Where you are now"],["s2","Current phenotype"],["s3","Goal phenotype"],["s4","Gaps and plan"]];
-const SECTION = {s1:"Step 1: Where are you now?",s2:"Step 2: What work do you do now?",s3:"Step 3: What work do you want?",s4:"Step 4: What are your gaps, and what will you do next?"};
 const AI_INTRO = {
   s1:"The AI asks about your work and drafts your answers.",
   s2:"The AI helps you describe yourself and suggests ratings for 20 kinds of work.",
@@ -1419,10 +1422,13 @@ function renderFork(step){
   if(!m) el.innerHTML = step==="s1" ? `<div class="card choose-first"><h2>How do you want to work? <span class="req">Required</span></h2><div class="choice">
       <button type="button" data-pref="ai">With an AI tool<span>The AI asks you questions and drafts your answers.</span></button>
       <button type="button" data-pref="self">On my own<span>Fill in each step yourself. No AI needed.</span></button></div></div>` : "";
-  else if(m==="self") el.innerHTML=`<div class="ai-band manual-band"><span class="badge">Manual entry</span><h2>${SECTION[step]}</h2><span class="spacer"></span><button type="button" class="linkbtn ai-link" data-mode="ai" data-step="${step}">Use AI for this step instead</button></div>`;
-  else el.innerHTML=aiPanel(step, SECTION[step], tk, prompts()[step], `<button type="button" class="linkbtn" data-mode="self" data-step="${step}">Do this step myself instead</button>`);
+  else if(m==="self") el.innerHTML=`<div class="ai-band manual-band"><span class="badge">Manual entry</span><h2>Fill this step in yourself</h2><span class="spacer"></span><button type="button" class="linkbtn ai-link" data-mode="ai" data-step="${step}">Use AI for this step instead</button></div>`;
+  // A finished step shrinks the AI box to one line, so the results aren't pushed below it.
+  else if(stepDone(step) && !REDO.has(step)) el.innerHTML=`<div class="ai"><div class="ai-band"><span class="badge">AI coaching</span><h2>✓ This step is done</h2><span class="spacer"></span><button type="button" class="linkbtn" data-redo="${step}">Redo with AI</button></div></div>`;
+  else el.innerHTML=aiPanel(step, "Do this step with an AI tool", tk, prompts()[step], `<button type="button" class="linkbtn" data-mode="self" data-step="${step}">Do this step myself instead</button>`);
   renderPref(); visibility();
 }
+const REDO = new Set(); // steps whose finished AI box was reopened with "Redo with AI" (until you leave the step)
 function renderCoachPage(){ $("#full-panel").innerHTML=aiPanel("full","Full session",S.aiTool,fullPrompt()); }
 function renderForks(){ STEPS.forEach(([s])=>renderFork(s)); renderCoachPage(); }
 // A step's fields appear once it has a mode. In AI mode the answer forms sit behind a closed toggle
@@ -1431,7 +1437,8 @@ function visibility(){ STEPS.forEach(([step])=>{ const m=modeFor(step), sec=docu
   [...sec.children].forEach(ch=>{ if(ch.matches(".fork")){ after=true; return; } if(after && !ch.matches("[data-recap]")) ch.hidden=!m; });
   const d=sec.querySelector("details.answers"); if(!d) return;
   if(d.dataset.mode!==m){ d.open = m==="self"; d.dataset.mode=m; }
-  d.classList.toggle("manual", m==="self"); }); }
+  d.classList.toggle("manual", m==="self");
+  d.querySelector("summary").textContent = stepHasData(step) ? "Review or edit your answers" : "Prefer to type? Fill this step in yourself"; }); }
 // Carry-forward card: a read-only display of the previous step's answers, shown at the top of steps 2-4.
 function renderRecaps(){
   const row=(k,v)=>v?`<dt>${k}</dt><dd>${esc(v)}</dd>`:"";
@@ -1529,7 +1536,7 @@ function renderStatic(){
      <label for="st${i}n">By when<input type="text" id="st${i}n" data-bind="steps.${i}.when"></label>
      <label for="st${i}h">Who can help<input type="text" id="st${i}h" data-bind="steps.${i}.who"></label>
    </div>`).join("");
-  STEPS.forEach(([id])=>document.querySelector(`#${id} .head`).insertAdjacentHTML("afterend",`<div class="stepbar"><button type="button" class="tiny" data-example="${id}">Fill with an example</button><button type="button" class="tiny" data-clearstep="${id}">Clear this step</button></div>`));
+  STEPS.forEach(([id])=>document.querySelector(`#${id} .head`).insertAdjacentHTML("afterend",`<div class="stepbar"><button type="button" class="tiny" data-example="${id}" title="Replaces this step's answers with a fictional example">Show an example</button><button type="button" class="tiny" data-clearstep="${id}">Clear this step</button></div>`));
   $("#lib-phenos").innerHTML = PHENO.map((p,i)=>{ const top=p.w.map((v,k)=>({v,k})).sort((a,b)=>b.v-a.v).slice(0,4).map(x=>ATTR[x.k].n.toLowerCase());
     return `<div class="pcard art-card">${art(p.n,"banner")}<div class="ph-head">${pglyph(i,56)}<b>${esc(p.n)}</b></div><p>${esc(p.d)}</p><p><b>Most of the work:</b> ${top.map(esc).join(", ")}.</p></div>`; }).join("");
   $("#lib-attrs").innerHTML = `<thead><tr><th>Kind of work</th><th>What it covers</th></tr></thead><tbody>${GROUPS.map((g,gi)=>`<tr><th colspan="2">${esc(g)}</th></tr>`+DISPLAY.filter(i=>ATTR[i].g===gi).map(i=>`<tr><td>${esc(ATTR[i].n)}</td><td>${esc(ATTR[i].d)}</td></tr>`).join("")).join("")}</tbody>`;
@@ -1552,6 +1559,7 @@ function renderMatches(){
   if(n<8){ el.innerHTML=`<p class="small muted">Rate at least 8 kinds of work to see your matches. You've rated ${n}.</p>`; return; }
   const m=matches();
   el.innerHTML = `<p class="small">Check up to 2 that fit you. If you check none, your top match is used.</p>`
+   + (S.profile.stage==="Trainee"||S.profile.experience===EXPERIENCE[0] ? `<p class="note small">New to informatics? Your matches mostly reflect your clinical work and teaching for now. That's expected; the goal you choose in step 3 matters more.</p>` : "")
    + `<div class="top3">${m.slice(0,3).map((x,j)=>tcard(x, j, `<label class="pick" for="ch${x.i}"><input type="checkbox" id="ch${x.i}" data-choose="${esc(PHENO[x.i].n)}" ${S.chosen.includes(PHENO[x.i].n)?"checked":""}>This fits me</label>`, "m", S.chosen.includes(PHENO[x.i].n))).join("")}</div>`
    + SCORE_NOTE("match")
    + allRanked(m, "See how you matched on all 20 phenotypes", "allm");
@@ -1592,12 +1600,12 @@ function renderFit(){
 
 /* step 4 */
 function compareTable(rows){
-  return `<div class="tablewrap"><table class="t"><thead><tr><th>Kind of work</th><th>Current</th><th>You want</th><th>Goal role</th><th>Gap</th></tr></thead><tbody>${rows.map(r=>{ const [l,c]=GAPLABEL[r.gap]; return `<tr><td>${esc(r.a.n)}</td><td class="num">${r.you??"–"}</td><td class="num">${S.want[r.k]??"–"}</td><td class="num">${r.t.toFixed(1)}</td><td><span class="tag ${c}">${l}</span></td></tr>`; }).join("")}</tbody></table></div>`; }
+  return `<div class="tablewrap"><table class="t"><thead><tr><th>Kind of work</th><th>Current</th><th>You want</th><th>Goal role</th><th>Gap</th></tr></thead><tbody>${rows.map(r=>{ const [l,c]=GAPLABEL[r.gap]; return `<tr><td>${esc(r.a.n)}</td><td class="num">${r.you??"–"}</td><td class="num">${S.want[r.k]??"–"}</td><td class="num">${Math.round(r.t)}</td><td><span class="tag ${c}">${l}</span></td></tr>`; }).join("")}</tbody></table></div>`; }
 function renderComparison(){
   const cur=currentPhenos(), g=S.target.filter(Boolean), rows=compareRows();
   $("#s4cmp").classList.toggle("ready", !!(cur.length&&g.length&&rows));
   if(!cur.length||!g.length||!rows){ $("#side-by-side").innerHTML='<p class="small muted">Finish steps 2 and 3 to see this.</p>'; $("#compare").innerHTML=""; return; }
-  const goal=rows.map(x=>x.t), gaps=rows.map(x=>x.gap), c=gapCounts(rows), ti=targetIdx(), r=goalR(), fit=goalFit(), top=growRows().slice(0,5);
+  const goal=rows.map(x=>x.t), gaps=rows.map(x=>x.gap), c=gapCounts(rows), ti=targetIdx(), r=goalR(), fit=goalFit(), top=growRows().slice(0,3);
   // Both bars are measured against the goal: one for the work you do now, one for the work you want. Their difference is the distance to cover.
   const takeaway = fit==null ? "This compares the mix of your current work with your goal's typical mix. The orange marks show where you'd grow."
     : fit-r>=0.2 ? (fit>=0.4 ? "The work you want fits this goal well. Your current work is partway there, and the orange gaps are the distance to cover." : "Your current work is partway to this goal. Even the work you want fits it only partly, so it's worth checking whether another goal fits better.")
@@ -1636,7 +1644,7 @@ function profileSVG(){
    ${tv?`<line x1="${lx+108}" x2="${lx+108}" y1="${H-9}" y2="${H-1}" stroke="#a5650f" stroke-width="2"/><text x="${lx+112}" y="${H-2}" font-size="6.5" fill="#5c6b73">goal</text>`:""}</svg>`;
 }
 function renderReport(){
-  const p=S.profile, cur=currentPhenos(), g=growRows().slice(0,5), steps=S.steps.filter(s=>s.what), E='<span class="rp-empty">Not filled in yet</span>';
+  const p=S.profile, cur=currentPhenos(), g=growRows().slice(0,3), steps=S.steps.filter(s=>s.what), E='<span class="rp-empty">Not filled in yet</span>';
   const strong = rated()>=8 ? drivers(matches()[0].i).shared.map(k=>ATTR[k].n) : [];
   if(!S.made){ const d=new Date(); S.made=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; save(); }
   const date=new Date(S.made+"T12:00:00").toLocaleDateString(undefined,{year:"numeric",month:"long",day:"numeric"});
@@ -1667,7 +1675,7 @@ function renderReport(){
        ${S.settings.length?`<div><b>Settings I'd consider:</b> ${esc(S.settings.join(", "))}</div>`:""}
      </div>
      <div class="rp-sec"><h4>Biggest differences from my goal</h4>
-       ${g.length?`<table><thead><tr><th>Kind of work</th><th>Current</th><th>You want</th><th>Goal role</th><th>Gap</th></tr></thead><tbody>${g.map(r=>`<tr><td>${esc(r.a.n)}</td><td class="num">${r.you}</td><td class="num">${S.want[r.k]??"–"}</td><td class="num">${r.t.toFixed(1)}</td><td><span class="tag">${GAPLABEL[r.gap][0]}</span></td></tr>`).join("")}</tbody></table>`
+       ${g.length?`<table><thead><tr><th>Kind of work</th><th>Current</th><th>You want</th><th>Goal role</th><th>Gap</th></tr></thead><tbody>${g.map(r=>`<tr><td>${esc(r.a.n)}</td><td class="num">${r.you}</td><td class="num">${S.want[r.k]??"–"}</td><td class="num">${Math.round(r.t)}</td><td><span class="tag">${GAPLABEL[r.gap][0]}</span></td></tr>`).join("")}</tbody></table>`
          : (compareRows()&&rated()>=8? "<div>No big differences. Focus on scope and visibility.</div>" : E)}
      </div>
    </div>
@@ -1720,7 +1728,7 @@ const missingIn = step => reqs(step).filter(x=>!x.ok);
 const stepDone = step => !missingIn(step).length;
 const isStep = id => STEPS.some(s=>s[0]===id);
 const ORDER = ["s1","s2","s3","s4","report"];               // gated: each needs the ones before it done
-const NAV = ["home","s1","s2","s3","s4","report"];           // pages with the bottom Back/Next bar
+const NAV = ["home","s1","s2","s3","s4","report"].concat(EV?["resources"]:[]); // pages with the bottom Back/Next bar (an event ends on the wrap-up)
 const PAGES = ["home","s1","s2","s3","s4","report","coach","resources"];
 const blockerFor = id => { const i=ORDER.indexOf(id); return i<0 ? null : ORDER.slice(0,i).find(s=>!stepDone(s))||null; };
 const flagged = {};
@@ -1748,16 +1756,17 @@ function renderRail(){
   const rail=$("#rail"), act=$("#rail [aria-current]"); if(act && rail.scrollWidth>rail.clientWidth) rail.scrollLeft = act.offsetLeft - 16;
   // bottom Back/Next bar
   const i=NAV.indexOf(cur), nb=$("#navbar"); nb.hidden = i<=0; if(i<=0) return;
-  const label=id=> id==="report"?"Report" : STEPS.find(s=>s[0]===id)[1];
+  const label=id=> id==="report"?"Report" : id==="resources"?"Resources & Wrap Up" : STEPS.find(s=>s[0]===id)[1];
   const prev=NAV[i-1], next=NAV[i+1], left=isStep(cur)? missingIn(cur).length : 0;
   Object.assign($("#nav-back"),{href:"#"+prev}); $("#nav-back").dataset.go=prev;
-  $("#nav-where").textContent = cur==="report" ? "Your report" : left ? `Step ${i} of 4 · ${plural(left,"required item")} left` : `Step ${i} of 4 · complete`;
+  $("#nav-where").textContent = cur==="report" ? "Your report" : cur==="resources" ? "Wrap up" : left ? `Step ${i} of 4 · ${plural(left,"required item")} left` : `Step ${i} of 4 · complete`;
   const nn=$("#nav-next"); nn.hidden=!next; if(next){ nn.href="#"+next; nn.dataset.go=next; nn.textContent=`Next: ${label(next)} →`; nn.classList.toggle("primary", !left); }
 }
 function go(id, push=true, quiet=false){
   if(!PAGES.includes(id)) id="home";
   const b=blockerFor(id); if(b){ if(cur!==b) go(b,push,true); if(!quiet) showMissing(b); return; }
   cur=id;
+  if(isStep(id)){ REDO.delete(id); renderFork(id); } // a step you come back to shows its finished AI box as one line
   // step 3's wanted-work ratings start from the current ratings
   if(id==="s3" && !S.want.some(v=>v!==null) && !S.wantUnsure.some(Boolean)){ S.want=[...S.ratings]; S.wantUnsure=[...S.unsure]; save(); fill(); refresh(); }
   if(push){ try{ if(location.hash!=="#"+id) history.pushState(null,"","#"+id); }catch(e){} }
@@ -1815,6 +1824,7 @@ document.addEventListener("click",e=>{
     go(el.dataset.go); $("#lib-return").hidden=!fromStep3; if(fromStep3) setTimeout(()=>scrollToEl($("#lib")),50); return; }
   if((el=q("[data-pref]"))){ S.pref=el.dataset.pref; S.mode={s1:"",s2:"",s3:"",s4:""}; afterLoad();
     if(cur==="home" && S.pref==="ai") scrollToEl($("#pref-tool"),"center"); return; }
+  if((el=q("[data-redo]"))){ const st=el.dataset.redo; REDO.add(st); renderFork(st); scrollToEl(document.querySelector(`[data-fork="${st}"]`)); return; }
   if((el=q("[data-second]"))){ secondOpen=true; renderFit(); const p=$("#picker-wrap"); if(p){ p.open=true; scrollToEl(p); } return; }
   if((el=q("[data-consent]"))){ S.consent=el.dataset.consent; save(); renderConsent(); return; }
   if((el=q("[data-mode]"))){ const st=el.dataset.step; S.mode[st]= el.dataset.mode===S.pref ? "" : el.dataset.mode; save(); renderFork(st); renderComparison(); renderRecaps(); markNeed(st); renderRail();
@@ -1857,6 +1867,11 @@ $("#m-load").addEventListener("click",()=>{ $("details.menu").open=false; $("#fi
 $("#file-load").addEventListener("change",e=>{ const f=e.target.files[0]; if(!f) return; const r=new FileReader();
   r.onload=()=>{ try{ S=merge(JSON.parse(r.result)); afterLoad(); toast("Your saved answers are open."); }catch(err){ toast("That file couldn't be read. Choose a ci-career-plan.json file."); } };
   r.readAsText(f); e.target.value=""; });
+// For presenters: the fictional example in every step at once, so any step can be shown without filling the ones before it.
+$("#m-example").addEventListener("click",()=>{ $("details.menu").open=false;
+  if(STEPS.some(([s])=>stepHasData(s)) && !confirm("Replace all your answers with the fictional example?")) return;
+  const ex=EXAMPLE(); STEPS.forEach(([s])=>STEPFIELDS[s].forEach(k=>{ S[k]=clone(ex[k]); })); if(!S.pref) S.pref="ai";
+  afterLoad(); toast("Every step now has the example. Use Menu → Start over to clear it."); });
 $("#m-clear").addEventListener("click",()=>{ $("details.menu").open=false;
   if(!confirm("Erase all your answers in this browser? Save them to a file first if you want a copy.")) return;
   S=blank(); try{ localStorage.removeItem(KEY); }catch(e){} afterLoad(); go("home"); toast("Cleared."); });
