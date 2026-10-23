@@ -452,6 +452,7 @@ html[data-event] .gen-only{display:none!important}
 .seg span i{font-style:normal}
 /* step 4: wide tables scroll inside their card, never the page */
 .goal-expand>*,#compare,#compare>*{min-width:0}
+.card.survey{border-color:var(--accent)} .card.survey fieldset.rate:first-child{border-top:0}
 .consent .draft{font:600 .66rem var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--warn);border:1px solid var(--warn);border-radius:3px;padding:1px 5px;margin-left:6px;vertical-align:middle}
 .qr{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:center}
 .qr svg{width:132px;height:132px;background:#fff;padding:6px;border-radius:4px;border:1px solid var(--rule)}
@@ -516,8 +517,8 @@ sup a{text-decoration:none;font-weight:600;padding:0 1px}
   </div>
   <div class="card consent" id="consent-card">
     <h2>Help us improve this workshop <span class="req">Optional</span><span class="draft">Draft</span></h2>
-    <p class="small">Two short anonymous surveys, one now and one at the end.</p>
-    <details class="peek"><summary>What's involved?</summary><p class="small" style="margin-top:6px">The surveys don't ask for your name, email, or anything that identifies you, and nothing you enter in this coach is collected. We'll use the combined answers to improve the workshop and may share them in a presentation or publication. Taking part is voluntary.</p></details>
+    <p class="small">Two short anonymous surveys inside the coach: one in step 1 and one at the wrap-up.</p>
+    <details class="peek"><summary>What's involved?</summary><p class="small" style="margin-top:6px">They ask how confident you feel about planning your informatics career, how useful the session was, and your profession, career stage, and informatics experience. Nothing else from the coach is sent, and only when you press Submit. There's no name or email; a random code links your two surveys. We'll use the combined answers to improve the workshop and may share them in a presentation or publication. Taking part is voluntary, and you can skip any question.</p></details>
     <div class="row" id="consent-row"></div>
   </div>
   </div>
@@ -539,7 +540,7 @@ sup a{text-decoration:none;font-weight:600;padding:0 1px}
     <label for="aiTool" id="pref-tool" hidden>Which AI tool? <span class="hint">Free accounts work. Use the one your organization allows.</span>
       <select id="aiTool" data-bind="aiTool" data-tools></select></label>
     <ul class="links small muted">
-      <li>Don't enter patient information or confidential details, here or in an AI tool. Nothing is sent from this page. (AI privacy settings: <a href="https://privacy.claude.com/" target="_blank" rel="noopener">Claude</a> · <a href="https://help.openai.com/en/articles/7730893-data-controls-faq" target="_blank" rel="noopener">ChatGPT</a> · <a href="https://support.google.com/gemini/answer/13594961" target="_blank" rel="noopener">Gemini</a>)</li>
+      <li>Don't enter patient information or confidential details, here or in an AI tool. Nothing is sent from this page<span class="ev-only"> except survey answers you choose to submit</span>. (AI privacy settings: <a href="https://privacy.claude.com/" target="_blank" rel="noopener">Claude</a> · <a href="https://help.openai.com/en/articles/7730893-data-controls-faq" target="_blank" rel="noopener">ChatGPT</a> · <a href="https://support.google.com/gemini/answer/13594961" target="_blank" rel="noopener">Gemini</a>)</li>
       <li>An AI tool that remembers you can point out where your answers don't match what it knows about your work. For a blank slate, use a temporary chat.</li>
       <li>Your answers save in this browser, so you can stop and come back.<span class="gen-only"> Most people take 45–90 minutes.</span></li>
     </ul>
@@ -570,6 +571,7 @@ sup a{text-decoration:none;font-weight:600;padding:0 1px}
         <select id="p-time" data-bind="profile.time" data-options="SHARES"></select></label>
     </div>
   </div>
+  <div class="card ev-only survey" id="survey-pre" hidden></div>
   <div class="fork" data-fork="s1"></div>
   <details class="answers" data-answers="s1"><summary>Review or edit your answers</summary><div class="answers-in">
   <div class="card">
@@ -737,8 +739,9 @@ sup a{text-decoration:none;font-weight:600;padding:0 1px}
       <li>Share your plan with a mentor, and check in on it at the time you chose in step 4.</li>
       <li><b>Before you leave:</b> tell your table the one step you'll take in the next 30 days.</li>
     </ul>
-    <div class="row" id="consent-post"></div>
   </div>
+  <div class="card ev-only res-wrap" id="survey-ask" hidden><h2>Help us improve this workshop <span class="req">Optional</span></h2><p class="small">Would you answer a 2-minute anonymous survey? There's no name or email, and only your survey answers are sent, when you press Submit.</p><div class="row"><button type="button" data-consent="yes">I agree</button><button type="button" data-consent="no">No thanks</button></div></div>
+  <div class="card ev-only res-wrap survey" id="survey-post" hidden></div>
   <div class="card res-about">
     <h2>About the phenotypes</h2>
     <p>A phenotype is a common pattern of informatics work: the activities, skills, setting, and way of contributing that tend to go together. Phenotypes overlap. They aren't personality types or validated categories. Use them to reflect, talk with mentors, and plan.</p>
@@ -816,7 +819,7 @@ sup a{text-decoration:none;font-weight:600;padding:0 1px}
   </div>
 </section>
 <!-- BUILD TAG: bump on every deploy so you can tell which build people are seeing. -->
-<footer class="buildtag">PREVIEW · build v0.10.6 (2026-10-23)</footer>
+<footer class="buildtag">PREVIEW · build v0.10.7 (2026-10-23)</footer>
 </main>
 </div>
 
@@ -922,12 +925,28 @@ const AI_INTRO = {
   full:"One conversation covers all four steps. You can share your CV or a job description (remove anything sensitive first). Need to stop partway? Ask for \"the export block so far.\""
 };
 // Workshop layer. The <head><meta name="robots" content="noindex"> script sets html[data-event]; CSS shows .ev-only and hides .gen-only.
-// surveys.pre/post: anonymous Google Form links (empty = "link coming soon"). Set on:false to remove consent and surveys.
+// surveys: the embedded pre-survey (step 1) and post-survey (Resources & Wrap Up), shown only after consent on Home.
+//   form   = the Google Form's formResponse URL (https://docs.google.com/forms/d/e/<id>/formResponse); empty = not connected yet
+//   fields = { our field name: "entry.<id>" } from the form's pre-filled link (field names: see drafts/surveys-amia-2026.md)
+//   on:false removes consent and both surveys.
 const EVENTS = {
-  "amia-2026":{name:"AMIA 2026", url:"https://jgenk.github.io/ci-phenotype-coach/amia-2026/", surveys:{on:true, pre:"", post:""},
+  "amia-2026":{name:"AMIA 2026", url:"https://jgenk.github.io/ci-phenotype-coach/amia-2026/", surveys:{on:true, form:"", fields:{}},
     pace:"I'm doing this in a timed workshop, so keep it brisk: aim to finish this step in about 10 minutes."}
 };
 const EVENT = document.documentElement.dataset.event || "", EV = EVENTS[EVENT] || null;
+// Survey questions, one per learning objective (proposal objectives 1-5); the same confidence items before and after.
+// "roles", "goal", and "pitch" follow the 2023/2025 retreat items (see drafts/surveys-amia-2026.md).
+const SV_CONF = [
+  ["now","Describing the informatics work I do now, and what shapes it"],
+  ["roles","Knowing the range of informatics roles open to someone like me"],
+  ["goal","Naming the kind of informatics role I want to grow toward"],
+  ["ai","Using an AI tool as a thinking partner for my career"],
+  ["gaps","Identifying the gaps between my current work and that role"],
+  ["steps","Planning concrete next steps for the next 6 months"],
+  ["pitch","Describing my value and direction in a 30-second pitch"]];
+const SV_USE = [["phenos","The 20 phenotypes"],["coach","The coaching tool"],["aichat","Working through it with an AI tool"],["talk","Pair and table discussions"],["pitch","Writing and saying my 30-second pitch"]];
+const SV_SCALE = ["Not at all","Slightly","Moderately","Very","Extremely"];
+const SV_LIKELY = ["Very unlikely","Unlikely","Not sure","Likely","Very likely"];
 const IMG = /\/amia-2026\//.test(location.pathname) ? "../img/" : "img/"; // the event copy shares the site's images
 // QR code for EVENTS["amia-2026"].url, made by tools/qr.py.
 const QR_SVG = `<svg viewBox="0 0 33 33" role="img" aria-label="QR code for the AMIA 2026 coach" shape-rendering="crispEdges"><path fill="#000" d="M0 0h1v1h-1zM1 0h1v1h-1zM2 0h1v1h-1zM3 0h1v1h-1zM4 0h1v1h-1zM5 0h1v1h-1zM6 0h1v1h-1zM8 0h1v1h-1zM12 0h1v1h-1zM16 0h1v1h-1zM17 0h1v1h-1zM18 0h1v1h-1zM19 0h1v1h-1zM20 0h1v1h-1zM23 0h1v1h-1zM24 0h1v1h-1zM26 0h1v1h-1zM27 0h1v1h-1zM28 0h1v1h-1zM29 0h1v1h-1zM30 0h1v1h-1zM31 0h1v1h-1zM32 0h1v1h-1zM0 1h1v1h-1zM6 1h1v1h-1zM8 1h1v1h-1zM9 1h1v1h-1zM10 1h1v1h-1zM12 1h1v1h-1zM14 1h1v1h-1zM18 1h1v1h-1zM20 1h1v1h-1zM22 1h1v1h-1zM23 1h1v1h-1zM24 1h1v1h-1zM26 1h1v1h-1zM32 1h1v1h-1zM0 2h1v1h-1zM2 2h1v1h-1zM3 2h1v1h-1zM4 2h1v1h-1zM6 2h1v1h-1zM9 2h1v1h-1zM12 2h1v1h-1zM13 2h1v1h-1zM14 2h1v1h-1zM16 2h1v1h-1zM18 2h1v1h-1zM20 2h1v1h-1zM23 2h1v1h-1zM26 2h1v1h-1zM28 2h1v1h-1zM29 2h1v1h-1zM30 2h1v1h-1zM32 2h1v1h-1zM0 3h1v1h-1zM2 3h1v1h-1zM3 3h1v1h-1zM4 3h1v1h-1zM6 3h1v1h-1zM8 3h1v1h-1zM9 3h1v1h-1zM10 3h1v1h-1zM11 3h1v1h-1zM12 3h1v1h-1zM18 3h1v1h-1zM19 3h1v1h-1zM22 3h1v1h-1zM23 3h1v1h-1zM24 3h1v1h-1zM26 3h1v1h-1zM28 3h1v1h-1zM29 3h1v1h-1zM30 3h1v1h-1zM32 3h1v1h-1zM0 4h1v1h-1zM2 4h1v1h-1zM3 4h1v1h-1zM4 4h1v1h-1zM6 4h1v1h-1zM9 4h1v1h-1zM12 4h1v1h-1zM16 4h1v1h-1zM19 4h1v1h-1zM20 4h1v1h-1zM21 4h1v1h-1zM24 4h1v1h-1zM26 4h1v1h-1zM28 4h1v1h-1zM29 4h1v1h-1zM30 4h1v1h-1zM32 4h1v1h-1zM0 5h1v1h-1zM6 5h1v1h-1zM9 5h1v1h-1zM10 5h1v1h-1zM12 5h1v1h-1zM13 5h1v1h-1zM14 5h1v1h-1zM15 5h1v1h-1zM16 5h1v1h-1zM19 5h1v1h-1zM21 5h1v1h-1zM24 5h1v1h-1zM26 5h1v1h-1zM32 5h1v1h-1zM0 6h1v1h-1zM1 6h1v1h-1zM2 6h1v1h-1zM3 6h1v1h-1zM4 6h1v1h-1zM5 6h1v1h-1zM6 6h1v1h-1zM8 6h1v1h-1zM10 6h1v1h-1zM12 6h1v1h-1zM14 6h1v1h-1zM16 6h1v1h-1zM18 6h1v1h-1zM20 6h1v1h-1zM22 6h1v1h-1zM24 6h1v1h-1zM26 6h1v1h-1zM27 6h1v1h-1zM28 6h1v1h-1zM29 6h1v1h-1zM30 6h1v1h-1zM31 6h1v1h-1zM32 6h1v1h-1zM8 7h1v1h-1zM9 7h1v1h-1zM12 7h1v1h-1zM15 7h1v1h-1zM16 7h1v1h-1zM17 7h1v1h-1zM18 7h1v1h-1zM19 7h1v1h-1zM23 7h1v1h-1zM0 8h1v1h-1zM2 8h1v1h-1zM3 8h1v1h-1zM5 8h1v1h-1zM6 8h1v1h-1zM7 8h1v1h-1zM9 8h1v1h-1zM10 8h1v1h-1zM11 8h1v1h-1zM14 8h1v1h-1zM15 8h1v1h-1zM16 8h1v1h-1zM17 8h1v1h-1zM18 8h1v1h-1zM19 8h1v1h-1zM21 8h1v1h-1zM26 8h1v1h-1zM29 8h1v1h-1zM31 8h1v1h-1zM32 8h1v1h-1zM0 9h1v1h-1zM1 9h1v1h-1zM3 9h1v1h-1zM4 9h1v1h-1zM7 9h1v1h-1zM10 9h1v1h-1zM11 9h1v1h-1zM13 9h1v1h-1zM16 9h1v1h-1zM17 9h1v1h-1zM18 9h1v1h-1zM19 9h1v1h-1zM23 9h1v1h-1zM26 9h1v1h-1zM27 9h1v1h-1zM29 9h1v1h-1zM30 9h1v1h-1zM31 9h1v1h-1zM32 9h1v1h-1zM0 10h1v1h-1zM2 10h1v1h-1zM3 10h1v1h-1zM6 10h1v1h-1zM8 10h1v1h-1zM9 10h1v1h-1zM11 10h1v1h-1zM12 10h1v1h-1zM13 10h1v1h-1zM18 10h1v1h-1zM20 10h1v1h-1zM23 10h1v1h-1zM25 10h1v1h-1zM27 10h1v1h-1zM28 10h1v1h-1zM29 10h1v1h-1zM31 10h1v1h-1zM32 10h1v1h-1zM0 11h1v1h-1zM3 11h1v1h-1zM4 11h1v1h-1zM7 11h1v1h-1zM9 11h1v1h-1zM12 11h1v1h-1zM16 11h1v1h-1zM17 11h1v1h-1zM23 11h1v1h-1zM24 11h1v1h-1zM26 11h1v1h-1zM27 11h1v1h-1zM29 11h1v1h-1zM31 11h1v1h-1zM0 12h1v1h-1zM2 12h1v1h-1zM3 12h1v1h-1zM6 12h1v1h-1zM7 12h1v1h-1zM8 12h1v1h-1zM9 12h1v1h-1zM14 12h1v1h-1zM15 12h1v1h-1zM16 12h1v1h-1zM20 12h1v1h-1zM22 12h1v1h-1zM23 12h1v1h-1zM24 12h1v1h-1zM25 12h1v1h-1zM27 12h1v1h-1zM28 12h1v1h-1zM29 12h1v1h-1zM31 12h1v1h-1zM2 13h1v1h-1zM3 13h1v1h-1zM4 13h1v1h-1zM7 13h1v1h-1zM9 13h1v1h-1zM11 13h1v1h-1zM12 13h1v1h-1zM13 13h1v1h-1zM14 13h1v1h-1zM19 13h1v1h-1zM20 13h1v1h-1zM24 13h1v1h-1zM27 13h1v1h-1zM29 13h1v1h-1zM30 13h1v1h-1zM31 13h1v1h-1zM0 14h1v1h-1zM1 14h1v1h-1zM3 14h1v1h-1zM5 14h1v1h-1zM6 14h1v1h-1zM10 14h1v1h-1zM11 14h1v1h-1zM12 14h1v1h-1zM13 14h1v1h-1zM14 14h1v1h-1zM17 14h1v1h-1zM18 14h1v1h-1zM19 14h1v1h-1zM21 14h1v1h-1zM24 14h1v1h-1zM26 14h1v1h-1zM27 14h1v1h-1zM29 14h1v1h-1zM0 15h1v1h-1zM1 15h1v1h-1zM3 15h1v1h-1zM5 15h1v1h-1zM8 15h1v1h-1zM9 15h1v1h-1zM11 15h1v1h-1zM12 15h1v1h-1zM15 15h1v1h-1zM19 15h1v1h-1zM21 15h1v1h-1zM22 15h1v1h-1zM23 15h1v1h-1zM25 15h1v1h-1zM26 15h1v1h-1zM27 15h1v1h-1zM29 15h1v1h-1zM30 15h1v1h-1zM2 16h1v1h-1zM3 16h1v1h-1zM5 16h1v1h-1zM6 16h1v1h-1zM8 16h1v1h-1zM11 16h1v1h-1zM12 16h1v1h-1zM13 16h1v1h-1zM16 16h1v1h-1zM20 16h1v1h-1zM21 16h1v1h-1zM22 16h1v1h-1zM25 16h1v1h-1zM26 16h1v1h-1zM28 16h1v1h-1zM30 16h1v1h-1zM3 17h1v1h-1zM4 17h1v1h-1zM5 17h1v1h-1zM9 17h1v1h-1zM10 17h1v1h-1zM11 17h1v1h-1zM12 17h1v1h-1zM13 17h1v1h-1zM15 17h1v1h-1zM20 17h1v1h-1zM22 17h1v1h-1zM23 17h1v1h-1zM24 17h1v1h-1zM25 17h1v1h-1zM26 17h1v1h-1zM28 17h1v1h-1zM29 17h1v1h-1zM32 17h1v1h-1zM0 18h1v1h-1zM3 18h1v1h-1zM6 18h1v1h-1zM11 18h1v1h-1zM12 18h1v1h-1zM14 18h1v1h-1zM15 18h1v1h-1zM16 18h1v1h-1zM18 18h1v1h-1zM20 18h1v1h-1zM21 18h1v1h-1zM27 18h1v1h-1zM28 18h1v1h-1zM30 18h1v1h-1zM31 18h1v1h-1zM0 19h1v1h-1zM1 19h1v1h-1zM2 19h1v1h-1zM7 19h1v1h-1zM9 19h1v1h-1zM10 19h1v1h-1zM14 19h1v1h-1zM16 19h1v1h-1zM17 19h1v1h-1zM18 19h1v1h-1zM22 19h1v1h-1zM23 19h1v1h-1zM24 19h1v1h-1zM25 19h1v1h-1zM26 19h1v1h-1zM28 19h1v1h-1zM31 19h1v1h-1zM1 20h1v1h-1zM5 20h1v1h-1zM6 20h1v1h-1zM12 20h1v1h-1zM14 20h1v1h-1zM15 20h1v1h-1zM16 20h1v1h-1zM19 20h1v1h-1zM20 20h1v1h-1zM21 20h1v1h-1zM22 20h1v1h-1zM29 20h1v1h-1zM30 20h1v1h-1zM32 20h1v1h-1zM0 21h1v1h-1zM3 21h1v1h-1zM7 21h1v1h-1zM8 21h1v1h-1zM11 21h1v1h-1zM14 21h1v1h-1zM15 21h1v1h-1zM16 21h1v1h-1zM17 21h1v1h-1zM19 21h1v1h-1zM23 21h1v1h-1zM24 21h1v1h-1zM26 21h1v1h-1zM30 21h1v1h-1zM32 21h1v1h-1zM2 22h1v1h-1zM5 22h1v1h-1zM6 22h1v1h-1zM7 22h1v1h-1zM10 22h1v1h-1zM11 22h1v1h-1zM13 22h1v1h-1zM14 22h1v1h-1zM15 22h1v1h-1zM18 22h1v1h-1zM20 22h1v1h-1zM23 22h1v1h-1zM27 22h1v1h-1zM29 22h1v1h-1zM31 22h1v1h-1zM32 22h1v1h-1zM1 23h1v1h-1zM3 23h1v1h-1zM5 23h1v1h-1zM7 23h1v1h-1zM9 23h1v1h-1zM11 23h1v1h-1zM12 23h1v1h-1zM13 23h1v1h-1zM14 23h1v1h-1zM15 23h1v1h-1zM18 23h1v1h-1zM19 23h1v1h-1zM25 23h1v1h-1zM26 23h1v1h-1zM27 23h1v1h-1zM29 23h1v1h-1zM0 24h1v1h-1zM2 24h1v1h-1zM3 24h1v1h-1zM4 24h1v1h-1zM6 24h1v1h-1zM8 24h1v1h-1zM9 24h1v1h-1zM11 24h1v1h-1zM12 24h1v1h-1zM17 24h1v1h-1zM20 24h1v1h-1zM22 24h1v1h-1zM23 24h1v1h-1zM24 24h1v1h-1zM25 24h1v1h-1zM26 24h1v1h-1zM27 24h1v1h-1zM28 24h1v1h-1zM31 24h1v1h-1zM8 25h1v1h-1zM9 25h1v1h-1zM12 25h1v1h-1zM15 25h1v1h-1zM19 25h1v1h-1zM21 25h1v1h-1zM22 25h1v1h-1zM23 25h1v1h-1zM24 25h1v1h-1zM28 25h1v1h-1zM29 25h1v1h-1zM0 26h1v1h-1zM1 26h1v1h-1zM2 26h1v1h-1zM3 26h1v1h-1zM4 26h1v1h-1zM5 26h1v1h-1zM6 26h1v1h-1zM8 26h1v1h-1zM9 26h1v1h-1zM10 26h1v1h-1zM11 26h1v1h-1zM12 26h1v1h-1zM13 26h1v1h-1zM14 26h1v1h-1zM17 26h1v1h-1zM18 26h1v1h-1zM19 26h1v1h-1zM23 26h1v1h-1zM24 26h1v1h-1zM26 26h1v1h-1zM28 26h1v1h-1zM0 27h1v1h-1zM6 27h1v1h-1zM8 27h1v1h-1zM9 27h1v1h-1zM10 27h1v1h-1zM12 27h1v1h-1zM13 27h1v1h-1zM14 27h1v1h-1zM15 27h1v1h-1zM17 27h1v1h-1zM18 27h1v1h-1zM21 27h1v1h-1zM22 27h1v1h-1zM23 27h1v1h-1zM24 27h1v1h-1zM28 27h1v1h-1zM29 27h1v1h-1zM30 27h1v1h-1zM32 27h1v1h-1zM0 28h1v1h-1zM2 28h1v1h-1zM3 28h1v1h-1zM4 28h1v1h-1zM6 28h1v1h-1zM10 28h1v1h-1zM11 28h1v1h-1zM15 28h1v1h-1zM16 28h1v1h-1zM17 28h1v1h-1zM18 28h1v1h-1zM19 28h1v1h-1zM21 28h1v1h-1zM23 28h1v1h-1zM24 28h1v1h-1zM25 28h1v1h-1zM26 28h1v1h-1zM27 28h1v1h-1zM28 28h1v1h-1zM30 28h1v1h-1zM31 28h1v1h-1zM0 29h1v1h-1zM2 29h1v1h-1zM3 29h1v1h-1zM4 29h1v1h-1zM6 29h1v1h-1zM8 29h1v1h-1zM9 29h1v1h-1zM10 29h1v1h-1zM12 29h1v1h-1zM16 29h1v1h-1zM23 29h1v1h-1zM24 29h1v1h-1zM27 29h1v1h-1zM29 29h1v1h-1zM32 29h1v1h-1zM0 30h1v1h-1zM2 30h1v1h-1zM3 30h1v1h-1zM4 30h1v1h-1zM6 30h1v1h-1zM8 30h1v1h-1zM14 30h1v1h-1zM15 30h1v1h-1zM16 30h1v1h-1zM17 30h1v1h-1zM18 30h1v1h-1zM21 30h1v1h-1zM22 30h1v1h-1zM23 30h1v1h-1zM24 30h1v1h-1zM26 30h1v1h-1zM27 30h1v1h-1zM29 30h1v1h-1zM30 30h1v1h-1zM0 31h1v1h-1zM6 31h1v1h-1zM14 31h1v1h-1zM17 31h1v1h-1zM18 31h1v1h-1zM19 31h1v1h-1zM20 31h1v1h-1zM23 31h1v1h-1zM24 31h1v1h-1zM26 31h1v1h-1zM27 31h1v1h-1zM28 31h1v1h-1zM29 31h1v1h-1zM32 31h1v1h-1zM0 32h1v1h-1zM1 32h1v1h-1zM2 32h1v1h-1zM3 32h1v1h-1zM4 32h1v1h-1zM5 32h1v1h-1zM6 32h1v1h-1zM8 32h1v1h-1zM10 32h1v1h-1zM12 32h1v1h-1zM13 32h1v1h-1zM14 32h1v1h-1zM16 32h1v1h-1zM17 32h1v1h-1zM18 32h1v1h-1zM19 32h1v1h-1zM21 32h1v1h-1zM23 32h1v1h-1zM26 32h1v1h-1zM28 32h1v1h-1zM30 32h1v1h-1z"/></svg>`;
@@ -945,7 +964,8 @@ const blank = () => ({
   dream:"", settings:[], want:Array(20).fill(null), wantUnsure:Array(20).fill(false), target:["",""],
   gaps:Object.fromEntries(GAPDIMS.map(g=>[g[0],{t:"",p:""}])),
   steps:[{what:"",when:"",who:""},{what:"",when:"",who:""},{what:"",when:"",who:""}],
-  ask:"", checkin:"", pitch:"", made:"", consent:"", flow:""
+  ask:"", checkin:"", pitch:"", made:"", consent:"", flow:"",
+  survey:{rid:"", pre:{conf:{}, aiBefore:"", hope:"", sent:""}, post:{conf:{}, use:{}, intent:"", step30:"", change:"", aiConcern:"", sent:""}}
 });
 // Worked example (a fictional nurse practitioner), used by "Fill with an example" one step at a time.
 const EXAMPLE = () => Object.assign(blank(), {
@@ -1798,16 +1818,51 @@ function renderReport(){
    </div>`;
 }
 
-// Workshop surveys: links appear only after "I agree". The coach itself never sends or collects anything.
-function surveyBtn(which){ const u=EV.surveys[which], label=which==="pre"?"Take the start-of-session survey":"Take the end-of-session survey";
-  return u ? `<a class="btn primary" href="${esc(u)}" target="_blank" rel="noopener">${label} ↗</a>` : `<span class="small muted">${label}: link coming soon.</span>`; }
+// Workshop surveys, built into the coach. Answers stay in this browser until the person presses Submit; then only the
+// survey answers, plus profession, career stage, informatics experience, and (after) how they used the coach, go to the form.
+const svOn = () => !!(EV && EV.surveys.on && S.consent==="yes");
+function svRate(phase, group, key, label, scale, na){ const v=(S.survey[phase][group]||{})[key]||"", nm=`sv-${phase}-${group}-${key}`;
+  return `<fieldset class="rate"><legend>${esc(label)}</legend><div class="seg">${scale.map((s,i)=>`<label><input type="radio" name="${nm}" value="${i+1}" data-sv="${phase}.${group}.${key}" ${v===String(i+1)?"checked":""}><span>${i+1}<i> ${esc(s)}</i></span></label>`).join("")}${na?`<label><input type="radio" name="${nm}" value="N/A" data-sv="${phase}.${group}.${key}" ${v==="N/A"?"checked":""}><span>N/A</span></label>`:""}</div></fieldset>`; }
+function svOne(phase, key, label, opts){ const v=S.survey[phase][key]||"", nm=`sv-${phase}-${key}`;
+  return `<fieldset class="rate"><legend>${esc(label)}</legend><div class="seg">${opts.map(o=>`<label><input type="radio" name="${nm}" value="${esc(o)}" data-sv="${phase}.${key}" ${v===o?"checked":""}><span>${esc(o)}</span></label>`).join("")}</div></fieldset>`; }
+const svText = (phase, key, label, hint) => `<label for="sv-${phase}-${key}">${esc(label)} ${hint?`<span class="hint">${esc(hint)}</span>`:""}<textarea id="sv-${phase}-${key}" data-bind="survey.${phase}.${key}" style="min-height:64px">${esc(S.survey[phase][key]||"")}</textarea></label>`;
+function surveyCard(phase){ const a=S.survey[phase], pre=phase==="pre";
+  if(a.sent) return `<p class="small"><b>✓ Thank you.</b> Your ${pre?"start-of-session":"end-of-session"} survey is in.</p>`;
+  const intent = `<fieldset class="rate"><legend>How likely are you to take at least one of your next steps in the next 3 months?</legend><div class="seg">${SV_LIKELY.map((s,i)=>`<label><input type="radio" name="sv-post-intent" value="${i+1}" data-sv="post.intent" ${a.intent===String(i+1)?"checked":""}><span>${i+1}<i> ${esc(s)}</i></span></label>`).join("")}</div></fieldset>`;
+  return `<span class="eyebrow">Optional · anonymous · about ${pre?1:2} min</span>
+    <h2>${pre?"Before you start: a 1-minute survey":"Before you go: the end-of-session survey"}</h2>
+    <p class="small muted">How confident do you feel ${pre?"today":"now"} about each of these? 1 Not at all · 2 Slightly · 3 Moderately · 4 Very · 5 Extremely confident. Skip any you like.</p>
+    <div>${SV_CONF.map(([k,l])=>svRate(phase,"conf",k,l,SV_SCALE)).join("")}</div>
+    ${pre ? svOne("pre","aiBefore","Have you used an AI tool for career planning before?",["Yes","No","Not sure"]) + svText("pre","hope","What do you most hope to get from this session?","Optional")
+      : `<p class="small muted" style="margin-top:6px">How useful was each part of the session? 1 Not at all · 5 Extremely useful.</p><div>${SV_USE.map(([k,l])=>svRate("post","use",k,l,SV_SCALE,true)).join("")}</div>`
+        + intent + svText("post","step30","One step you'll take in the next 30 days","Optional") + svText("post","change","What should we change about this session?","Optional") + svText("post","aiConcern","Did anything about using AI concern you?","Optional")}
+    <p class="small muted">Also sent: your profession, career stage, and informatics experience${pre?"":", plus how you used the coach and which AI tool"}. No name, email, or anything else from the coach. Please leave names and patient details out of your comments.</p>
+    <div class="row"><button type="button" class="primary" data-svsubmit="${phase}">Submit</button></div>`; }
+function renderSurveys(){ const on=svOn();
+  [["pre","#survey-pre"],["post","#survey-post"]].forEach(([ph,sel])=>{ const el=$(sel); if(!el) return; el.hidden=!on; el.innerHTML= on ? surveyCard(ph) : ""; });
+  // At the wrap-up, someone who never answered on Home can still opt in there.
+  const ask=$("#survey-ask"); if(ask) ask.hidden = !(EV && EV.surveys.on && !S.consent); }
+function howUsed(){ if(S.flow==="full") return "Full AI coach"; const ms=STEPS.map(([s])=>modeFor(s)).filter(Boolean);
+  return !ms.length ? "" : ms.every(m=>m==="ai") ? "Step by step with an AI tool" : ms.every(m=>m==="self") ? "Manual entry" : "A mix"; }
+const toolUsed = () => (S.flow==="full" || STEPS.some(([s])=>modeFor(s)==="ai")) ? TOOL_LABEL(S.aiTool) : "None";
+function svPayload(phase){ const p=S.profile, a=S.survey[phase];
+  const f={rid:S.survey.rid, phase, build:(document.querySelector(".buildtag").textContent.match(/v[\d.]+/)||[""])[0], profession:p.profession, stage:p.stage, experience:p.experience};
+  SV_CONF.forEach(([k])=>{ f["conf_"+k]=a.conf[k]||""; });
+  if(phase==="pre"){ f.ai_before=a.aiBefore; f.hope=a.hope; }
+  else { SV_USE.forEach(([k])=>{ f["use_"+k]=a.use[k]||""; }); f.intent=a.intent; f.step30=a.step30; f.change=a.change; f.ai_concern=a.aiConcern; f.how=howUsed(); f.tool=toolUsed(); }
+  return f; }
+async function svSubmit(phase){ const cfg=EV.surveys;
+  if(!cfg.form || !Object.keys(cfg.fields||{}).length){ toast("The survey isn't connected yet. Your answers are saved in this browser."); return; }
+  const body=new URLSearchParams(); Object.entries(svPayload(phase)).forEach(([k,v])=>{ if(cfg.fields[k]) body.append(cfg.fields[k], v??""); });
+  try{ await fetch(cfg.form,{method:"POST",mode:"no-cors",body}); S.survey[phase].sent=new Date().toISOString(); save(); renderSurveys(); toast("Thank you. Your survey is in."); }
+  catch(err){ toast("Couldn't send. Check your connection and try again."); } }
 function renderConsent(){
-  const on=!!(EV&&EV.surveys.on); $("#consent-card").hidden=!on; if(!on){ $("#consent-post").innerHTML=""; return; }
-  const ask=`<button type="button" data-consent="yes">I agree, show the surveys</button><button type="button" data-consent="no">No thanks</button>`;
-  $("#consent-row").innerHTML = S.consent==="yes" ? `<span class="small">Thank you.</span>${surveyBtn("pre")}<button type="button" class="linkbtn small" data-consent="">Undo</button>`
+  const on=!!(EV&&EV.surveys.on); $("#consent-card").hidden=!on;
+  if(on && S.consent==="yes" && !S.survey.rid){ const b=new Uint8Array(6); crypto.getRandomValues(b); S.survey.rid=[...b].map(x=>x.toString(36).padStart(2,"0")).join("").slice(0,10); save(); }
+  const ask=`<button type="button" data-consent="yes">I agree</button><button type="button" data-consent="no">No thanks</button>`;
+  $("#consent-row").innerHTML = S.consent==="yes" ? `<span class="small">Thank you. The first survey is in step 1, after the card about your career.</span><button type="button" class="linkbtn small" data-consent="">Undo</button>`
     : S.consent==="no" ? `<span class="small muted">No problem.</span><button type="button" class="linkbtn small" data-consent="">Change my mind</button>` : ask;
-  $("#consent-post").innerHTML = S.consent==="yes" ? surveyBtn("post")
-    : S.consent==="no" ? "" : `<span class="small">Would you help us improve this workshop? Two short anonymous surveys.</span><button type="button" class="tiny" data-go="home">Read about it on Home</button>`; }
+  renderSurveys(); }
 
 // Re-renders everything that depends on answers.
 function profileHint(){ const ph=$("#profile-hint"), p=S.profile, ok=!!(p.profession&&p.stage&&p.experience); if(ph) ph.hidden=ok;
@@ -1909,6 +1964,7 @@ function advance(t, listSel, doneEl){ if(!rateByPointer) return; rateByPointer=f
 const toggleIn = (arr,v,on) => { const i=arr.indexOf(v); if(on&&i<0) arr.push(v); if(!on&&i>=0) arr.splice(i,1); };
 document.addEventListener("change",e=>{
   const t=e.target, d=t.dataset;
+  if(d.sv){ setPath(S,"survey."+d.sv,t.value); save(); return; } // survey answers: stored here until Submit
   if(d.rate!==undefined){ const i=+d.rate; S.ratings[i]= t.value===""? null : +t.value; S.unsure[i]= t.value===""; save(); refresh(); advance(t,"#ratings", answered()===20 && $("#results")); }
   else if(d.want!==undefined){ const i=+d.want; S.want[i]= t.value===""? null : +t.value; S.wantUnsure[i]= t.value===""; save(); refresh(); advance(t,"#wants", wantAnswered()===20 && $("#fit")); }
   else if(d.setting){ toggleIn(S.settings,d.setting,t.checked); save(); refresh(); }
@@ -1944,6 +2000,7 @@ document.addEventListener("click",e=>{
     scrollToEl(cardOf(el.dataset.jump)); if(t && t.matches("input,select,textarea")) setTimeout(()=>t.focus({preventScroll:true}),350); return; }
   if((el=q("[data-redo]"))){ const st=el.dataset.redo; REDO.add(st); renderFork(st); scrollToEl(document.querySelector(`[data-fork="${st}"]`)); return; }
   if((el=q("[data-second]"))){ secondOpen=true; renderFit(); const p=$("#picker-wrap"); if(p){ p.open=true; scrollToEl(p); } return; }
+  if((el=q("[data-svsubmit]"))){ svSubmit(el.dataset.svsubmit); return; }
   if((el=q("[data-consent]"))){ S.consent=el.dataset.consent; save(); renderConsent(); return; }
   if((el=q("[data-mode]"))){ const st=el.dataset.step; S.mode[st]= el.dataset.mode===S.pref ? "" : el.dataset.mode; save(); renderFork(st); renderComparison(); renderRecaps(); markNeed(st); renderRail();
     const f=document.querySelector(`[data-fork="${st}"]`); scrollToEl(el.dataset.mode==="ai" ? f.querySelector(".ai") : f); return; }
