@@ -236,7 +236,6 @@ label.need input,label.need select,label.need textarea{border-color:var(--warn);
 .ctl{display:grid;grid-template-columns:24px minmax(0,1fr);gap:10px;align-items:start;min-width:0}
 .ctl-n{width:22px;height:22px;border-radius:50%;background:var(--coach);color:var(--coach-ink);font:700 .75rem var(--f-mono);display:grid;place-items:center;margin-top:6px}
 .ctl-body{display:grid;gap:8px;min-width:0}
-.ctl-wait{margin:0;padding-top:6px;font-size:.9rem;color:var(--muted);font-style:italic}
 button:disabled{opacity:.45;cursor:not-allowed}
 .ai .primary{background:var(--coach);border-color:var(--coach);color:var(--coach-ink)}
 .ai .linkbtn,.ai a:not(.btn){color:var(--coach)}
@@ -346,7 +345,7 @@ table.t td.num{font-family:var(--f-mono);text-align:center;white-space:nowrap} t
 .rp-foot{border-top:1px solid #d6dede;padding-top:6px;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:14px;font-size:7.4pt;color:#4d5d66}
 .rp-foot ul{margin:0;padding-left:1em}
 .rp-empty{color:#8a979d;font-style:italic}
-svg.profile text{font-family:var(--f-mono)}
+svg.profile text{font-family:var(--f-body)} /* the sans is narrower than the mono, so the row labels clear the bars */
 @media (max-width:700px){.rp-meta{grid-template-columns:repeat(2,minmax(0,1fr))}.rp-two,.rp-foot{grid-template-columns:minmax(0,1fr)}}
 /* phenotype glyphs: blue = the phenotype (neutral information), ink = you, orange = grow */
 .glyph{--g-acc:var(--accent);--g-ink:var(--ink);--g-warn:var(--warn);--g-rule:var(--rule);display:block;flex:none;overflow:visible}
@@ -360,7 +359,9 @@ svg.profile text{font-family:var(--f-mono)}
 .g-dot{fill:var(--g-ink)}
 .g-gap{stroke:var(--g-warn);stroke-linecap:round;stroke-width:3.2}
 .g-gap.big{stroke-width:5}
-.glyph.mini .g-petal{stroke-width:0}
+.glyph.mini .g-petal{stroke-width:0;fill-opacity:calc(.5 + var(--v) * .1)}
+/* small signatures (cards, lists): a solid ring on a light disc, so the circle reads at a glance */
+.glyph.mini .g-ring{stroke:var(--g-acc);stroke-opacity:.55;stroke-width:3;stroke-dasharray:none;fill:var(--g-acc);fill-opacity:.08}
 .glyph.mini .g-you{stroke-width:2.2}
 .g-legend{display:flex;flex-wrap:wrap;gap:6px 18px;color:var(--muted)}
 .g-legend span{display:inline-flex;align-items:center;gap:6px}
@@ -403,6 +404,7 @@ details.carry[open]>summary{margin-bottom:10px}
 /* step 1 choice, when it hasn't been made on Home */
 .choose-first{display:grid;gap:10px}
 /* "Not sure what you want yet?" callout at the top of step 3 */
+.waiting{font-size:.92rem;color:var(--muted);padding:14px 16px;border:1px dashed var(--control);border-radius:var(--r)}
 .callout{display:grid;gap:8px;border:1px solid var(--accent);border-left-width:4px;border-radius:var(--r);background:var(--accent-soft);padding:12px 16px}
 .callout h2{font-size:1.05rem}
 /* step 2 and 3: the top three as picture cards */
@@ -415,6 +417,7 @@ details.carry[open]>summary{margin-bottom:10px}
 .tcard-body{display:grid;gap:8px;padding:10px 12px 12px;align-content:start}
 .tcard .rank{font:600 .7rem var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .tcard .ph-head b{font-size:.98rem}
+[data-pick]{cursor:pointer} .tcard[data-pick]:hover,.pcard[data-pick]:hover{border-color:var(--accent)}
 .tcard.sel{border-color:var(--ok);box-shadow:0 0 0 1px var(--ok)} #fit-list .tcard.sel{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
 .allrank{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:4px;font-size:.88rem}
 .allrank li{display:grid;grid-template-columns:2em minmax(0,1fr) auto;gap:8px;align-items:center}
@@ -431,9 +434,12 @@ html[data-event] .gen-only{display:none!important}
 .pause .eyebrow{color:var(--ink)}
 .pause h2{font-size:1.1rem}
 .pause .early{font-size:.86rem;color:var(--muted);border-top:1px dashed var(--rule);padding-top:6px;margin-top:2px}
-html[data-event] #pref-card{order:1} html[data-event] #consent-card{order:2} html[data-event] #home>.card:last-child{order:3} /* start first; the survey card sits right below */
+/* AMIA Home: the QR code and the survey side by side above the steps; on phones (no QR) the survey sits below Start */
+.ev-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:stretch}
+.ev-row:has(#consent-card[hidden]){grid-template-columns:minmax(0,1fr)} /* surveys switched off */
+@media (max-width:760px){ .ev-row{grid-template-columns:minmax(0,1fr)} html[data-event] #pref-card{order:1} html[data-event] #ev-row{order:2} }
 /* phones: the QR card is for laptops and the room screen; one-row header; no iOS zoom on focus; bigger tap targets */
-@media (max-width:760px){ #home .card:has(.qr){display:none} }
+@media (max-width:760px){ #qr-card{display:none} }
 @media (max-width:640px){ input[type=text],select,textarea{font-size:16px} }
 @media (max-width:560px){
   .evtag{display:none} .brand{font-size:.95rem} .topbar-in{flex-wrap:nowrap}
@@ -502,6 +508,17 @@ sup a{text-decoration:none;font-weight:600;padding:0 1px}
     <h1 tabindex="-1">Plan your next move in clinical informatics.</h1>
     <p class="lede">See which kinds of informatics roles your work resembles, choose one to aim for, and plan how to get there. You leave with a one-page plan.</p>
   </div>
+  <div class="ev-row ev-only" id="ev-row">
+  <div class="card" id="qr-card">
+    <div class="qr"><div id="qr-home"></div><div class="stack" style="gap:6px"><h2>Open it on your own device</h2><p class="small muted">Scan the code or type the address. Your answers stay in the browser you use.</p><code id="ev-url"></code></div></div>
+  </div>
+  <div class="card consent" id="consent-card">
+    <h2>Help us improve this workshop <span class="req">Optional</span><span class="draft">Draft</span></h2>
+    <p class="small">Two short anonymous surveys, one now and one at the end.</p>
+    <details class="peek"><summary>What's involved?</summary><p class="small" style="margin-top:6px">The surveys don't ask for your name, email, or anything that identifies you, and nothing you enter in this coach is collected. We'll use the combined answers to improve the workshop and may share them in a presentation or publication. Taking part is voluntary.</p></details>
+    <div class="row" id="consent-row"></div>
+  </div>
+  </div>
   <div class="card" id="pref-card">
     <h2>What you'll do</h2>
     <p class="small muted">A <b>phenotype</b> is a common pattern of informatics work, such as "clinician builder" or "informatics educator." There are 20.</p>
@@ -524,15 +541,6 @@ sup a{text-decoration:none;font-weight:600;padding:0 1px}
       <li>Your answers save in this browser, so you can stop and come back.<span class="gen-only"> Most people take 45–90 minutes.</span></li>
     </ul>
     <div class="row"><a class="btn primary" href="#s1" data-go="s1" id="start-btn">Start step 1</a><a class="btn ai-btn gen-only" href="#coach" data-go="coach">Or do it all in one AI conversation</a></div>
-  </div>
-  <div class="card consent ev-only" id="consent-card">
-    <h2>Help us improve this workshop <span class="req">Optional</span><span class="draft">Draft</span></h2>
-    <p class="small">Two short anonymous surveys, one now and one at the end.</p>
-    <details class="peek"><summary>What's involved?</summary><p class="small" style="margin-top:6px">The surveys don't ask for your name, email, or anything that identifies you, and nothing you enter in this coach is collected. We'll use the combined answers to improve the workshop and may share them in a presentation or publication. Taking part is voluntary.</p></details>
-    <div class="row" id="consent-row"></div>
-  </div>
-  <div class="card ev-only">
-    <div class="qr"><div id="qr-home"></div><div class="stack" style="gap:6px"><h2>Open it on your own device</h2><p class="small muted">Scan the code or type the address. Your answers stay in the browser you use.</p><code id="ev-url"></code></div></div>
   </div>
 </section>
 
@@ -602,7 +610,7 @@ sup a{text-decoration:none;font-weight:600;padding:0 1px}
   </div>
   </div></details>
   <div class="card hi" id="results">
-    <h2>Which of these fit you?</h2>
+    <h2 id="results-h">Which of these fit you?</h2>
     <div id="matches"></div>
   </div>
   <div class="pause ev-only"><span class="eyebrow">Pause · table discussion · about 8 min</span><h2>Do your matches describe your work?</h2><p class="small">Go around the table: your top match, whether it fits, and anything that surprised you.</p><p class="early">If you finish early: open "See how you matched on all 20" and find a phenotype you'd never considered.</p></div>
@@ -617,8 +625,7 @@ sup a{text-decoration:none;font-weight:600;padding:0 1px}
   </div>
   <div class="callout" id="explore">
     <h2>Not sure what you want yet? That's fine.</h2>
-    <p class="small">Start from the work you enjoy, not a job title. See what exists, then pick the closest. Your goal can change as you learn.</p>
-    <div class="row"><a class="btn primary" href="#resources" data-go="resources" data-lib>Browse the 20 phenotypes</a></div>
+    <p class="small">Start from the work you enjoy, not a job title, and pick the closest. Your goal can change as you learn. <a href="#resources" data-go="resources" data-lib>Browse the 20 phenotypes for inspiration</a>.</p>
   </div>
   <details class="carry" data-recap="s3" hidden></details>
   <div class="fork" data-fork="s3"></div>
@@ -635,7 +642,7 @@ sup a{text-decoration:none;font-weight:600;padding:0 1px}
   </div>
   </div></details>
   <div class="card hi" id="fit">
-    <h2>Which phenotype do you want to aim for? <span class="req">Required</span></h2>
+    <h2 id="fit-h">Which phenotype do you want to aim for? <span class="req">Required</span></h2>
     <div id="goal-now"></div>
     <div id="fit-list"></div>
     <details class="peek" id="picker-wrap"><summary>See all 20 phenotypes, sorted by fit</summary><div class="stack" style="margin-top:8px"><div class="small muted" id="picker-note"></div><div class="picker" id="picker"></div></div></details>
@@ -814,7 +821,7 @@ sup a{text-decoration:none;font-weight:600;padding:0 1px}
   </div>
 </section>
 <!-- BUILD TAG: bump on every deploy so you can tell which build people are seeing. -->
-<footer class="buildtag">PREVIEW · build v0.10.4 (2026-10-23)</footer>
+<footer class="buildtag">PREVIEW · build v0.10.5 (2026-10-23)</footer>
 </main>
 </div>
 
@@ -1487,10 +1494,9 @@ function aiPanel(key, title, tk, prompt, modeSwitch){
     <p class="small muted">${AI_INTRO[key]}</p>
     ${key==="s1"?'<p class="needmsg" id="profile-hint" hidden>First choose your profession, career stage, and informatics experience above. The AI uses them.</p>':""}
     <div class="ai-controls">
-      <div class="ctl"><span class="ctl-n">1</span><div class="ai-go"><div class="row">${goButton(key,tk)}<label class="toolpick small">Using ${tool}</label></div>
+      <div class="ctl"><span class="ctl-n">1</span><div class="ai-go"><div class="row"><label class="toolpick small">Choose your AI tool ${tool}</label>${goButton(key,tk)}</div>
         <details class="peek"><summary>See the prompt</summary><pre class="prompt" id="prompt-${key}">${esc(prompt)}</pre></details></div></div>
-      <div class="ctl"><span class="ctl-n">2</span><p class="ctl-wait">Chat with ${esc(toolName(tk))}. When you're done, it gives you a box that follows “Copy everything below into the coach.”${key==="full"?"":" A new chat or the same chat both work."}</p></div>
-      <div class="ctl"><span class="ctl-n">3</span><div class="ctl-body"><label for="paste-${key}">Paste the box here<textarea id="paste-${key}" class="paste" data-fillsrc="fill-${key}" placeholder="Paste the box that follows “Copy everything below into the coach”"></textarea></label>
+      <div class="ctl"><span class="ctl-n">2</span><div class="ctl-body"><label for="paste-${key}"><span>Chat with ${esc(toolName(tk))}, then paste its final box here <span class="hint">It follows “Copy everything below into the coach.”${key==="full"?"":" A new chat or the same chat both work."}</span></span><textarea id="paste-${key}" class="paste" data-fillsrc="fill-${key}" placeholder="Paste the box that follows “Copy everything below into the coach”"></textarea></label>
         <div class="row"><button type="button" class="primary" id="fill-${key}" ${fillAttr} disabled>Fill in my answers</button></div><div class="fillmsg" id="fillmsg-${key}" role="status"></div></div></div>
     </div></div></div>`; }
 function renderFork(step){
@@ -1633,7 +1639,9 @@ function fill(){
 /* step 2 */
 function renderMatches(){
   const el=$("#matches"), n=rated(); $("#rate-count").textContent=`${answered()} of 20 answered`;
-  if(n<8){ el.innerHTML=`<p class="small muted">Rate at least 8 kinds of work to see your matches. You've rated ${n}.</p>`; return; }
+  // Before there are answers, the card says it's waiting rather than asking a question it can't answer yet.
+  $("#results-h").textContent = n<8 ? "Your matches" : "Which of these fit you?"; $("#results").classList.toggle("hi", n>=8);
+  if(n<8){ el.innerHTML=`<p class="waiting">Waiting for your answers. Your closest phenotypes appear here once ${modeFor("s2")==="ai"?"you paste the AI's answer above":"you rate at least 8 kinds of work"}${n?` (${n} rated so far)`:""}.</p>`; return; }
   const m=matches();
   el.innerHTML = `<p class="small">Check up to 2 that fit you. If you check none, your top match is used.</p>`
    + (S.profile.stage==="Trainee"||S.profile.experience===EXPERIENCE[0] ? `<p class="note small">New to informatics? Your matches mostly reflect your clinical work and teaching for now. That's expected; the goal you choose in step 3 matters more.</p>` : "")
@@ -1644,7 +1652,7 @@ function renderMatches(){
 }
 // A top-three result as a picture card. extra = the card's action (a checkbox or goal buttons).
 function tcard(x, j, extra, ctx, sel){ const p=PHENO[x.i];
-  return `<div class="tcard ${sel?"sel":""}">${art(p.n,"")}<div class="tcard-body"><span class="rank">#${j+1}</span>
+  return `<div class="tcard ${sel?"sel":""}" data-pick="${ctx}" data-name="${esc(p.n)}">${art(p.n,"")}<div class="tcard-body"><span class="rank">#${j+1}</span>
     <div class="ph-head">${pglyph(x.i,56)}<b>${esc(p.n)}</b></div>
     <div class="row">${meter(x.r)}<span class="tag">${strength(x.r, ctx==="m"?"match":"fit")}</span></div>
     <p class="small muted">${esc(p.d)}</p>${chips(x.i,3,2,ctx)}<div class="row">${extra}</div></div></div>`; }
@@ -1663,7 +1671,8 @@ function renderFit(){
   $("#want-count").textContent=`${wantAnswered()} of 20 answered`;
   ATTR.forEach((_,i)=>{ const el=document.getElementById("now-"+i); if(el) el.textContent = S.ratings[i]!==null ? `Current: ${S.ratings[i]}` : S.unsure[i] ? "Current: not sure" : ""; });
   const has=wanted()>=8, f=has?fits():PHENO.map((_,i)=>({i,r:null})), cur=curName();
-  $("#fit-list").innerHTML = !has ? '<p class="small muted">Answer at least 8 of the 20 to see which phenotypes fit.</p>'
+  $("#fit-h").innerHTML = has ? 'Which phenotype do you want to aim for? <span class="req">Required</span>' : 'Your goal <span class="req">Required</span>'; $("#fit").classList.toggle("hi", has);
+  $("#fit-list").innerHTML = !has ? `<p class="waiting">Waiting for your answers. The phenotypes that fit the work you want appear here once ${modeFor("s3")==="ai"?"you paste the AI's answer above":"you answer at least 8 of the 20"}. You can also pick from all 20 below.</p>`
     : (S.want.every((v,i)=>v===S.ratings[i]) && S.wantUnsure.every((v,i)=>v===S.unsure[i]) ? `<p class="note small"><b>These start as a copy of your current work,</b> so they mostly show who you are now. Change the work you'd want more or less of${modeFor("s3")==="ai"?" (or do this step with the AI above)":" above"}, then choose.</p>` : "")
     + `<p class="small">${S.target[0]?"Closest fits for the work you want:":"Choose one of these, or any of the 20 below."}</p><div class="top3">${f.slice(0,3).map((x,j)=>tcard(x, j, (PHENO[x.i].n===cur?'<span class="tag neutral">Your current phenotype</span>':"")+goalButtons(PHENO[x.i].n), "f", S.target.includes(PHENO[x.i].n))).join("")}</div>` + SCORE_NOTE("fit");
   // The chosen goal leads the card, wherever it was picked (top three or all 20).
@@ -1673,7 +1682,7 @@ function renderFit(){
       : showSecond()?'<span class="small muted">Choose "Second goal" on another phenotype below.</span>':'<button type="button" class="linkbtn small" data-second>Torn between two? Add a second goal</button>'}<span class="spacer"></span><button type="button" class="tiny" data-goal="clear1">Change goal</button></div></div></div>`;
   $("#picker-note").innerHTML = has ? "Sorted by fit with the work you want." : "Answer the questions above to sort these by fit.";
   $("#picker").innerHTML = f.map(x=>{ const p=PHENO[x.i];
-    return `<div class="pcard ${S.target.includes(p.n)?"sel":""}"><div class="ph-head">${pglyph(x.i,40)}<b>${esc(p.n)}</b></div>${has?`<div class="row">${meter(x.r)}</div>`:""}
+    return `<div class="pcard ${S.target.includes(p.n)?"sel":""}" data-pick="f" data-name="${esc(p.n)}"><div class="ph-head">${pglyph(x.i,48)}<b>${esc(p.n)}</b></div>${has?`<div class="row">${meter(x.r)}</div>`:""}
       <p>${esc(p.d)}</p>${has?chips(x.i,3,2,"p"):""}<div class="row">${goalButtons(p.n)}</div></div>`; }).join("");
 }
 
@@ -1716,7 +1725,7 @@ function renderIdeas(){
 function profileSVG(){
   // Same encoding as the glyphs: you = ink, goal = blue, gap = orange (only where the goal is higher).
   // Uses the same scaled goal levels as the gap table.
-  const u=S.ratings, rows=compareRows(), tv=rows? rows.map(x=>x.t) : null, W=270,H=120,lx=100,bw=160;
+  const u=S.ratings, rows=compareRows(), tv=rows? rows.map(x=>x.t) : null, W=270,H=120,lx=112,bw=150;
   const g=GROUPS.map((n,gi)=>{ const ks=ATTR.map((a,k)=>a.g===gi?k:-1).filter(k=>k>=0); const uv=ks.map(k=>u[k]).filter(v=>v!==null);
     return {um:uv.length? uv.reduce((a,b)=>a+b,0)/uv.length : 0, tm:tv? ks.reduce((s,k)=>s+tv[k],0)/ks.length : null}; });
   const short=["Clinical & teaching","Leadership & policy","Operations & quality","Building & design","Data & research"];
@@ -1768,7 +1777,7 @@ function renderReport(){
          : (compareRows()&&rated()>=8? "<div>No big differences. Focus on scope and visibility.</div>" : E)}
      </div>
    </div>
-   <div class="rp-sec"><h4>My gaps</h4>
+   <div class="rp-sec" style="margin-top:10px"><h4>My gaps</h4>
      ${GAPDIMS.some(([k])=>S.gaps[k].t)?`<table><thead><tr><th>Area</th><th>Gap</th><th>Possible at my current workplace?</th></tr></thead><tbody>${GAPDIMS.filter(([k])=>S.gaps[k].t).map(([k,t])=>`<tr><td style="width:20%"><b>${t==="Your setting"?"My setting":t}</b></td><td>${esc(S.gaps[k].t)}</td><td style="width:22%">${esc(S.gaps[k].p)}</td></tr>`).join("")}</tbody></table>`:E}
    </div>
    <div class="rp-two">
@@ -1915,6 +1924,12 @@ function afterLoad(){ save(); fill(); renderPref(); renderForks(); refresh(); re
 window.addEventListener("storage", e=>{ if(e.key!==KEY || !e.newValue) return; try{ S=merge(JSON.parse(e.newValue)); fill(); renderPref(); renderForks(); refresh(); renderConsent(); }catch(err){} });
 document.addEventListener("click",e=>{
   const q=s=>e.target.closest(s); let el;
+  // Clicking anywhere on a result card selects it (its own buttons, checkbox, and toggles still work as before).
+  if((el=q("[data-pick]")) && !e.target.closest("button,a,input,label,summary,details,select,textarea")){ const n=el.dataset.name;
+    if(el.dataset.pick==="m"){ const on=!S.chosen.includes(n); if(on && S.chosen.length>=2){ toast("You can check up to 2. Uncheck one first."); return; }
+      toggleIn(S.chosen,n,on); save(); refresh(); }
+    else if(S.target[0]!==n){ S.target=[n, S.target[1]===n?"":S.target[1]]; save(); refresh(); scrollToEl($("#goal-now").closest(".card")); }
+    return; }
   if((el=q("[data-ref]"))){ e.preventDefault(); const li=document.getElementById("ref-"+el.dataset.ref); if(li){ scrollToEl(li,"center"); li.classList.add("flash"); setTimeout(()=>li.classList.remove("flash"),1800); } return; }
   if((el=q("[data-go]"))){ e.preventDefault(); $("details.menu").open=false;
     if(el.id==="start-btn" && !S.pref){ $("#pref-card").classList.add("need"); scrollToEl($("#pref-card .choice"),"center"); toast("Choose how you want to work first."); return; }
