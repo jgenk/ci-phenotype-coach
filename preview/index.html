@@ -830,7 +830,7 @@ sup a{text-decoration:none;font-weight:600;padding:0 1px}
   </div>
 </section>
 <!-- BUILD TAG: bump on every deploy so you can tell which build people are seeing. -->
-<footer class="buildtag">PREVIEW · build v0.10.11 (2026-10-23)</footer>
+<footer class="buildtag">PREVIEW · build v0.10.12 (2026-10-23)</footer>
 </main>
 </div>
 
@@ -951,10 +951,10 @@ const SV_CONF = [
   ["now","Describing the informatics work I do now, and what shapes it"],
   ["roles","Knowing the range of informatics roles open to someone like me"],
   ["goal","Naming the kind of informatics role I want to grow toward"],
-  ["ai","Using an AI tool as a thinking partner for my career"],
   ["gaps","Identifying the gaps between my current work and that role"],
   ["steps","Planning concrete next steps for the next 6 months"],
-  ["pitch","Describing my value and direction in a 30-second pitch"]];
+  ["pitch","Describing my value and direction in a 30-second pitch"],
+  ["ai","Using an AI tool as a thinking partner for my career"]]; // last, so it doesn't color the others
 const SV_USE = [["phenos","The 20 phenotypes"],["coach","The coaching tool"],["aichat","Working through it with an AI tool"],["talk","Pair and table discussions"],["pitch","Writing and saying my 30-second pitch"]];
 const SV_SCALE = ["Not at all","Slightly","Moderately","Very","Extremely"];
 const SV_LIKELY = ["Very unlikely","Unlikely","Not sure","Likely","Very likely"];
@@ -976,7 +976,7 @@ const blank = () => ({
   gaps:Object.fromEntries(GAPDIMS.map(g=>[g[0],{t:"",p:""}])),
   steps:[{what:"",when:"",who:""},{what:"",when:"",who:""},{what:"",when:"",who:""}],
   ask:"", checkin:"", pitch:"", made:"", consent:"", flow:"",
-  survey:{rid:"", pre:{conf:{}, aiBefore:"", hope:"", sent:"", sentHash:""}, post:{conf:{}, use:{}, intent:"", step30:"", change:"", aiConcern:"", sent:"", sentHash:""}}
+  survey:{rid:"", pre:{conf:{}, hope:"", sent:"", sentHash:""}, post:{conf:{}, use:{}, intent:"", step30:"", change:"", aiConcern:"", sent:"", sentHash:""}}
 });
 // Worked example (a fictional nurse practitioner), used by "Fill with an example" one step at a time.
 const EXAMPLE = () => Object.assign(blank(), {
@@ -1834,8 +1834,6 @@ function renderReport(){
 const svOn = () => !!(EV && EV.surveys.on && S.consent==="yes");
 function svRate(phase, group, key, label, scale, na){ const v=(S.survey[phase][group]||{})[key]||"", nm=`sv-${phase}-${group}-${key}`;
   return `<fieldset class="rate"><legend>${esc(label)}</legend><div class="seg">${scale.map((s,i)=>`<label><input type="radio" name="${nm}" value="${i+1}" data-sv="${phase}.${group}.${key}" ${v===String(i+1)?"checked":""}><span>${i+1}<i> ${esc(s)}</i></span></label>`).join("")}${na?`<label><input type="radio" name="${nm}" value="N/A" data-sv="${phase}.${group}.${key}" ${v==="N/A"?"checked":""}><span>N/A</span></label>`:""}</div></fieldset>`; }
-function svOne(phase, key, label, opts){ const v=S.survey[phase][key]||"", nm=`sv-${phase}-${key}`;
-  return `<fieldset class="rate"><legend>${esc(label)}</legend><div class="seg">${opts.map(o=>`<label><input type="radio" name="${nm}" value="${esc(o)}" data-sv="${phase}.${key}" ${v===o?"checked":""}><span>${esc(o)}</span></label>`).join("")}</div></fieldset>`; }
 const svText = (phase, key, label, hint) => `<label for="sv-${phase}-${key}">${esc(label)} ${hint?`<span class="hint">${esc(hint)}</span>`:""}<textarea id="sv-${phase}-${key}" data-bind="survey.${phase}.${key}" style="min-height:64px">${esc(S.survey[phase][key]||"")}</textarea></label>`;
 function surveyCard(phase){ const a=S.survey[phase], pre=phase==="pre";
   const intent = `<fieldset class="rate"><legend>How likely are you to take at least one of your next steps in the next 3 months?</legend><div class="seg">${SV_LIKELY.map((s,i)=>`<label><input type="radio" name="sv-post-intent" value="${i+1}" data-sv="post.intent" ${a.intent===String(i+1)?"checked":""}><span>${i+1}<i> ${esc(s)}</i></span></label>`).join("")}</div></fieldset>`;
@@ -1843,7 +1841,7 @@ function surveyCard(phase){ const a=S.survey[phase], pre=phase==="pre";
     <h2>${pre?"Before you start: a 1-minute survey":"Before you go: the end-of-session survey"}</h2>
     <p class="small muted">How confident do you feel ${pre?"today":"now"} about each of these? 1 Not at all · 2 Slightly · 3 Moderately · 4 Very · 5 Extremely confident. Skip any you like.</p>
     <div>${SV_CONF.map(([k,l])=>svRate(phase,"conf",k,l,SV_SCALE)).join("")}</div>
-    ${pre ? svText("pre","hope","What do you most hope to get from this session?","Optional") + svOne("pre","aiBefore","Have you used an AI tool for career planning before?",["Yes","No","Not sure"])
+    ${pre ? svText("pre","hope","What do you most hope to get from this session?","Optional")
       : `<p class="small muted" style="margin-top:6px">How useful was each part of the session? 1 Not at all · 5 Extremely useful.</p><div>${SV_USE.map(([k,l])=>svRate("post","use",k,l,SV_SCALE,true)).join("")}</div>`
         + intent + svText("post","step30","One step you'll take in the next 30 days","Optional") + svText("post","change","What should we change about this session?","Optional") + svText("post","aiConcern","Did anything about using AI concern you?","Optional")}
     <p class="small muted">Also sent: your profession, career stage, and informatics experience${pre?"":", plus how you used the coach and which AI tool"}. No name, email, or anything else from the coach. Please leave names and patient details out of your comments.</p>
@@ -1859,7 +1857,7 @@ const toolUsed = () => (S.flow==="full" || STEPS.some(([s])=>modeFor(s)==="ai"))
 function svPayload(phase){ const p=S.profile, a=S.survey[phase];
   const f={rid:S.survey.rid, phase, build:(document.querySelector(".buildtag").textContent.match(/v[\d.]+/)||[""])[0], profession:p.profession, stage:p.stage, experience:p.experience};
   SV_CONF.forEach(([k])=>{ f["conf_"+k]=a.conf[k]||""; });
-  if(phase==="pre"){ f.hope=a.hope; f.ai_before=a.aiBefore; }
+  if(phase==="pre"){ f.hope=a.hope; }
   else { SV_USE.forEach(([k])=>{ f["use_"+k]=a.use[k]||""; }); f.intent=a.intent; f.step30=a.step30; f.change=a.change; f.ai_concern=a.aiConcern; f.how=howUsed(); f.tool=toolUsed(); }
   return f; }
 // Answers go out when the person moves on: the pre-survey when they leave step 1, the post-survey when they press
@@ -1867,7 +1865,7 @@ function svPayload(phase){ const p=S.profile, a=S.survey[phase];
 // every send; analysis keeps the latest row per rid + phase). Google doesn't let the page see a reply, so delivery can't be confirmed.
 const svConnected = () => !!(EV && EV.surveys.form && Object.keys(EV.surveys.fields||{}).length);
 function svAnswered(phase){ const a=S.survey[phase];
-  return Object.values(a.conf).some(Boolean) || (phase==="pre" ? !!(a.aiBefore||a.hope) : Object.values(a.use).some(Boolean) || !!(a.intent||a.step30||a.change||a.aiConcern)); }
+  return Object.values(a.conf).some(Boolean) || (phase==="pre" ? !!a.hope : Object.values(a.use).some(Boolean) || !!(a.intent||a.step30||a.change||a.aiConcern)); }
 function svSend(phase, {beacon=false, quiet=true}={}){
   if(!svOn() || !svAnswered(phase)) return;
   const a=S.survey[phase], data=svPayload(phase), hash=JSON.stringify(data);
