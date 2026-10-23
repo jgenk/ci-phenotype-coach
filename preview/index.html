@@ -206,13 +206,15 @@ label.need input,label.need select,label.need textarea{border-color:var(--warn);
 
 /* step 1 choice */
 .choice{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.choice.choice3{grid-template-columns:minmax(0,1fr)} /* three full-width rows, so "(recommended)" stays beside its title */
+.choice button b{font-weight:700} .choice .rec{font-style:normal;font-weight:500;color:var(--muted)}
 @media (max-width:560px){.choice{grid-template-columns:minmax(0,1fr)}}
 .choice button{flex-direction:column;align-items:flex-start;text-align:left;padding:12px 14px;gap:2px;font-weight:700}
 .choice button span{font-weight:400;font-size:.84rem;color:var(--muted)}
 .choice button[aria-pressed="true"]{border:2px solid var(--accent);background:var(--accent-soft)}
 /* purple marks every place you choose AI */
-.choice button[data-pref="ai"]{border-color:var(--coach-rule);color:var(--coach)}
-.choice button[data-pref="ai"][aria-pressed="true"]{border:2px solid var(--coach);background:var(--coach-band)}
+.choice button[data-pref="ai"],.choice button[data-pref="full"]{border-color:var(--coach-rule);color:var(--coach)}
+.choice button[data-pref="ai"][aria-pressed="true"],.choice button[data-pref="full"][aria-pressed="true"]{border:2px solid var(--coach);background:var(--coach-band)}
 #pref-tool{color:var(--coach)}
 #pref-tool select{border-color:var(--coach)}
 .ai-link{color:var(--coach)!important}
@@ -529,9 +531,10 @@ sup a{text-decoration:none;font-weight:600;padding:0 1px}
       <li><b>Gaps and plan:</b> what's different, and 2–3 next steps.</li>
     </ol>
     <h2>How do you want to work? <span class="req">Required</span></h2>
-    <div class="choice">
-      <button type="button" data-pref="ai">With an AI tool <span class="ev-only">(recommended)</span><span>The AI asks you questions and drafts your answers. You copy them back here.</span></button>
-      <button type="button" data-pref="self">On my own<span>Fill in each step yourself. No AI needed.</span></button>
+    <div class="choice choice3">
+      <button type="button" data-pref="ai"><b>Step by step with an AI tool <em class="rec">(recommended)</em></b><span>The AI interviews you one step at a time and drafts your answers. You paste them back here.</span></button>
+      <button type="button" data-pref="self"><b>Manual entry</b><span>Fill in each step yourself. No AI needed.</span></button>
+      <button type="button" data-pref="full"><b>Full AI coach</b><span>One longer conversation in your AI tool covers all four steps, and you can share a CV. Paste its final box back here for your report.</span></button>
     </div>
     <label for="aiTool" id="pref-tool" hidden>Which AI tool? <span class="hint">Free accounts work. Use the one your organization allows.</span>
       <select id="aiTool" data-bind="aiTool" data-tools></select></label>
@@ -540,7 +543,8 @@ sup a{text-decoration:none;font-weight:600;padding:0 1px}
       <li>An AI tool that remembers you can point out where your answers don't match what it knows about your work. For a blank slate, use a temporary chat.</li>
       <li>Your answers save in this browser, so you can stop and come back.<span class="gen-only"> Most people take 45–90 minutes.</span></li>
     </ul>
-    <div class="row"><a class="btn primary" href="#s1" data-go="s1" id="start-btn">Start step 1</a><a class="btn ai-btn gen-only" href="#coach" data-go="coach">Or do it all in one AI conversation</a></div>
+    <div class="row" id="start-row"><a class="btn primary" href="#s1" data-go="s1" id="start-btn">Start step 1</a></div>
+    <div id="full-panel" hidden></div>
   </div>
 </section>
 
@@ -717,15 +721,6 @@ sup a{text-decoration:none;font-weight:600;padding:0 1px}
   <article class="report" id="report-page"></article>
 </section>
 
-<!-- FULL AI COACH -->
-<section class="page" id="coach" hidden>
-  <div class="head">
-    <span class="eyebrow">Full AI coach</span>
-    <h1 tabindex="-1">Do it all in one AI conversation</h1>
-    <p class="lede">The same four steps as one conversation in your AI tool. Share your CV or other files, go deeper where you want, and finish with your one-page plan.</p>
-  </div>
-  <div id="full-panel"></div>
-</section>
 
 <!-- RESOURCES -->
 <section class="page" id="resources" hidden>
@@ -821,7 +816,7 @@ sup a{text-decoration:none;font-weight:600;padding:0 1px}
   </div>
 </section>
 <!-- BUILD TAG: bump on every deploy so you can tell which build people are seeing. -->
-<footer class="buildtag">PREVIEW · build v0.10.5 (2026-10-23)</footer>
+<footer class="buildtag">PREVIEW · build v0.10.6 (2026-10-23)</footer>
 </main>
 </div>
 
@@ -950,7 +945,7 @@ const blank = () => ({
   dream:"", settings:[], want:Array(20).fill(null), wantUnsure:Array(20).fill(false), target:["",""],
   gaps:Object.fromEntries(GAPDIMS.map(g=>[g[0],{t:"",p:""}])),
   steps:[{what:"",when:"",who:""},{what:"",when:"",who:""},{what:"",when:"",who:""}],
-  ask:"", checkin:"", pitch:"", made:"", consent:""
+  ask:"", checkin:"", pitch:"", made:"", consent:"", flow:""
 });
 // Worked example (a fictional nurse practitioner), used by "Fill with an example" one step at a time.
 const EXAMPLE = () => Object.assign(blank(), {
@@ -1482,7 +1477,12 @@ const toolOptions = sel => Object.keys(TOOLS).map(k=>`<option value="${k}" ${k==
 function goButton(key, tk){ return tk==="other"
   ? `<button type="button" class="primary" data-copyprompt="${key}">Copy prompt</button>`
   : `<a class="btn primary" href="${TOOLS[tk].u}" target="_blank" rel="noopener" data-copyprompt="${key}">Copy prompt and open ${esc(TOOLS[tk].n)} ↗</a>`; }
-function renderPref(){ $$("[data-pref]").forEach(b=>b.setAttribute("aria-pressed", String(S.pref===b.dataset.pref))); $("#pref-tool").hidden = S.pref!=="ai"; if(S.pref) $("#pref-card").classList.remove("need"); }
+// Three ways to work: step by step with AI (pref "ai"), manual ("self"), or the full AI coach (flow "full", which also sets pref "ai"
+// so the steps still work if someone goes there). The full coach's panel opens on Home in place of "Start step 1".
+function renderPref(){ const sel = S.flow==="full" ? "full" : S.pref;
+  $$("[data-pref]").forEach(b=>b.setAttribute("aria-pressed", String(sel===b.dataset.pref)));
+  $("#pref-tool").hidden = sel!=="ai"; $("#full-panel").hidden = sel!=="full"; $("#start-row").hidden = sel==="full";
+  if(S.pref) $("#pref-card").classList.remove("need"); }
 // The AI panel: three numbered controls (copy the prompt, chat, paste back). key is a step id or "full".
 function aiPanel(key, title, tk, prompt, modeSwitch){
   const tool = key==="full" ? `<select class="toolsel" id="tool-full" data-bind="aiTool" aria-label="AI tool">${toolOptions(tk)}</select>`
@@ -1512,7 +1512,7 @@ function renderFork(step){
   renderPref(); visibility(); profileHint();
 }
 const REDO = new Set(); // steps whose finished AI box was reopened with "Redo with AI" (until you leave the step)
-function renderCoachPage(){ $("#full-panel").innerHTML=aiPanel("full","Full session",S.aiTool,fullPrompt()); }
+function renderCoachPage(){ $("#full-panel").innerHTML=aiPanel("full","Full AI coach",S.aiTool,fullPrompt()); }
 function renderForks(){ STEPS.forEach(([s])=>renderFork(s)); renderCoachPage(); }
 // A step's fields appear once it has a mode. In AI mode the answer forms sit behind a closed toggle
 // (what the AI filled in shows up in the next step's recap); in manual mode they're open, with no toggle.
@@ -1830,7 +1830,7 @@ const stepDone = step => !missingIn(step).length;
 const isStep = id => STEPS.some(s=>s[0]===id);
 const ORDER = ["s1","s2","s3","s4","report"];               // gated: each needs the ones before it done
 const NAV = ["home","s1","s2","s3","s4","report"].concat(EV?["resources"]:[]); // pages with the bottom Back/Next bar (an event ends on the wrap-up)
-const PAGES = ["home","s1","s2","s3","s4","report","coach","resources"];
+const PAGES = ["home","s1","s2","s3","s4","report","resources"];
 const blockerFor = id => { const i=ORDER.indexOf(id); return i<0 ? null : ORDER.slice(0,i).find(s=>!stepDone(s))||null; };
 const flagged = {};
 const cardOf = sel => { const el=document.querySelector(sel); return el && (el.closest(".card")||el); };
@@ -1857,7 +1857,7 @@ function renderRail(){
    + STEPS.map(([id,l],i)=>railLink(id,`<span class="n">${i+1}</span>${l}`, stepDone(id)?"done":"")).join("")
    + railLink("report",`<span class="n">5</span>Report`)
    + railLink("resources",`<span class="n">${BOOK_ICON}</span>${EV?"Resources &amp; Wrap Up":"Resources"}`)
-   + `<span class="rail-div" aria-hidden="true"></span>` + railLink("coach","Full AI coach","coachchip");
+   ;
   const rail=$("#rail"), act=$("#rail [aria-current]"); if(act && rail.scrollWidth>rail.clientWidth) rail.scrollLeft = act.offsetLeft - 16;
   // bottom Back/Next bar
   const i=NAV.indexOf(cur), nb=$("#navbar"); nb.hidden = i<=0; if(i<=0) return;
@@ -1868,6 +1868,8 @@ function renderRail(){
   const nn=$("#nav-next"); nn.hidden=!next; if(next){ nn.href="#"+next; nn.dataset.go=next; nn.textContent=`Next: ${label(next)} →`; nn.classList.toggle("primary", !left); }
 }
 function go(id, push=true, quiet=false){
+  // #coach (the full coach's "Back to the coach" link, and old links to its page) opens Home with the full coach chosen.
+  if(id==="coach"){ S.flow="full"; S.pref="ai"; save(); renderPref(); id="home"; setTimeout(()=>scrollToEl($("#full-panel")),60); }
   if(!PAGES.includes(id)) id="home";
   const b=blockerFor(id); if(b){ if(cur!==b) go(b,push,true); if(!quiet) showMissing(b); return; }
   const prev=cur; cur=id;
@@ -1935,7 +1937,8 @@ document.addEventListener("click",e=>{
     if(el.id==="start-btn" && !S.pref){ $("#pref-card").classList.add("need"); scrollToEl($("#pref-card .choice"),"center"); toast("Choose how you want to work first."); return; }
     const fromStep3 = el.hasAttribute("data-lib");
     go(el.dataset.go); $("#lib-return").hidden=!fromStep3; if(fromStep3) setTimeout(()=>scrollToEl($("#lib")),50); return; }
-  if((el=q("[data-pref]"))){ S.pref=el.dataset.pref; S.mode={s1:"",s2:"",s3:"",s4:""}; afterLoad();
+  if((el=q("[data-pref]"))){ const v=el.dataset.pref; S.flow= v==="full" ? "full" : ""; S.pref= v==="full" ? "ai" : v; S.mode={s1:"",s2:"",s3:"",s4:""}; afterLoad();
+    if(cur==="home" && v==="full"){ scrollToEl($("#full-panel")); return; }
     if(cur==="home" && S.pref==="ai") scrollToEl($("#pref-tool"),"center"); return; }
   if((el=q("[data-jump]"))){ const t=document.querySelector(el.dataset.jump), box=t&&t.closest("details.answers"); if(box) box.open=true;
     scrollToEl(cardOf(el.dataset.jump)); if(t && t.matches("input,select,textarea")) setTimeout(()=>t.focus({preventScroll:true}),350); return; }
@@ -1951,9 +1954,10 @@ document.addEventListener("click",e=>{
     if(!txt.trim()) return;
     const C=applyPaste(st,txt); save(); fill(); refresh(); renderCheck(st,C);
     if(!C.some(c=>!c.ok&&!c.opt) && AFTERFILL[st]) setTimeout(()=>scrollToEl(cardOf(AFTERFILL[st])),900); return; }
-  if((el=q("[data-fillfull]"))){ const txt=$("#paste-full").value, msg=$("#fillmsg-full");
+  if((el=q("[data-fillfull]"))){ const txt=$("#paste-full").value;
     if(!txt.trim()) return;
     const C=applyFull(txt); afterLoad(); renderCheck("full",C); if(!C.some(c=>c.ok)) return;
+    const msg=$("#fillmsg-full"); // afterLoad() redraws the panel, so find the message box again
     const b=blockerFor("report");
     msg.insertAdjacentHTML("beforeend", b ? `<div class="row" style="margin-top:8px"><a class="btn primary" href="#${b}" data-go="${b}">Finish ${STEPS.find(s=>s[0]===b)[1].toLowerCase()}</a><span class="small muted">A required item is missing there.</span></div>`
       : `<div class="row" style="margin-top:8px"><a class="btn primary" href="#report" data-go="report">See my one-page report</a><a class="btn" href="#s4" data-go="s4">Review the steps</a></div>`); return; }
