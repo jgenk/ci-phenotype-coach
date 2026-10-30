@@ -81,12 +81,10 @@ main{max-width:880px;width:100%;margin:0;padding:24px 0 120px;min-width:0}
 .rail a .n{font:600 .74rem var(--f-mono);color:var(--muted);min-width:1.1em;text-align:center}
 .rail a.done .n::after{content:"✓";color:var(--ok);margin-left:2px}
 .rail a.done[aria-current="page"] .n::after{color:var(--accent-ink)}
-.rail a.locked{opacity:.5}
+.rail a.locked{color:var(--muted)}
 .rail a[aria-current="page"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .rail a[aria-current="page"] .n{color:var(--accent-ink)}
 .rail a svg{display:block}
-.rail a.coachchip{border-color:var(--coach);color:var(--coach);background:var(--coach-soft)}
-.rail a.coachchip[aria-current="page"]{background:var(--coach);border-color:var(--coach);color:var(--coach-ink)}
 .rail-div{height:1px;background:var(--rule);margin:auto 4px 8px}
 @media (max-width:900px){
   .layout{display:block}
@@ -106,7 +104,7 @@ main{max-width:880px;width:100%;margin:0;padding:24px 0 120px;min-width:0}
 .note{border-left:3px solid var(--accent);background:var(--accent-soft);padding:10px 12px;border-radius:0 4px 4px 0;font-size:.9rem}
 .note.warn{border-color:var(--warn);background:var(--warn-soft)}
 #storage-warn{margin-bottom:16px}
-.why summary{cursor:pointer;font-size:.84rem;color:var(--muted);width:max-content;max-width:100%}
+.why summary{cursor:pointer;padding:2px 0;font-size:.84rem;color:var(--muted);width:max-content;max-width:100%}
 .why[open] summary{margin-bottom:6px}
 .why-row{display:grid;grid-template-columns:7.5em minmax(0,1fr);gap:8px;align-items:start;margin-top:4px}
 .why-label{font-size:.8rem;font-weight:600;color:var(--muted);padding-top:2px}
@@ -177,6 +175,7 @@ main{max-width:880px;width:100%;margin:0;padding:24px 0 120px;min-width:0}
 
 /* forms */
 .grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.grid2>label{align-content:end}
 .grid-project{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)}
 .grid-gap{grid-template-columns:minmax(0,1.6fr) minmax(0,.8fr)}
 .grid-step{grid-template-columns:minmax(0,1.6fr) minmax(0,.7fr) minmax(0,1fr)}
@@ -184,6 +183,7 @@ main{max-width:880px;width:100%;margin:0;padding:24px 0 120px;min-width:0}
 @media (max-width:640px){.grid2{grid-template-columns:minmax(0,1fr)}}
 label{display:grid;gap:4px;font-size:.92rem;font-weight:600}
 .hint{font-weight:400;color:var(--muted);font-size:.84rem}
+input[type=text],select{min-height:42px}
 input[type=text],select,textarea{width:100%;font:inherit;font-size:.95rem;color:var(--ink);background:var(--paper);border:1px solid var(--control);border-radius:4px;padding:8px 10px}
 textarea{min-height:130px;resize:vertical}
 textarea.tall{min-height:200px}
@@ -192,14 +192,14 @@ fieldset{border:1px solid var(--rule);border-radius:var(--r);padding:12px 14px;m
 legend{font-weight:600;font-size:.92rem;padding:0 4px}
 .checks{display:flex;flex-wrap:wrap;gap:6px 16px}
 .checks label{display:flex;gap:6px;align-items:center;font-weight:400}
-button,.btn{font:600 .9rem var(--f-body);display:inline-flex;gap:6px;align-items:center;justify-content:center;padding:9px 15px;border-radius:4px;border:1px solid var(--rule);background:var(--sheet);color:var(--ink);cursor:pointer;text-decoration:none}
+button,.btn{font:600 .9rem var(--f-body);display:inline-flex;gap:6px;align-items:center;justify-content:center;padding:9px 15px;border-radius:4px;border:1px solid var(--control);background:var(--sheet);color:var(--ink);cursor:pointer;text-decoration:none}
 button:hover,.btn:hover{border-color:var(--accent)}
 .primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .tiny{padding:4px 10px;font-size:.8rem}
 .linkbtn{border:0;background:none;padding:4px 0;min-height:24px;color:var(--accent);font-weight:600;text-decoration:underline;cursor:pointer}
 
 /* required items */
-.req{font:500 .72rem var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-left:6px;white-space:nowrap}
+.req{font:500 .75rem var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-left:6px;white-space:nowrap}
 h2 .req{vertical-align:middle}
 .card.need{border-color:var(--warn)}
 .card.need h2 .req,label.need .req{color:var(--warn);font-weight:700}
@@ -243,7 +243,7 @@ label.need input,label.need select,label.need textarea{border-color:var(--warn);
 .ai-band h2{font-size:1.15rem;color:var(--coach-band-ink)}
 .manual-band{border:1px solid color-mix(in srgb,var(--accent) 35%,transparent);border-radius:var(--r);background:var(--accent-soft);color:var(--accent)}
 .manual-band h2{color:var(--ink)}
-.badge{font:600 .68rem var(--f-mono);letter-spacing:.08em;text-transform:uppercase;border:1px solid currentColor;border-radius:3px;padding:2px 6px}
+.badge{font:600 .72rem var(--f-mono);letter-spacing:.08em;text-transform:uppercase;border:1px solid currentColor;border-radius:3px;padding:2px 6px}
 .ai-body{display:grid;gap:12px;padding:16px}
 .ai ol{margin:0;padding-left:1.3em;display:grid;gap:10px}
 .ai li::marker{font-weight:700;color:var(--coach)}
@@ -288,7 +288,7 @@ fieldset.rate{border:0;border-top:1px dashed var(--rule);border-radius:0;padding
 .match:first-child{border-top:0;padding-top:0}
 .match-top{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
 .match-name{font-weight:700}
-.tag{font:600 .72rem var(--f-mono);padding:2px 7px;border-radius:999px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.tag{font:600 .75rem var(--f-mono);padding:2px 7px;border-radius:999px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
 .tag.ok{background:var(--ok-soft);color:var(--ok)} .tag.warn{background:var(--warn-soft);color:var(--warn)} .tag.big{background:var(--warn);color:var(--sheet)} .tag.neutral{background:var(--rule);color:var(--muted)}
 .pick{display:flex;gap:6px;align-items:center;font-weight:400;font-size:.9rem}
 .score{display:inline-flex;gap:6px;align-items:center;font:500 .85rem var(--f-mono);white-space:nowrap}
@@ -298,7 +298,7 @@ fieldset.rate{border:0;border-top:1px dashed var(--rule);border-radius:0;padding
 .meter{display:inline-block;width:84px;height:7px;background:var(--track);border-radius:4px;overflow:hidden}
 .meter i{display:block;height:100%;background:var(--accent)}
 .chips{display:flex;flex-wrap:wrap;gap:5px}
-.chip{font-size:.76rem;padding:2px 8px;border-radius:999px;background:var(--ok-soft);color:var(--ok)}
+.chip{font-size:.8rem;padding:2px 8px;border-radius:999px;background:var(--ok-soft);color:var(--ok)}
 .chip.up{background:var(--warn-soft);color:var(--warn)}
 .chip.neutral{background:var(--rule);color:var(--muted)}
 ul.near{list-style:none;margin:4px 0 0;padding:0;display:grid;gap:4px;font-size:.88rem}
@@ -331,7 +331,7 @@ table.t tbody th[scope=row]{font:inherit;letter-spacing:0;text-transform:none;co
   table.cmp tr{display:grid;grid-template-columns:repeat(3,auto) minmax(0,1fr);gap:4px 14px;align-items:center;padding:8px 0;border-bottom:1px solid var(--rule)}
   table.cmp tr>*{padding:0;border:0}
   table.cmp tr>th[scope=row]{grid-column:1/-1;font-weight:600}
-  table.cmp td.num::before{content:attr(data-l) " ";font:600 .66rem var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+  table.cmp td.num::before{content:attr(data-l) " ";font:600 .72rem var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
   table.cmp td:last-child{justify-self:end}
 }
 .links{margin:0;padding-left:1.1em;display:grid;gap:7px;font-size:.92rem}
@@ -377,7 +377,7 @@ table.t tbody th[scope=row]{font:inherit;letter-spacing:0;text-transform:none;co
 .rp-empty{color:#66757d;font-style:italic}
 svg.profile text{font-family:var(--f-body)} /* the sans is narrower than the mono, so the row labels clear the bars */
 @media (max-width:700px){.rp-meta{grid-template-columns:repeat(2,minmax(0,1fr))}.rp-two,.rp-foot{grid-template-columns:minmax(0,1fr)}}
-@media screen and (max-width:560px){.report{padding:14px;font-size:10.5pt}}
+@media screen and (max-width:560px){.report{padding:14px;font-size:10.5pt} .rp-meta span,.report th{font-size:8.5pt} .rp-foot{font-size:9pt}}
 /* phenotype glyphs: blue = the phenotype (neutral information), ink = you, orange = grow */
 .glyph{--g-acc:var(--accent);--g-ink:var(--ink);--g-warn:var(--warn);--g-rule:var(--rule);display:block;flex:none;overflow:visible}
 .report .glyph{--g-acc:#1d6a83;--g-ink:#14212a;--g-warn:#a5650f;--g-rule:#cfd8d8}
@@ -427,7 +427,7 @@ details.answers>summary::before{content:"▸ ";content:"▸ " / "";color:var(--m
 details.answers[open]>summary::before{content:"▾ ";content:"▾ " / ""}
 details.answers.manual>summary{display:none}
 .answers-in{display:grid;gap:20px}
-details.carry>summary{cursor:pointer;font-weight:600;font-size:.92rem;color:var(--muted)}
+details.carry>summary{cursor:pointer;padding:2px 0;font-weight:600;font-size:.92rem;color:var(--muted)}
 details.carry[open]>summary{margin-bottom:10px}
 .fill-ok{display:grid;gap:8px;padding:10px 12px;border-radius:var(--r);background:var(--ok-soft);color:var(--ink)}
 .fill-ok b{color:var(--ok)}
@@ -443,10 +443,10 @@ details.carry[open]>summary{margin-bottom:10px}
 @media (max-width:760px){.top3{grid-template-columns:minmax(0,1fr)}
   .top3 .tcard{grid-template-columns:92px minmax(0,1fr);grid-template-rows:none} .top3 .tcard .art{aspect-ratio:auto;width:100%;height:100%;min-height:110px}}
 .tcard{display:grid;grid-template-rows:auto 1fr;border:1px solid var(--rule);border-radius:var(--r);background:var(--sheet);overflow:hidden;min-width:0}
-/* a card border means selection only: green = "this fits me" (step 2), blue = your goal (step 3) */
+/* a card border means selection only: green = "this describes me" (step 2), blue = your goal (step 3) */
 .tcard .art{aspect-ratio:16/9}
 .tcard-body{display:grid;gap:8px;padding:10px 12px 12px;align-content:start}
-.tcard .rank{font:600 .7rem var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.tcard .rank{font:600 .75rem var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .tcard .ph-head b{font-size:.98rem}
 [data-pick]{cursor:pointer} .tcard[data-pick]:hover,.pcard[data-pick]:hover{border-color:var(--accent)}
 .tcard.sel{border-color:var(--ok);box-shadow:0 0 0 1px var(--ok)} #fit-list .tcard.sel{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
@@ -473,10 +473,11 @@ html[data-event] .gen-only{display:none!important}
 @media (max-width:760px){ .ev-row{grid-template-columns:minmax(0,1fr)} html[data-event] #pref-card{order:1} html[data-event] #ev-row{order:2} }
 /* phones: the QR card is for laptops and the room screen; one-row header; no iOS zoom on focus; bigger tap targets */
 @media (max-width:760px){ #qr-card{display:none} }
-@media (max-width:640px){ input[type=text],select,textarea{font-size:16px} }
+@media (max-width:640px){ input[type=text],select,select.toolsel,textarea{font-size:16px} }
 @media (max-width:560px){
   .evtag{display:none} .brand{font-size:.95rem} .topbar-in{flex-wrap:nowrap}
   .tiny{min-height:36px;padding:6px 12px}
+  .why summary,details.carry>summary{padding:11px 0} .linkbtn{min-height:44px} .checks label{min-height:44px}
   .stepbar{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px} .stepbar .spacer{display:none} .stepbar .muted{grid-column:1/-1;order:3}
   .seg{flex-wrap:nowrap;gap:3px} .seg label{flex:1 1 0} .seg label:last-child{flex:1.7 1 0} .seg span{text-align:center;padding:10px 0;min-height:44px} .seg span i{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
   .segval:not(:empty){display:block}
@@ -486,7 +487,7 @@ html[data-event] .gen-only{display:none!important}
 /* step 4: wide tables scroll inside their card, never the page */
 .goal-expand>*,#compare,#compare>*{min-width:0}
 .card.survey{border-color:var(--accent)} .card.survey fieldset.rate:first-child{border-top:0}
-.consent .draft{font:600 .66rem var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--warn);border:1px solid var(--warn);border-radius:3px;padding:1px 5px;margin-left:6px;vertical-align:middle}
+.consent .draft{font:600 .72rem var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--warn);border:1px solid var(--warn);border-radius:3px;padding:1px 5px;margin-left:6px;vertical-align:middle}
 .qr{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:center}
 .qr svg{width:132px;height:132px;background:#fff;padding:6px;border-radius:4px;border:1px solid var(--rule)}
 .qr code{font:500 .85rem var(--f-mono);word-break:break-all}
@@ -505,7 +506,7 @@ details.sec>summary .sec-note{font-size:.85rem;color:var(--muted)}
 details.sec>summary .sec-note::after{content:" · Show"}
 details.sec[open]>summary .sec-note::after{content:" · Hide"}
 details.sec>.sec-in{display:grid;gap:14px;margin-top:14px}
-.totop{justify-self:start}
+.totop{justify-self:start;display:inline-block;padding:3px 0}
 @media (max-width:560px){ .toc a{min-height:44px} }
 .refs li:target,.refs li.flash{background:var(--accent-soft);border-radius:3px}
 sup a{text-decoration:none;font-weight:600;padding:0 1px}
@@ -547,7 +548,7 @@ sup a{text-decoration:none;font-weight:600;padding:0 1px}
 <nav class="rail" aria-label="Steps" id="rail"></nav>
 <main>
 <p class="note warn" id="storage-warn" hidden>This browser isn't saving your answers. Use Menu → "Save answers to reopen later" before you close the page.</p>
-<p class="note warn" id="lost-note" hidden>Your answers aren't in this browser. Go back to the browser where you started and paste the AI's answer there.</p>
+<p class="note warn" id="lost-note" hidden>No answers are saved in this browser yet. If you started in another browser or app, your answers are there, so go back and paste the AI's answer in that one. Otherwise, <a href="#home" data-go="home">start from Home</a>.</p>
 
 <!-- HOME -->
 <section class="page" id="home">
@@ -666,7 +667,7 @@ sup a{text-decoration:none;font-weight:600;padding:0 1px}
   </div>
   </div></details>
   <div class="card hi" id="results">
-    <h2 id="results-h">Which of these fit you?</h2>
+    <h2 id="results-h">Which of these describe your work?</h2>
     <div id="matches"></div>
   </div>
   <div class="pause ev-only"><span class="eyebrow">Pause · table discussion · about 8 min</span><h2>Do your matches describe your work?</h2><p class="small">Go around the table: your top match, whether it fits, and anything that surprised you.</p><p class="early">If you finish early: open "See how you matched on all 20" and find a phenotype you'd never considered.</p></div>
@@ -872,7 +873,7 @@ sup a{text-decoration:none;font-weight:600;padding:0 1px}
   </div>
 </section>
 <!-- BUILD TAG: bump on every deploy so you can tell which build people are seeing. -->
-<footer class="buildtag">PREVIEW · Build v0.10.15 (2026-10-30)</footer>
+<footer class="buildtag">PREVIEW · Build v0.10.16 (2026-10-30)</footer>
 </main>
 </div>
 
@@ -1089,7 +1090,7 @@ function merge(o){ const b=blank(); const s=Object.assign(b, o, {mode:Object.ass
   return s; }
 function load(){ try{ const t=localStorage.getItem(KEY); if(t) return merge(JSON.parse(t)); }catch(e){} return blank(); }
 let S = load(), storageOK = true, saveT;
-function save(){ clearTimeout(saveT); saveT=setTimeout(()=>{ try{ localStorage.setItem(KEY, JSON.stringify(S)); storageOK=true; }catch(e){ storageOK=false; } $("#storage-warn").hidden=storageOK; },250); }
+function save(){ if(S.pref||STEPS.some(([s])=>stepHasData(s))) $("#lost-note").hidden=true; clearTimeout(saveT); saveT=setTimeout(()=>{ try{ localStorage.setItem(KEY, JSON.stringify(S)); storageOK=true; }catch(e){ storageOK=false; } $("#storage-warn").hidden=storageOK; },250); }
 
 /* helpers */
 const $ = s => document.querySelector(s);
@@ -1102,7 +1103,8 @@ const pIndex = n => PHENO.findIndex(p=>p.n===n);
 const plural = (n,w) => `${n} ${w}${n===1?"":"s"}`;
 function getPath(o,p){ return p.split(".").reduce((a,k)=>a==null?a:a[k],o); }
 function setPath(o,p,v){ const ks=p.split("."); const last=ks.pop(); ks.reduce((a,k)=>a[k],o)[last]=v; }
-function toast(t){ const el=$("#toast"); el.textContent=t; el.classList.add("on"); clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove("on"),2200); }
+// Problems ("Couldn't copy…", "That file couldn't be read…") stay up long enough to read.
+function toast(t, ms=/^(Couldn|That file)/.test(t)?6000:2200){ const el=$("#toast"); el.textContent=t; el.classList.add("on"); clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove("on"),ms); }
 const smooth = () => matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
 function scrollToEl(el, block="start"){ if(el) el.scrollIntoView({behavior:smooth(), block}); }
 // Resources sections: open a folded one, then scroll to it and move focus to its heading.
@@ -1134,7 +1136,7 @@ const fits = () => matches(S.want);
 const score = r => Math.max(0, Math.round((r||0)*100));
 // Labels follow the score people see (rounded), so "60%" is always "Close".
 const strength = (r, word="match") => { const s=score(r); return (s>=60?"Close ":s>=40?"Good ":s>=20?"Partial ":"Weak ")+word; };
-// Current phenotype(s): the ones checked "This fits me" (up to 2), otherwise the top match.
+// Current phenotype(s): the ones checked "This describes me" (up to 2), otherwise the top match.
 const currentPhenos = () => S.chosen.length ? S.chosen.slice(0,2) : (rated()>=8 ? [PHENO[matches()[0].i].n] : []);
 const curName = () => currentPhenos()[0] || "";
 const targetIdx = () => S.target.filter(Boolean).map(pIndex).filter(i=>i>=0);
@@ -1181,7 +1183,7 @@ const chips = (pi,nShared=3,nGrow=2,ctx="") => { const d=drivers(pi, ctx!=="m"),
   const row=(label,ks,cls)=>ks.length?`<div class="why-row"><span class="why-label">${label}</span><div class="chips">${ks.map(i=>`<span class="chip ${cls}">${esc(ATTR[i].n)}</span>`).join("")}</div></div>`:"";
   // Step 2 asks "does this describe my work?" (no goal yet), so differences are neutral, not gaps to grow.
   const fit = ctx==="m";
-  return `<details class="why" data-why="${key}" ${WHY_OPEN.has(key)?"open":""}><summary>More details</summary>${row(fit?"Fits well":"Already do",d.shared.slice(0,nShared),"")}${row(fit?"Fits less well":"Need to grow",d.miss.slice(0,nGrow),fit?"neutral":"up")}</details>`; };
+  return `<details class="why" data-why="${key}" ${WHY_OPEN.has(key)?"open":""}><summary>More details<span class="sr"> about ${esc(PHENO[pi].n)}</span></summary>${row(fit?"Fits well":"Already do",d.shared.slice(0,nShared),"")}${row(fit?"Fits less well":"Need to grow",d.miss.slice(0,nGrow),fit?"neutral":"up")}</details>`; };
 document.addEventListener("toggle", e=>{ const d=e.target; if(d.matches && d.matches("details[data-why]")) d.open ? WHY_OPEN.add(d.dataset.why) : WHY_OPEN.delete(d.dataset.why); }, true);
 const SCORE_NOTE = what => `<p class="small muted">${what==="fit"?"Fit score shows how similar the work you want is":"Match score shows how similar the mix of your work is"} to each phenotype's typical mix. It's a similarity score, not a share: 60% or more is close, 40–59% good, 20–39% partial.</p>`;
 
@@ -1704,7 +1706,7 @@ function renderStatic(){
    </div>`).join("");
   $("#nextsteps").innerHTML = S.steps.map((s,i)=>`
    <div class="grid2 grid-step">
-     <label for="st${i}w">Step ${i+1}<input type="text" id="st${i}w" data-bind="steps.${i}.what"></label>
+     <label for="st${i}w">Next step ${i+1}<input type="text" id="st${i}w" data-bind="steps.${i}.what"></label>
      <label for="st${i}n">By when<input type="text" id="st${i}n" data-bind="steps.${i}.when"></label>
      <label for="st${i}h">Who can help<input type="text" id="st${i}h" data-bind="steps.${i}.who"></label>
    </div>`).join("");
@@ -1742,12 +1744,12 @@ function renderMine(){
 function renderMatches(){
   const el=$("#matches"), n=rated(); $("#rate-count").textContent=`${answered()} of 20 answered`;
   // Before there are answers, the card says it's waiting rather than asking a question it can't answer yet.
-  $("#results-h").textContent = n<8 ? "Your matches" : "Which of these fit you?"; $("#results").classList.toggle("hi", n>=8);
+  $("#results-h").textContent = n<8 ? "Your matches" : "Which of these describe your work?"; $("#results").classList.toggle("hi", n>=8);
   if(n<8){ el.innerHTML=`<p class="waiting">Waiting for your answers. Your closest phenotypes appear here once ${modeFor("s2")==="ai"?"you paste the AI's answer above":"you rate at least 8 kinds of work"}${n?` (${n} rated so far)`:""}.</p>`; return; }
   const m=matches();
   el.innerHTML = `<p class="small">Check up to 2 that fit you. If you check none, your top match is used.</p>`
    + (S.profile.stage==="Trainee"||S.profile.experience===EXPERIENCE[0] ? `<p class="note small">New to informatics? Your matches mostly reflect your clinical work and teaching for now. That's expected. The goal you choose in step 3 matters more.</p>` : "")
-   + `<div class="top3">${m.slice(0,3).map((x,j)=>tcard(x, j, `<label class="pick" for="ch${x.i}"><input type="checkbox" id="ch${x.i}" aria-label="This fits me: ${esc(PHENO[x.i].n)}" data-choose="${esc(PHENO[x.i].n)}" ${S.chosen.includes(PHENO[x.i].n)?"checked":""}>This fits me</label>`, "m", S.chosen.includes(PHENO[x.i].n))).join("")}</div>`
+   + `<div class="top3">${m.slice(0,3).map((x,j)=>tcard(x, j, `<label class="pick" for="ch${x.i}"><input type="checkbox" id="ch${x.i}" aria-label="This describes me: ${esc(PHENO[x.i].n)}" data-choose="${esc(PHENO[x.i].n)}" ${S.chosen.includes(PHENO[x.i].n)?"checked":""}>This describes me</label>`, "m", S.chosen.includes(PHENO[x.i].n))).join("")}</div>`
    + SCORE_NOTE("match")
    + (S.ratings[0]!=null && S.ratings[0]<=1 ? `<p class="small muted">Clinical work counts heavily in many phenotypes, because the phenotypes were built mostly from physician informaticians, many of whom still see patients. If you no longer see patients, director and executive matches will read lower than they should.</p>` : "")
    + allRanked(m, "See how you matched on all 20 phenotypes", "allm");
@@ -1818,7 +1820,7 @@ function renderComparison(){
    <details class="peek"><summary>See all 20 kinds of work</summary><p class="small muted" style="margin:8px 0">"Now" is your step 2 rating, "Want" your step 3 answer (0 never to 5 daily). "Goal" is the typical level for your goal phenotype, adjusted to how busy you are overall. It's a model estimate. The gap is between now and goal. "Your choice" means the goal does more of it, but you said you don't want more.</p>${compareTable([...rows].sort((a,b)=>(b.g??-9)-(a.g??-9)))}</details>`;
 }
 function renderIdeas(){
-  const g=growRows().slice(0,3), item=o=>`<li>${esc(o)} <button type="button" class="tiny addbtn" data-addstep="${esc(o)}">Add</button></li>`;
+  const g=growRows().slice(0,3), item=o=>`<li>${esc(o)} <button type="button" class="tiny addbtn" data-addstep="${esc(o)}" aria-label="Add to my next steps: ${esc(o)}">Add</button></li>`;
   $("#ideas").innerHTML = (g.length? `<div class="idea-group"><h3>For your biggest gaps</h3>${g.map(r=>`<p class="small"><b>${esc(r.a.n)}</b> <span class="tag ${GAPLABEL[r.gap][1]}">${GAPLABEL[r.gap][0]}</span></p><ul class="ideas">${r.a.o.map(item).join("")}</ul>`).join("")}</div>` : "")
     + `<div class="idea-group"><h3>Ways to build experience</h3><ul class="ideas">${startersFor().map(item).join("")}</ul></div>`;
 }
@@ -2018,7 +2020,7 @@ let cur = "home";
 const HOME_ICON = `<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5h13V10"/><path d="M10 19.5v-5h4v5"/></svg>`;
 const BOOK_ICON = `<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5z"/><path d="M4 21.5V5.5"/></svg>`;
 function railLink(id, inner, cls=""){ const locked=!!blockerFor(id);
-  return `<a href="#${id}" data-go="${id}" class="${cls} ${locked?"locked":""}" ${id===cur?'aria-current="page"':""}>${inner}</a>`; }
+  return `<a href="#${id}" data-go="${id}" class="${cls} ${locked?"locked":""}" ${id===cur?'aria-current="page"':""}>${inner}${locked?'<span class="sr">, not ready yet</span>':""}</a>`; }
 function renderRail(){
   $("#rail").innerHTML = railLink("home",`${HOME_ICON}<span class="lbl">Home</span>`)
    + STEPS.map(([id,l],i)=>railLink(id,`<span class="n">${i+1}</span>${l}${stepDone(id)?'<span class="sr">, done</span>':""}`, stepDone(id)?"done":"")).join("")
@@ -2099,6 +2101,7 @@ function updateTool(key){ const sel=document.getElementById("tool-"+key); if(!se
   sel.value=tk; const old=sel.closest(".row").querySelector("[data-copyprompt]"); if(old) old.outerHTML=goButton(key,tk);
   const nm=document.getElementById("chatname-"+key); if(nm) nm.textContent=toolName(tk); }
 const stepHasData = step => STEPFIELDS[step].some(k=>JSON.stringify(S[k])!==JSON.stringify(blank()[k]));
+function clearUndo(st){ const b=document.querySelector(`[data-clearstep="${st}"]`); if(b){ b._undo=null; b.textContent="Clear this step"; } }
 function setStep(step, src){ STEPFIELDS[step].forEach(k=>{ S[k]=clone(src[k]); }); save(); fill(); refresh(); }
 function afterLoad(){ save(); fill(); renderPref(); renderForks(); refresh(); renderConsent(); }
 // Another tab of the coach saved (for example one opened from the AI's "Back to the coach" link): take its answers,
@@ -2154,15 +2157,20 @@ document.addEventListener("click",e=>{
     save(); refresh(); if(v==="1"||v==="2") scrollToEl($("#goal-now").closest(".card")); return; }
   if((el=q("[data-example]"))){ const st=el.dataset.example;
     if(!confirm(stepHasData(st) ? "Replace what you've entered in this step with a fictional example?" : "Fill this step with a fictional example? You can clear it after.")) return;
-    if(!S.pref){ S.pref="self"; renderPref(); } setStep(st, EXAMPLE()); renderForks();
+    if(!S.pref){ S.pref="self"; renderPref(); } setStep(st, EXAMPLE()); clearUndo(st); renderForks();
     // Steps 1 and 4 have no results to show, so in AI mode open the answers so the example is visible.
     const box=document.querySelector(`details[data-answers="${st}"]`); if(box && (st==="s1"||st==="s4")) box.open=true;
     toast("Example filled in. Edit it or clear the step to start fresh."); return; }
-  if((el=q("[data-clearstep]"))){ const st=el.dataset.clearstep;
-    if(stepHasData(st) && !confirm("Clear everything in this step?")) return;
-    setStep(st, blank()); toast("Step cleared."); return; }
-  if((el=q("[data-addstep]"))){ const i=S.steps.findIndex(s=>!s.what); if(i<0){ toast("All three steps are filled. Clear one first."); return; }
-    S.steps[i].what=el.dataset.addstep; save(); fill(); refresh(); toast(`Added as step ${i+1}.`); return; }
+  // Clearing keeps a copy, and the button offers "Undo clear" until it's used or the step is refilled from an example.
+  if((el=q("[data-clearstep]"))){ const st=el.dataset.clearstep, n=STEPS.findIndex(([s])=>s===st)+1, name=STEPS[n-1][1];
+    if(el._undo){ if(stepHasData(st) && !confirm(`Replace what you've entered since with what you cleared from step ${n}?`)) return;
+      setStep(st, el._undo); clearUndo(st); toast(`Step ${n} is back.`); return; }
+    if(!stepHasData(st)){ toast("This step is already empty."); return; }
+    if(!confirm(`Clear everything you entered in step ${n} (${name})?`)) return;
+    const prev={}; STEPFIELDS[st].forEach(k=>{ prev[k]=clone(S[k]); });
+    setStep(st, blank()); el._undo=prev; el.textContent="Undo clear"; toast(`Step ${n} cleared. Press "Undo clear" to bring it back.`); return; }
+  if((el=q("[data-addstep]"))){ const i=S.steps.findIndex(s=>!s.what); if(i<0){ toast("All three next steps are filled. Empty one of them first."); return; }
+    S.steps[i].what=el.dataset.addstep; save(); fill(); refresh(); toast(`Added as next step ${i+1}.`); return; }
   if((el=q("[data-savefile]"))){ saveFile(); return; }
   const m=$("details.menu"); if(m.open && !m.contains(e.target)) m.open=false;
 });
@@ -2205,7 +2213,7 @@ renderStatic(); fill(); renderPref(); renderForks(); refresh(); renderConsent();
   q.delete("scenario"); try{ history.replaceState(null,"",location.pathname+(q.toString()?"?"+q:"")+"#s4"); }catch(e){}
   if(STEPS.some(([s])=>stepHasData(s)) && !confirm(`Replace the answers in this browser with the "${name}" test case?`)) return;
   const sc=make(); STEPS.forEach(([s])=>STEPFIELDS[s].forEach(k=>{ S[k]=clone(sc[k]); })); if(!S.pref) S.pref="ai"; afterLoad(); })();
-(()=>{ const h=(location.hash||"#home").slice(1); if((isStep(h)||h==="coach"||h==="report") && !S.pref && !STEPS.some(([s])=>stepHasData(s))) $("#lost-note").hidden=false; })();
+(()=>{ const h=(location.hash||"#home").slice(1); if(["s2","s3","s4","report"].includes(h) && !S.pref && !STEPS.some(([s])=>stepHasData(s))) $("#lost-note").hidden=false; })();
 go((location.hash||"#home").slice(1), false, true);
 try{ localStorage.setItem(KEY+".probe","1"); localStorage.removeItem(KEY+".probe"); }catch(e){ storageOK=false; $("#storage-warn").hidden=false; }
 </script>
