@@ -1991,7 +1991,9 @@ const isStep = id => STEPS.some(s=>s[0]===id);
 const ORDER = ["s1","s2","s3","s4","report"];               // gated: each needs the ones before it done
 const NAV = ["home","s1","s2","s3","s4","report"].concat(EV?["resources"]:[]); // pages with the bottom Back/Next bar (an event ends on the wrap-up)
 const PAGES = ["home","s1","s2","s3","s4","report","resources"];
-const blockerFor = id => { const i=ORDER.indexOf(id); return i<0 ? null : ORDER.slice(0,i).find(s=>!stepDone(s))||null; };
+// At an event, steps 1 to 4 open from the rail in any order, so someone who joins late can jump to where the room is.
+// The report still needs all four steps, and Next still stops on what's missing in the current step.
+const blockerFor = id => { if(EV && isStep(id)) return null; const i=ORDER.indexOf(id); return i<0 ? null : ORDER.slice(0,i).find(s=>!stepDone(s))||null; };
 const flagged = {};
 const cardOf = sel => { const el=document.querySelector(sel); return el && (el.closest(".card")||el); };
 const needTarget = sel => { const el=document.querySelector(sel); return el && (el.matches("input,select,textarea") ? el.closest("label")||cardOf(sel) : cardOf(sel)); };
@@ -2109,6 +2111,7 @@ document.addEventListener("click",e=>{
     return; }
   if((el=q("[data-ref]"))){ e.preventDefault(); openSec("res-refs"); const li=document.getElementById("ref-"+el.dataset.ref); if(li){ scrollToEl(li,"center"); li.classList.add("flash"); setTimeout(()=>li.classList.remove("flash"),1800); } return; }
   if((el=q("[data-go]"))){ e.preventDefault(); $("details.menu").open=false;
+    if(EV && el.id==="nav-next" && isStep(cur) && isStep(el.dataset.go) && !stepDone(cur)){ showMissing(cur); return; }
     if(el.id==="start-btn" && !S.pref){ $("#pref-card").classList.add("need"); scrollToEl($("#pref-card .choice"),"center"); toast("Choose how you want to work first."); return; }
     // 28 Opening Resources from a step offers a way back to that step.
     const from=cur, sec = el.hasAttribute("data-lib") ? "lib" : el.dataset.sec, n=STEPS.findIndex(s=>s[0]===from), back=$("#lib-return");
