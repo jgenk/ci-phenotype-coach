@@ -102,6 +102,7 @@ main{max-width:880px;width:100%;margin:0;padding:24px 0 120px;min-width:0}
 .card.hi{box-shadow:var(--shadow)}
 .stepbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .note{border-left:3px solid var(--accent);background:var(--accent-soft);padding:10px 12px;border-radius:0 4px 4px 0;font-size:.9rem}
+#lost-note{margin-bottom:20px}
 .note.warn{border-color:var(--warn);background:var(--warn-soft)}
 #storage-warn{margin-bottom:16px}
 .why summary{cursor:pointer;padding:2px 0;font-size:.84rem;color:var(--muted);width:max-content;max-width:100%}
@@ -443,7 +444,7 @@ details.carry[open]>summary{margin-bottom:10px}
 @media (max-width:760px){.top3{grid-template-columns:minmax(0,1fr)}
   .top3 .tcard{grid-template-columns:92px minmax(0,1fr);grid-template-rows:none} .top3 .tcard .art{aspect-ratio:auto;width:100%;height:100%;min-height:110px}}
 .tcard{display:grid;grid-template-rows:auto 1fr;border:1px solid var(--rule);border-radius:var(--r);background:var(--sheet);overflow:hidden;min-width:0}
-/* a card border means selection only: green = "this describes me" (step 2), blue = your goal (step 3) */
+/* a card border means selection only: green = "this describes my work" (step 2), blue = your goal (step 3) */
 .tcard .art{aspect-ratio:16/9}
 .tcard-body{display:grid;gap:8px;padding:10px 12px 12px;align-content:start}
 .tcard .rank{font:600 .75rem var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
@@ -1136,7 +1137,7 @@ const fits = () => matches(S.want);
 const score = r => Math.max(0, Math.round((r||0)*100));
 // Labels follow the score people see (rounded), so "60%" is always "Close".
 const strength = (r, word="match") => { const s=score(r); return (s>=60?"Close ":s>=40?"Good ":s>=20?"Partial ":"Weak ")+word; };
-// Current phenotype(s): the ones checked "This describes me" (up to 2), otherwise the top match.
+// Current phenotype(s): the ones checked "This describes my work" (up to 2), otherwise the top match.
 const currentPhenos = () => S.chosen.length ? S.chosen.slice(0,2) : (rated()>=8 ? [PHENO[matches()[0].i].n] : []);
 const curName = () => currentPhenos()[0] || "";
 const targetIdx = () => S.target.filter(Boolean).map(pIndex).filter(i=>i>=0);
@@ -1749,7 +1750,7 @@ function renderMatches(){
   const m=matches();
   el.innerHTML = `<p class="small">Check up to 2 that fit you. If you check none, your top match is used.</p>`
    + (S.profile.stage==="Trainee"||S.profile.experience===EXPERIENCE[0] ? `<p class="note small">New to informatics? Your matches mostly reflect your clinical work and teaching for now. That's expected. The goal you choose in step 3 matters more.</p>` : "")
-   + `<div class="top3">${m.slice(0,3).map((x,j)=>tcard(x, j, `<label class="pick" for="ch${x.i}"><input type="checkbox" id="ch${x.i}" aria-label="This describes me: ${esc(PHENO[x.i].n)}" data-choose="${esc(PHENO[x.i].n)}" ${S.chosen.includes(PHENO[x.i].n)?"checked":""}>This describes me</label>`, "m", S.chosen.includes(PHENO[x.i].n))).join("")}</div>`
+   + `<div class="top3">${m.slice(0,3).map((x,j)=>tcard(x, j, `<label class="pick" for="ch${x.i}"><input type="checkbox" id="ch${x.i}" aria-label="This describes my work: ${esc(PHENO[x.i].n)}" data-choose="${esc(PHENO[x.i].n)}" ${S.chosen.includes(PHENO[x.i].n)?"checked":""}>This describes my work</label>`, "m", S.chosen.includes(PHENO[x.i].n))).join("")}</div>`
    + SCORE_NOTE("match")
    + (S.ratings[0]!=null && S.ratings[0]<=1 ? `<p class="small muted">Clinical work counts heavily in many phenotypes, because the phenotypes were built mostly from physician informaticians, many of whom still see patients. If you no longer see patients, director and executive matches will read lower than they should.</p>` : "")
    + allRanked(m, "See how you matched on all 20 phenotypes", "allm");
