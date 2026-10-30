@@ -980,7 +980,8 @@ const AI_INTRO = {
 // Workshop layer. The <head><meta name="robots" content="noindex"> script sets html[data-event]; CSS shows .ev-only and hides .gen-only.
 // surveys: the embedded pre-survey (step 1) and post-survey (Resources & Wrap Up), shown only after consent on Home.
 //   form   = the Google Form's formResponse URL (https://docs.google.com/forms/d/e/<id>/formResponse); empty = not connected yet
-//   fields = { our field name: "entry.<id>" } from the form's pre-filled link (field names: see drafts/surveys-amia-2026.md)
+//   fields = { data: "entry.<id>" } sends every answer as one JSON text in a single question (the simple setup), or
+//            { our field name: "entry.<id>" } for one question per field. Both come from the form's pre-filled link (drafts/surveys-amia-2026.md).
 //   on:false removes consent and both surveys.
 const EVENTS = {
   "amia-2026":{name:"AMIA 2026", url:"https://jgenk.github.io/ci-phenotype-coach/amia-2026/", surveys:{on:true, form:"", fields:{}},
@@ -1941,7 +1942,9 @@ function svSend(phase, {beacon=false, quiet=true}={}){
   const a=S.survey[phase], data=svPayload(phase), hash=JSON.stringify(data);
   if(hash===a.sentHash){ if(!quiet) toast("Already sent. Thank you."); return; }
   if(!svConnected()){ if(!quiet) toast("The survey isn't connected yet. Your answers are saved in this browser."); return; }
-  const cfg=EV.surveys, body=new URLSearchParams(); Object.entries(data).forEach(([k,v])=>{ if(cfg.fields[k]) body.append(cfg.fields[k], v??""); });
+  const cfg=EV.surveys, body=new URLSearchParams();
+  if(cfg.fields.data) body.append(cfg.fields.data, JSON.stringify(Object.fromEntries(Object.entries(data).map(([k,v])=>[k, String(v??"")]))));
+  else Object.entries(data).forEach(([k,v])=>{ if(cfg.fields[k]) body.append(cfg.fields[k], v??""); });
   let ok=true;
   if(beacon && navigator.sendBeacon) ok=navigator.sendBeacon(cfg.form, body); // survives the page closing
   else fetch(cfg.form,{method:"POST",mode:"no-cors",keepalive:true,body}).catch(()=>{});
