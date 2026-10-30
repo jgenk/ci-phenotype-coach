@@ -465,10 +465,24 @@ html[data-event] .gen-only{display:none!important}
 .qr{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:center}
 .qr svg{width:132px;height:132px;background:#fff;padding:6px;border-radius:4px;border:1px solid var(--rule)}
 .qr code{font:500 .85rem var(--f-mono);word-break:break-all}
-/* wrap-up order for the room screen: what to do next first, background last */
-html[data-event] #resources>.head{order:0} html[data-event] .res-wrap{order:1} html[data-event] .res-train{order:2} html[data-event] .res-comm{order:3}
-html[data-event] .res-ai{order:4} html[data-event] .res-what{order:5} html[data-event] .res-about{order:6} html[data-event] .res-lib{order:7}
-html[data-event] .res-attrs{order:8} html[data-event] .res-refs{order:9}
+/* Resources: a jump list at the top; the long background sections fold away. (The event's wrap-up order is set in renderStatic, so reading order matches what's on screen.) */
+.toc{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center}
+.toc .eyebrow{flex-basis:100%}
+.toc a{display:inline-flex;align-items:center;min-height:34px;padding:4px 12px;border:1px solid var(--control);border-radius:999px;background:var(--sheet);color:var(--ink);font-size:.86rem;text-decoration:none}
+.toc a:hover{border-color:var(--accent);color:var(--accent)}
+.toc .toc-div{width:1px;align-self:stretch;background:var(--rule);margin:2px 4px}
+.res-divider{display:flex;align-items:center;gap:10px;color:var(--muted);margin-top:6px}
+.res-divider::after{content:"";flex:1;height:1px;background:var(--rule)}
+details.sec>summary{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;cursor:pointer;list-style:none}
+details.sec>summary::-webkit-details-marker{display:none}
+details.sec>summary h2::before{content:"▸ ";color:var(--muted);font-size:.8em}
+details.sec[open]>summary h2::before{content:"▾ "}
+details.sec>summary .sec-note{font-size:.85rem;color:var(--muted)}
+details.sec>summary .sec-note::after{content:" · Show"}
+details.sec[open]>summary .sec-note::after{content:" · Hide"}
+details.sec>.sec-in{display:grid;gap:14px;margin-top:14px}
+.totop{justify-self:start}
+@media (max-width:560px){ .toc a{min-height:44px} }
 .refs li:target,.refs li.flash{background:var(--accent-soft);border-radius:3px}
 sup a{text-decoration:none;font-weight:600;padding:0 1px}
 .evtag{font:600 .68rem var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--accent);border:1px solid var(--accent);border-radius:3px;padding:2px 6px}
@@ -602,7 +616,7 @@ sup a{text-decoration:none;font-weight:600;padding:0 1px}
     <textarea id="snap" class="tall" data-bind="snapshot" aria-label="Summary of where you are now"></textarea>
   </div>
   </div></details>
-  <div class="pause ev-only"><span class="eyebrow">Pause · pair share · about 5 min</span><h2>Share your summary with a partner.</h2><p class="small">What surprised you? What did your partner notice that you didn't? Then revise your summary with one thing you heard.</p><p class="early">If you finish early: skim the 20 phenotypes in <a href="#resources" data-go="resources">Resources</a>.</p></div>
+  <div class="pause ev-only"><span class="eyebrow">Pause · pair share · about 5 min</span><h2>Share your summary with a partner.</h2><p class="small">What surprised you? What did your partner notice that you didn't? Then revise your summary with one thing you heard.</p><p class="early">If you finish early: skim <a href="#resources" data-go="resources" data-sec="lib">the 20 phenotypes</a> in Resources.</p></div>
 </section>
 
 <!-- STEP 2 -->
@@ -611,7 +625,7 @@ sup a{text-decoration:none;font-weight:600;padding:0 1px}
     <span class="eyebrow">Step 2 of 4</span>
     <h1 tabindex="-1">Your current phenotype</h1>
     <p class="lede">A phenotype is a common pattern of informatics work, such as "clinician builder." Most people match more than one. It describes your work, not you.</p>
-    <details class="peek"><summary>How the matching works</summary><p class="small" style="margin-top:6px">You rate how often your work involves 20 kinds of activity. The page compares your mix of work (not how busy you are) with the typical mix for each of the 20 phenotypes. <a href="#resources" data-go="resources">See all 20 phenotypes</a>.</p></details>
+    <details class="peek"><summary>How the matching works</summary><p class="small" style="margin-top:6px">You rate how often your work involves 20 kinds of activity. The page compares your mix of work (not how busy you are) with the typical mix for each of the 20 phenotypes. <a href="#resources" data-go="resources" data-sec="lib">See all 20 phenotypes</a>.</p></details>
   </div>
   <details class="carry" data-recap="s2" hidden></details>
   <div class="fork" data-fork="s2"></div>
@@ -742,8 +756,9 @@ sup a{text-decoration:none;font-weight:600;padding:0 1px}
     <p class="lede gen-only">The phenotypes, the 20 kinds of work, training and certification, communities, and references.</p>
     <p class="lede ev-only">Where to go next: training, certification, and communities, plus the phenotypes and the work behind them.</p>
   </div>
-  <div class="card ev-only res-wrap">
-    <h2>Before you go</h2>
+  <nav class="toc" id="res-toc" aria-label="On this page"></nav>
+  <div class="card ev-only res-wrap" id="res-before" data-toc="Before you go">
+    <h2 tabindex="-1">Before you go</h2>
     <ul class="links">
       <li>Save your plan: open your <a href="#report" data-go="report">report</a> and print it or save it as a PDF.</li>
       <li>Your answers stay in this browser. To keep a copy, use Menu → "Save my answers to a file."</li>
@@ -753,24 +768,28 @@ sup a{text-decoration:none;font-weight:600;padding:0 1px}
   </div>
   <div class="card ev-only res-wrap" id="survey-ask" hidden><h2>Help us improve this workshop <span class="req">Optional</span></h2><p class="small">Would you answer a 2-minute anonymous survey? There's no name or email, and only your survey answers are sent.</p><div class="row"><button type="button" data-consent="yes">I agree</button><button type="button" data-consent="no">No thanks</button></div></div>
   <div class="card ev-only res-wrap survey" id="survey-post" hidden></div>
-  <div class="card res-about">
-    <h2>About the phenotypes</h2>
+  <div class="card res-about" id="res-about" data-toc="About the phenotypes">
+    <h2 tabindex="-1">About the phenotypes</h2>
     <p>A phenotype is a common pattern of informatics work: the activities, skills, setting, and way of contributing that tend to go together. Phenotypes overlap. They aren't personality types or validated categories. Use them to reflect, talk with mentors, and plan.</p>
     <p class="small muted">How they were made: informatics faculty and fellows drafted them from experience across several fellowship programs and from earlier ways of describing informatics work: the CI Domains of Practice<sup><a href="#resources" data-ref="1">1</a></sup>, KOI Pond<sup><a href="#resources" data-ref="7">7</a></sup>, and #MyInformaticsProfile<sup><a href="#resources" data-ref="8">8</a></sup>. About 100 informaticians answered a survey through Physicians in AMIA, a regional informatics group, and academic faculty groups (90 usable responses). The weights for each phenotype came from the survey and were adjusted by expert review<sup><a href="#resources" data-ref="12">12</a></sup>. They were first used with fellows at AMIA's Clinical Informatics Conference retreats in 2023 and 2025<sup><a href="#resources" data-ref="12">12</a>,<a href="#resources" data-ref="13">13</a></sup>. This supports using them for reflection, not for classifying people.</p>
     <p class="note warn small">Limits: the survey and phenotypes come from physicians. Role names are written for all clinicians, but there are no nurse-, APP-, or pharmacist-specific phenotypes yet.</p>
   </div>
-  <div class="card res-lib" id="lib">
+  <div class="card res-lib" id="lib" data-toc="The 20 phenotypes">
     <div class="row" id="lib-return" hidden><a class="btn primary" href="#s3" data-go="s3">← Back to step 3: choose your goal</a></div>
-    <h2>The 20 phenotypes</h2>
+    <details class="sec"><summary><h2 tabindex="-1">The 20 phenotypes</h2><span class="sec-note">20 cards</span></summary><div class="sec-in">
     <p class="small muted">Each signature shows a phenotype's typical mix of work: one petal for each of the 20 kinds of work, clockwise from the top in five groups. A longer petal means more of that kind of work.</p>
     <div class="picker" id="lib-phenos"></div>
+    <a class="small totop" href="#resources" data-totop>↑ Back to the top of Resources</a>
+    </div></details>
   </div>
-  <div class="card res-attrs">
-    <h2>The 20 kinds of work</h2>
+  <div class="card res-attrs" id="res-attrs" data-toc="The 20 kinds of work">
+    <details class="sec"><summary><h2 tabindex="-1">The 20 kinds of work</h2><span class="sec-note">in five groups</span></summary><div class="sec-in">
     <div class="tablewrap"><table class="t" id="lib-attrs"></table></div>
+    <a class="small totop" href="#resources" data-totop>↑ Back to the top of Resources</a>
+    </div></details>
   </div>
-  <div class="card res-what">
-    <h2>What informaticians do</h2>
+  <div class="card res-what" id="res-what" data-toc="What informaticians do">
+    <h2 tabindex="-1">What informaticians do</h2>
     <ul class="links">
       <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7647208/" target="_blank" rel="noopener">Clinical Informatics Domains of Practice</a> (physician subspecialty, 2019): 5 domains, 42 tasks, 139 knowledge and skill statements. The basis of the board exam.</li>
       <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7647284/" target="_blank" rel="noopener">Health Informatics Domains of Practice</a> (all professions, 2020). The basis of AMIA's AHIC certification.</li>
@@ -780,16 +799,16 @@ sup a{text-decoration:none;font-weight:600;padding:0 1px}
       <li><a href="https://www.aaronneinstein.com/post/myinformaticsprofile" target="_blank" rel="noopener">#MyInformaticsProfile</a>: show where your time goes across areas of informatics.</li>
     </ul>
   </div>
-  <div class="card res-ai">
-    <h2>AI in clinical informatics</h2>
+  <div class="card res-ai" id="res-ai" data-toc="AI in informatics">
+    <h2 tabindex="-1">AI in clinical informatics</h2>
     <p class="small">Clinical AI is a growing part of informatics work: choosing, evaluating, putting into use, and governing AI tools in care.</p>
     <ul class="links">
       <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC12925513/" target="_blank" rel="noopener">Cultivating AI leaders: the role of clinical informatics fellowship in transforming healthcare</a> (Lingam et al., 2026; free full text)</li>
       <li><a href="https://amia.org/education-events/10x10-virtual-courses/introduction-biomedical-informatics-ai/course-overview" target="_blank" rel="noopener">AMIA 10x10: Introduction to Biomedical Informatics and AI</a> (short online course)</li>
     </ul>
   </div>
-  <div class="card res-train">
-    <h2>Training and certification</h2>
+  <div class="card res-train" id="res-train" data-toc="Training and certification">
+    <h2 tabindex="-1">Training and certification</h2>
     <ul class="links">
       <li><a href="https://www.theabpm.org/become-certified/subspecialties/clinical-informatics/" target="_blank" rel="noopener">Clinical Informatics board certification</a> (physicians, ABPM). Requires an ACGME-accredited fellowship. The practice pathway is closed.</li>
       <li><a href="https://apps.acgme.org/ads/Public/Programs/Search" target="_blank" rel="noopener">Find an accredited fellowship</a> (ACGME program search; choose Clinical Informatics) and the <a href="https://amia.org/membership/academic-forum/amia-clinical-informatics-fellowship-match" target="_blank" rel="noopener">AMIA fellowship match</a>.</li>
@@ -800,8 +819,8 @@ sup a{text-decoration:none;font-weight:600;padding:0 1px}
       <li>Also useful: Lean or Six Sigma training, project management training, and your EHR vendor's builder training.</li>
     </ul>
   </div>
-  <div class="card res-comm">
-    <h2>Communities</h2>
+  <div class="card res-comm" id="res-comm" data-toc="Communities">
+    <h2 tabindex="-1">Communities</h2>
     <ul class="links">
       <li><a href="https://amia.org/communities/physicians-amia" target="_blank" rel="noopener">Physicians in AMIA (PINA)</a></li>
       <li><a href="https://amia.org/communities/nursing-informatics" target="_blank" rel="noopener">AMIA Nursing Informatics</a></li>
@@ -810,8 +829,8 @@ sup a{text-decoration:none;font-weight:600;padding:0 1px}
       <li><a href="https://www.amia.org/career-development" target="_blank" rel="noopener">AMIA career development</a> (includes the AMIA job board)</li>
     </ul>
   </div>
-  <div class="card res-refs">
-    <h2>References</h2>
+  <div class="card res-refs" id="res-refs" data-toc="References">
+    <details class="sec"><summary><h2 tabindex="-1">References</h2><span class="sec-note">13 sources</span></summary><div class="sec-in">
     <ol class="refs">
       <li>Silverman HD, Steen EB, Carpenito JN, et al. Domains, tasks, and knowledge for clinical informatics subspecialty practice: results of a practice analysis. <i>JAMIA</i>. 2019;26(7):586-593. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7647208/" target="_blank" rel="noopener">Free full text</a></li>
       <li>Gadd CS, Steen EB, Caro CM, et al. Domains, tasks, and knowledge for health informatics practice: results of a practice analysis. <i>JAMIA</i>. 2020;27(6):845-852. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7647284/" target="_blank" rel="noopener">Free full text</a></li>
@@ -827,10 +846,12 @@ sup a{text-decoration:none;font-weight:600;padding:0 1px}
       <li>Genkins J. Clinical informatics phenotypes, portfolios, and elevator pitch. AMIA Clinical Informatics Conference (CIC) Fellows Retreat; 2023. Presentation.</li>
       <li>Mieso B, Lingam V, Genkins J. CI physician phenotypes and portfolios. AMIA CIC 2025 Fellows Retreat; May 19, 2025. Presentation.</li>
     </ol>
+    <a class="small totop" href="#resources" data-totop>↑ Back to the top of Resources</a>
+    </div></details>
   </div>
 </section>
 <!-- BUILD TAG: bump on every deploy so you can tell which build people are seeing. -->
-<footer class="buildtag">PREVIEW · build v0.10.12 (2026-10-23)</footer>
+<footer class="buildtag">PREVIEW · build v0.10.13 (2026-10-29)</footer>
 </main>
 </div>
 
@@ -1062,6 +1083,9 @@ function setPath(o,p,v){ const ks=p.split("."); const last=ks.pop(); ks.reduce((
 function toast(t){ const el=$("#toast"); el.textContent=t; el.classList.add("on"); clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove("on"),2200); }
 const smooth = () => matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
 function scrollToEl(el, block="start"){ if(el) el.scrollIntoView({behavior:smooth(), block}); }
+// Resources sections: open a folded one, then scroll to it and move focus to its heading.
+function openSec(id){ const c=document.getElementById(id), d=c && c.querySelector("details.sec"); if(d) d.open=true; return c; }
+function jumpSec(id){ const c=openSec(id); if(!c) return; scrollToEl(c); const h=c.querySelector("h2"); if(h) h.focus({preventScroll:true}); }
 function copyText(txt){ // synchronous copy, so a link can still open in the same click
   let ok=false; const ta=document.createElement("textarea"); ta.value=txt; ta.setAttribute("readonly",""); ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta); ta.select();
   try{ ok=document.execCommand("copy"); }catch(err){} ta.remove();
@@ -1656,6 +1680,15 @@ function renderStatic(){
   $("#lib-attrs").innerHTML = `<thead><tr><th>Kind of work</th><th>What it covers</th></tr></thead><tbody>${GROUPS.map((g,gi)=>`<tr><th colspan="2">${esc(g)}</th></tr>`+DISPLAY.filter(i=>ATTR[i].g===gi).map(i=>`<tr><td>${esc(ATTR[i].n)}</td><td>${esc(ATTR[i].d)}</td></tr>`).join("")).join("")}</tbody>`;
   $$("[data-img]").forEach(im=>{ im.src=IMG+im.dataset.img; });
   $$("#resources .refs li").forEach((li,k)=>{ li.id="ref-"+(k+1); });
+  // Resources: at an event, what to do next comes first and the background last (moved in the page, so keyboard and
+  // screen-reader order match the screen). Then the jump list is built from the cards in that order.
+  const res=$("#resources");
+  if(EV){ ["res-wrap","res-train","res-comm","res-ai"].forEach(c=>$$(`#resources>.${c}`).forEach(el=>res.appendChild(el)));
+    res.insertAdjacentHTML("beforeend",`<div class="res-divider eyebrow" id="res-bg">Background: the phenotypes and the work behind them</div>`);
+    ["res-what","res-about","res-lib","res-attrs","res-refs"].forEach(c=>$$(`#resources>.${c}`).forEach(el=>res.appendChild(el))); }
+  const tocCards=[...$$("#resources>.card[data-toc]")].filter(c=>!c.classList.contains(EV?"gen-only":"ev-only"));
+  $("#res-toc").innerHTML = `<span class="eyebrow">On this page</span>` + tocCards.map(c=>
+    `${EV && c.classList.contains("res-what") ? `<span class="toc-div" aria-hidden="true"></span>` : ""}<a href="#resources" data-sec="${c.id}">${esc(c.dataset.toc)}</a>`).join("");
   if(EV){ $("#ev-url").textContent=EV.url.replace(/^https:\/\//,""); $("#qr-home").innerHTML=QR_SVG; }
 }
 // Puts state values into the form controls.
@@ -1845,8 +1878,8 @@ function surveyCard(phase){ const a=S.survey[phase], pre=phase==="pre";
       : `<p class="small muted" style="margin-top:6px">How useful was each part of the session? 1 Not at all · 5 Extremely useful.</p><div>${SV_USE.map(([k,l])=>svRate("post","use",k,l,SV_SCALE,true)).join("")}</div>`
         + intent + svText("post","step30","One step you'll take in the next 30 days","Optional") + svText("post","change","What should we change about this session?","Optional") + svText("post","aiConcern","Did anything about using AI concern you?","Optional")}
     <p class="small muted">Also sent: your profession, career stage, and informatics experience${pre?"":", plus how you used the coach and which AI tool"}. No name, email, or anything else from the coach. Please leave names and patient details out of your comments.</p>
-    ${pre ? `<p class="small" id="sv-status-pre">${a.sent?"<b>✓ Sent.</b> If you change an answer, it's sent again when you move on.":"Your answers are sent when you move on from step 1."}${svConnected()?"":" <i>(This preview isn't connected yet: answers stay in this browser.)</i>"}</p>`
-      : `<div class="row"><button type="button" class="primary" data-svsubmit="post">I'm finished: send my answers</button><span class="small muted">${a.sent?"✓ Sent. Thank you.":"Also sent if you leave this page."}${svConnected()?"":" <i>(Not connected yet in this preview.)</i>"}</span></div>`}`; }
+    ${pre ? `<p class="small" id="sv-status-pre">${a.sent?"<b>✓ Sent.</b> If you change an answer, it's sent again when you move on.":"Your answers are sent when you move on from step 1."}${svConnected()?"":" <i>(The survey isn't connected yet: answers stay in this browser.)</i>"}</p>`
+      : `<div class="row"><button type="button" class="primary" data-svsubmit="post">I'm finished: send my answers</button><span class="small muted">${a.sent?"✓ Sent. Thank you.":"Also sent if you leave this page."}${svConnected()?"":" <i>(The survey isn't connected yet.)</i>"}</span></div>`}`; }
 function renderSurveys(){ const on=svOn();
   [["pre","#survey-pre"],["post","#survey-post"]].forEach(([ph,sel])=>{ const el=$(sel); if(!el) return; el.hidden=!on; el.innerHTML= on ? surveyCard(ph) : ""; });
   // At the wrap-up, someone who never answered on Home can still opt in there.
@@ -2010,11 +2043,13 @@ document.addEventListener("click",e=>{
       toggleIn(S.chosen,n,on); save(); refresh(); }
     else if(S.target[0]!==n){ S.target=[n, S.target[1]===n?"":S.target[1]]; save(); refresh(); scrollToEl($("#goal-now").closest(".card")); }
     return; }
-  if((el=q("[data-ref]"))){ e.preventDefault(); const li=document.getElementById("ref-"+el.dataset.ref); if(li){ scrollToEl(li,"center"); li.classList.add("flash"); setTimeout(()=>li.classList.remove("flash"),1800); } return; }
+  if((el=q("[data-ref]"))){ e.preventDefault(); openSec("res-refs"); const li=document.getElementById("ref-"+el.dataset.ref); if(li){ scrollToEl(li,"center"); li.classList.add("flash"); setTimeout(()=>li.classList.remove("flash"),1800); } return; }
   if((el=q("[data-go]"))){ e.preventDefault(); $("details.menu").open=false;
     if(el.id==="start-btn" && !S.pref){ $("#pref-card").classList.add("need"); scrollToEl($("#pref-card .choice"),"center"); toast("Choose how you want to work first."); return; }
-    const fromStep3 = el.hasAttribute("data-lib");
-    go(el.dataset.go); $("#lib-return").hidden=!fromStep3; if(fromStep3) setTimeout(()=>scrollToEl($("#lib")),50); return; }
+    const fromStep3 = el.hasAttribute("data-lib"), sec = fromStep3 ? "lib" : el.dataset.sec;
+    go(el.dataset.go); $("#lib-return").hidden=!fromStep3; if(sec) setTimeout(()=>jumpSec(sec),50); return; }
+  if((el=q("[data-sec]"))){ e.preventDefault(); jumpSec(el.dataset.sec); return; }
+  if((el=q("[data-totop]"))){ e.preventDefault(); window.scrollTo({top:0,behavior:smooth()}); const t=$("#res-toc a"); if(t) t.focus({preventScroll:true}); return; }
   if((el=q("[data-pref]"))){ const v=el.dataset.pref; S.flow= v==="full" ? "full" : ""; S.pref= v==="full" ? "ai" : v; S.mode={s1:"",s2:"",s3:"",s4:""}; afterLoad();
     if(cur==="home" && v==="full"){ scrollToEl($("#full-panel")); return; }
     if(cur==="home" && S.pref==="ai") scrollToEl($("#pref-tool"),"center"); return; }
