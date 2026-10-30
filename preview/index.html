@@ -468,12 +468,12 @@ html[data-event] .gen-only{display:none!important}
 .pause .mine{display:grid;gap:4px;padding:8px 10px;border-left:3px solid var(--accent);background:var(--paper)}
 .pause .mine p{white-space:pre-line}
 .pause .early{font-size:.86rem;color:var(--muted);border-top:1px dashed var(--rule);padding-top:6px;margin-top:2px}
-/* AMIA Home: the QR code and the survey side by side above the steps; on phones (no QR) the survey sits below Start */
+/* AMIA Home: the QR code and the survey consent side by side above the steps; on phones they stack, still above Start */
 .ev-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:stretch}
 .ev-row:has(#consent-card[hidden]){grid-template-columns:minmax(0,1fr)} /* surveys switched off */
-@media (max-width:760px){ .ev-row{grid-template-columns:minmax(0,1fr)} html[data-event] #pref-card{order:1} html[data-event] #ev-row{order:2} }
-/* phones: the QR card is for laptops and the room screen; one-row header; no iOS zoom on focus; bigger tap targets */
-@media (max-width:760px){ #qr-card{display:none} }
+@media (max-width:760px){ .ev-row{grid-template-columns:minmax(0,1fr)} }
+/* phones: the QR card stays (people show it to a neighbor) with a smaller code; one-row header; no iOS zoom on focus; bigger tap targets */
+@media (max-width:560px){ .qr svg{width:104px;height:104px} }
 @media (max-width:640px){ input[type=text],select,select.toolsel,textarea{font-size:16px} }
 @media (max-width:560px){
   .evtag{display:none} .brand{font-size:.95rem} .topbar-in{flex-wrap:nowrap}
@@ -562,12 +562,12 @@ sup a{text-decoration:none;font-weight:600;padding:0 1px}
   </div>
   <div class="ev-row ev-only" id="ev-row">
   <div class="card" id="qr-card">
-    <div class="qr"><div id="qr-home"></div><div class="stack" style="gap:6px"><h2>Open it on your own device</h2><p class="small muted">Scan the code or type the address. Your answers stay in the browser you use.</p><code id="ev-url"></code></div></div>
+    <div class="qr"><div id="qr-home"></div><div class="stack" style="gap:6px"><h2>Open it on any device</h2><p class="small muted">Scan the code or type the address, or show this to a neighbor. Your answers stay in the browser you use.</p><code id="ev-url"></code><p class="small" id="ev-short" hidden>Short link: <code></code></p></div></div>
   </div>
   <div class="card consent" id="consent-card">
     <h2>Help us improve this workshop <span class="req">Optional</span><span class="draft">Draft</span></h2>
     <p class="small">Two short anonymous surveys inside the coach: one in step 1 and one at the wrap-up.</p>
-    <details class="peek"><summary>What's involved?</summary><p class="small" style="margin-top:6px">They ask how confident you feel about planning your informatics career, how useful the session was, and your profession, career stage, and informatics experience. Nothing else from the coach is sent. Your answers are sent when you move on from each survey. There's no name or email. A random code links your two surveys. We'll use the combined answers to improve the workshop and may share them in a presentation or publication. Taking part is voluntary, and you can skip any question.</p></details>
+    <details class="peek"><summary>What's involved?</summary><p class="small" style="margin-top:6px">They ask how confident you feel about planning your informatics career and how useful the session was. They also send your menu choices from step 1 about your role and workplace (profession, career stage, informatics experience, share of time in informatics, type of organization, country, your role on each project, and what got in the way) and how you used the coach. Not your name, specialty, or anything you type in the steps. Each survey is sent once, when you press Send or move on. There's no name or email. A random code links your two surveys. We'll use the combined answers to improve the workshop and may share them in a presentation or publication. Taking part is voluntary, and you can skip any question.</p></details>
     <div class="row" id="consent-row"></div>
   </div>
   </div>
@@ -621,6 +621,10 @@ sup a{text-decoration:none;font-weight:600;padding:0 1px}
         <select id="p-exp" data-bind="profile.experience" data-options="EXPERIENCE"></select></label>
       <label for="p-time">Share of your work that is informatics now
         <select id="p-time" data-bind="profile.time" data-options="SHARES"></select></label>
+      <label for="p-org">Type of organization <span class="hint">Where most of your work happens</span>
+        <select id="p-org" data-bind="profile.org" data-options="ORGS"></select></label>
+      <label for="p-region">Country
+        <select id="p-region" data-bind="profile.region" data-options="REGIONS"></select></label>
     </div>
   </div>
   <div class="card ev-only survey" id="survey-pre" hidden></div>
@@ -874,7 +878,7 @@ sup a{text-decoration:none;font-weight:600;padding:0 1px}
   </div>
 </section>
 <!-- BUILD TAG: bump on every deploy so you can tell which build people are seeing. -->
-<footer class="buildtag">PREVIEW · Build v0.10.16 (2026-10-30)</footer>
+<footer class="buildtag">PREVIEW · Build v0.10.17 (2026-10-30)</footer>
 </main>
 </div>
 
@@ -949,7 +953,9 @@ const PROFESSIONS = ["Physician","Nurse practitioner","Physician assistant","Reg
 const STAGES = ["Trainee","Informatics fellow","Early career","Mid career","Senior or executive"];
 const EXPERIENCE = ["None yet","Some, unpaid or informal (committees, superuser, projects)","Some paid or protected time","A formal informatics role"];
 const SHARES = ["None","Under 10%","10–25%","25–50%","50–75%","Over 75%"];
-const OPTION_LISTS = {PROFESSIONS, STAGES, EXPERIENCE, SHARES}; // fills the About you menus (data-options)
+const ORGS = ["Academic medical center or health system","Community or regional health system","Public, safety-net, VA, or military","Private practice or medical group","Health IT company, vendor, or payer","Government, policy, or public health","University or research, no patient care","Other"];
+const REGIONS = ["United States","Canada","Another country"];
+const OPTION_LISTS = {PROFESSIONS, STAGES, EXPERIENCE, SHARES, ORGS, REGIONS}; // fills the About you menus (data-options)
 const ROLES = ["I led it","I did the work","I advised","I was kept informed"];
 const REASONS = ["Time","No sponsor","Too big in scope","Skills","Not an organizational priority","Funding","Didn't know how to start","Other"];
 const GAPDIMS = [
@@ -1013,7 +1019,7 @@ const QR_SVG = `<svg viewBox="0 0 33 33" role="img" aria-label="QR code for the 
 const KEY = "ciPhenotypeCoach.v2" + (/\/preview\//.test(location.pathname) ? ".preview" : "") + (EVENT ? "."+EVENT : ""); // never change the live key
 const blank = () => ({
   pref:"", aiTool:"chatgpt", mode:{s1:"",s2:"",s3:"",s4:""}, stepTool:{s1:"",s2:"",s3:"",s4:""},
-  profile:{name:"",profession:"",setting:"",stage:"",experience:"",time:""},
+  profile:{name:"",profession:"",setting:"",stage:"",experience:"",time:"",org:"",region:""},
   projects:[{title:"",role:"",why:""},{title:"",role:"",why:""},{title:"",role:"",why:""}],
   unrealized:{text:"",reasons:[]}, environment:"", snapshot:"",
   identity:"", ratings:Array(20).fill(null), unsure:Array(20).fill(false), chosen:[],
@@ -1025,7 +1031,7 @@ const blank = () => ({
 });
 // Worked example (a fictional nurse practitioner), used by "Fill with an example" one step at a time.
 const EXAMPLE = () => Object.assign(blank(), {
-  profile:{name:"Jordan Rivera, NP (example)",profession:"Nurse practitioner",setting:"Adult primary care, community health system",stage:"Mid career",experience:EXPERIENCE[1],time:"10–25%"},
+  profile:{name:"Jordan Rivera, NP (example)",profession:"Nurse practitioner",setting:"Adult primary care, community health system",stage:"Mid career",experience:EXPERIENCE[1],time:"10–25%",org:"Community or regional health system",region:"United States"},
   projects:[
     {title:"Redesigned the refill protocol and its EHR order panel",role:"I led it",why:"Cut refill turnaround from 3 days to 1 and freed up nursing time"},
     {title:"EHR superuser for the clinic's go-live",role:"I did the work",why:"I liked translating between clinicians and the build team"},
@@ -1051,7 +1057,7 @@ const EXAMPLE = () => Object.assign(blank(), {
 const SCENARIOS = {
   np: EXAMPLE,
   "nurse-exec": () => Object.assign(EXAMPLE(), {
-    profile:{name:"Alex Morgan, DNP (scenario)",profession:"Registered nurse",setting:"Nursing informatics, regional health system",stage:"Senior or executive",experience:EXPERIENCE[3],time:"Over 75%"},
+    profile:{name:"Alex Morgan, DNP (scenario)",profession:"Registered nurse",setting:"Nursing informatics, regional health system",stage:"Senior or executive",experience:EXPERIENCE[3],time:"Over 75%",org:"Community or regional health system",region:"United States"},
     projects:[{title:"Led the nursing documentation redesign across 6 hospitals",role:"I led it",why:"Cut charting time and standardized care across sites"},{title:"Chair of the clinical decision support committee",role:"I led it",why:"Brought nursing into every CDS decision"},{title:"Sepsis early-warning rollout",role:"I advised",why:"First AI tool our nurses used every day"}],
     unrealized:{text:"A seat at the system's executive table",reasons:["Not an organizational priority","No sponsor"]},
     environment:"Strong CNO support. The CMIO and CIO set the informatics agenda; there's no CNIO role yet.",
@@ -1067,7 +1073,7 @@ const SCENARIOS = {
     pitch:"I'm a nurse informatics director who has redesigned documentation and decision support across six hospitals. Next, I want to be our first CNIO and bring nursing's voice to every AI and EHR decision. I'm looking for an executive sponsor."
   }),
   resident: () => Object.assign(EXAMPLE(), {
-    profile:{name:"Sam Lee, MD (scenario)",profession:"Physician",setting:"Internal medicine residency, academic medical center",stage:"Trainee",experience:EXPERIENCE[0],time:"Under 10%"},
+    profile:{name:"Sam Lee, MD (scenario)",profession:"Physician",setting:"Internal medicine residency, academic medical center",stage:"Trainee",experience:EXPERIENCE[0],time:"Under 10%",org:"Academic medical center or health system",region:"United States"},
     projects:[{title:"Gave feedback on a new sepsis order set",role:"I advised",why:"First time I saw how EHR tools get built"},{title:"Superuser for a week during a go-live",role:"I did the work",why:"I liked helping colleagues get unstuck"},{title:"",role:"",why:""}],
     unrealized:{text:"Build my own note template",reasons:["Didn't know how to start","Time"]},
     environment:"Busy residency. Informatics decisions sit with a CMIO office I haven't met.",
@@ -1086,7 +1092,7 @@ const SCENARIOS = {
 // Which parts of the state belong to each step (for "Fill with an example" and "Clear this step").
 const STEPFIELDS = {s1:["profile","projects","unrealized","environment","snapshot"],s2:["identity","ratings","unsure","chosen"],s3:["dream","settings","want","wantUnsure","target"],s4:["gaps","steps","ask","checkin","pitch"]};
 
-function merge(o){ const b=blank(); const s=Object.assign(b, o, {mode:Object.assign(blank().mode,o.mode||{}), stepTool:Object.assign(blank().stepTool,o.stepTool||{})});
+function merge(o){ const b=blank(); const s=Object.assign(b, o, {mode:Object.assign(blank().mode,o.mode||{}), stepTool:Object.assign(blank().stepTool,o.stepTool||{}), profile:Object.assign(blank().profile,o.profile||{})});
   if(s.aiTool==="none"){ s.aiTool="chatgpt"; if(!s.pref) s.pref="self"; } // files saved by v0.2
   return s; }
 function load(){ try{ const t=localStorage.getItem(KEY); if(t) return merge(JSON.parse(t)); }catch(e){} return blank(); }
@@ -1240,7 +1246,7 @@ const PURPOSE = {
   s4:"turning the gap between now and my goal into a few next steps I'll actually take"
 };
 const attrList = () => DISPLAY.map(i=>`- ${ATTR[i].n} (${code(i)}): ${ATTR[i].d}`).join("\n");
-function profileLine(){ const p=S.profile; return [p.profession,p.setting,p.stage&&("career stage: "+p.stage),p.experience&&("informatics experience: "+p.experience),p.time&&("share of work that is informatics: "+p.time)].filter(Boolean).join("; ")||"(not given)"; }
+function profileLine(){ const p=S.profile; return [p.profession,p.setting,p.stage&&("career stage: "+p.stage),p.experience&&("informatics experience: "+p.experience),p.time&&("share of work that is informatics: "+p.time),p.org&&("organization type: "+p.org),p.region&&("country: "+p.region)].filter(Boolean).join("; ")||"(not given)"; }
 function projectsText(){ const ps=S.projects.filter(p=>p.title); return ps.map((p,i)=>`${i+1}. ${p.title}${p.role?` (${p.role})`:""}${p.why?`: ${p.why}`:""}`).join("\n"); }
 function prompts(){
  const hasProj=S.projects.some(p=>p.title);
@@ -1720,7 +1726,8 @@ function renderStatic(){
   // Resources: the jump list is built from the cards in page order (Before you go appears only at an event).
   const tocCards=[...$$("#resources>.card[data-toc]")].filter(c=>!c.classList.contains(EV?"gen-only":"ev-only"));
   $("#res-toc").innerHTML = `<span class="eyebrow">On this page</span>` + tocCards.map(c=>`<a href="#resources" data-sec="${c.id}">${esc(c.dataset.toc)}</a>`).join("");
-  if(EV){ $("#ev-url").textContent=EV.url.replace(/^https:\/\//,""); $("#qr-home").innerHTML=QR_SVG; }
+  if(EV){ $("#ev-url").textContent=EV.url.replace(/^https:\/\//,""); $("#qr-home").innerHTML=QR_SVG;
+  if(EV.short){ $("#ev-short code").textContent=EV.short; $("#ev-short").hidden=false; } }
 }
 // Puts state values into the form controls.
 function fill(){
@@ -1903,8 +1910,8 @@ function renderReport(){
    </div>`;
 }
 
-// Workshop surveys, built into the coach. Answers stay in this browser until the person presses Submit; then only the
-// survey answers, plus profession, career stage, informatics experience, and (after) how they used the coach, go to the form.
+// Workshop surveys, built into the coach. Answers stay in this browser until they're sent; then only the survey answers,
+// the step 1 menu choices (no name, specialty, or typed text), and how they used the coach go to the form.
 const svOn = () => !!(EV && EV.surveys.on && S.consent==="yes");
 function svRate(phase, group, key, label, scale, na){ const v=(S.survey[phase][group]||{})[key]||"", nm=`sv-${phase}-${group}-${key}`;
   return `<fieldset class="rate"><legend>${esc(label)}</legend><div class="seg">${scale.map((s,i)=>`<label><input type="radio" name="${nm}" value="${i+1}" data-sv="${phase}.${group}.${key}" ${v===String(i+1)?"checked":""}><span>${i+1}<i> ${esc(s)}</i></span></label>`).join("")}${na?`<label><input type="radio" name="${nm}" value="N/A" data-sv="${phase}.${group}.${key}" ${v==="N/A"?"checked":""}><span>N/A</span></label>`:""}</div></fieldset>`; }
@@ -1918,9 +1925,10 @@ function surveyCard(phase){ const a=S.survey[phase], pre=phase==="pre";
     ${pre ? svText("pre","hope","What do you most hope to get from this session?","Optional")
       : `<p class="small muted" style="margin-top:6px">How useful was each part of the session? 1 Not at all · 5 Extremely useful.</p><div>${SV_USE.map(([k,l])=>svRate("post","use",k,l,SV_SCALE,true)).join("")}</div>`
         + intent + svText("post","step30","One step you'll take in the next 30 days","Optional") + svText("post","change","What should we change about this session?","Optional") + svText("post","aiConcern","Did anything about using AI concern you?","Optional")}
-    <p class="small muted">Also sent: your profession, career stage, and informatics experience${pre?"":", plus how you used the coach and which AI tool"}. No name, email, or anything else from the coach. Please leave names and patient details out of your comments.</p>
-    ${pre ? `<p class="small" id="sv-status-pre">${a.sent?"<b>✓ Sent.</b> If you change an answer, it's sent again when you move on.":"Your answers are sent when you move on from step 1."}${svConnected()?"":" <i>(The survey isn't connected yet: answers stay in this browser.)</i>"}</p>`
-      : `<div class="row"><button type="button" class="primary" data-svsubmit="post">Send my answers</button><span class="small muted">${a.sent?"✓ Sent. Thank you.":"Also sent if you leave this page."}${svConnected()?"":" <i>(The survey isn't connected yet.)</i>"}</span></div>`}`; }
+    <p class="small muted">Also sent: your step 1 menu choices about your role and workplace, how you're using the coach, and which AI tool. No name, email, specialty, or anything you type in the steps. Please leave names and patient details out of your comments.</p>
+    <div class="row" id="sv-status-${phase}">${a.sent
+      ? `<span class="small"><b>✓ Sent.</b> Thank you.</span><button type="button" class="linkbtn small" data-svsubmit="${phase}">Changed an answer? Send my changes</button>`
+      : `<button type="button" class="primary" data-svsubmit="${phase}">Send my answers</button><span class="small muted">${pre?"Or they're sent once when you move on from step 1.":"Or they're sent once when you leave this page."}</span>`}${svConnected()?"":`<span class="small"><i>(The survey isn't connected yet: answers stay in this browser.)</i></span>`}</div>`; }
 function renderSurveys(){ const on=svOn();
   [["pre","#survey-pre"],["post","#survey-post"]].forEach(([ph,sel])=>{ const el=$(sel); if(!el) return; el.hidden=!on; el.innerHTML= on ? surveyCard(ph) : ""; });
   // At the wrap-up, someone who never answered on Home can still opt in there.
@@ -1929,20 +1937,25 @@ function howUsed(){ if(S.flow==="full") return "Full AI coach"; const ms=STEPS.m
   return !ms.length ? "" : ms.every(m=>m==="ai") ? "Step by step with an AI tool" : ms.every(m=>m==="self") ? "Manual entry" : "A mix"; }
 const toolUsed = () => (S.flow==="full" || STEPS.some(([s])=>modeFor(s)==="ai")) ? TOOL_LABEL(S.aiTool) : "None";
 function svPayload(phase){ const p=S.profile, a=S.survey[phase];
-  const f={rid:S.survey.rid, phase, build:(document.querySelector(".buildtag").textContent.match(/v[\d.]+/)||[""])[0], profession:p.profession, stage:p.stage, experience:p.experience};
+  const f={rid:S.survey.rid, phase, site:svSite(), build:(document.querySelector(".buildtag").textContent.match(/v[\d.]+/)||[""])[0],
+    profession:p.profession, stage:p.stage, experience:p.experience, time:p.time||"", org:p.org||"", region:p.region||"",
+    project_roles:S.projects.filter(x=>x.title).map(x=>x.role||"?").join("; "), barriers:(S.unrealized.reasons||[]).join("; "), how:howUsed(), tool:toolUsed()};
   SV_CONF.forEach(([k])=>{ f["conf_"+k]=a.conf[k]||""; });
   if(phase==="pre"){ f.hope=a.hope; }
-  else { SV_USE.forEach(([k])=>{ f["use_"+k]=a.use[k]||""; }); f.intent=a.intent; f.step30=a.step30; f.change=a.change; f.ai_concern=a.aiConcern; f.how=howUsed(); f.tool=toolUsed(); }
+  else { SV_USE.forEach(([k])=>{ f["use_"+k]=a.use[k]||""; }); f.intent=a.intent; f.step30=a.step30; f.change=a.change; f.ai_concern=a.aiConcern; }
   return f; }
-// Answers go out when the person moves on: the pre-survey when they leave step 1, the post-survey when they press
-// "Send my answers" or leave the page. Only once something is answered, and again only if an answer changed (the Sheet keeps
-// every send; analysis keeps the latest row per rid + phase). Google doesn't let the page see a reply, so delivery can't be confirmed.
+// Each survey goes out once: when the person presses "Send my answers", or on its own the first time they move on (the pre-survey
+// when they leave step 1, the post-survey when they leave the wrap-up or close the page). Moving on never sends it again. After
+// that, only "Send my changes" sends a new row, and only if something changed (the Parsed tab marks the latest row per rid + phase).
+// "site" tells test rows (preview, local) from real ones. Google doesn't let the page see a reply, so delivery can't be confirmed.
+const svSite = () => location.protocol==="file:" || /^(localhost|127\.)/.test(location.hostname) ? "local" : /\/preview\//.test(location.pathname) ? "preview" : "live";
 const svConnected = () => !!(EV && EV.surveys.form && Object.keys(EV.surveys.fields||{}).length);
 function svAnswered(phase){ const a=S.survey[phase];
   return Object.values(a.conf).some(Boolean) || (phase==="pre" ? !!a.hope : Object.values(a.use).some(Boolean) || !!(a.intent||a.step30||a.change||a.aiConcern)); }
-function svSend(phase, {beacon=false, quiet=true}={}){
+function svSend(phase, {beacon=false, quiet=true, auto=false}={}){
   if(!svOn() || !svAnswered(phase)) return;
-  const a=S.survey[phase], data=svPayload(phase), hash=JSON.stringify(data);
+  const a=S.survey[phase]; if(auto && a.sent) return; // moving on sends a survey once, never again
+  const data=svPayload(phase), hash=JSON.stringify(data);
   if(hash===a.sentHash){ if(!quiet) toast("Already sent. Thank you."); return; }
   if(!svConnected()){ if(!quiet) toast("The survey isn't connected yet. Your answers are saved in this browser."); return; }
   const cfg=EV.surveys, body=new URLSearchParams();
@@ -1952,7 +1965,7 @@ function svSend(phase, {beacon=false, quiet=true}={}){
   if(beacon && navigator.sendBeacon) ok=navigator.sendBeacon(cfg.form, body); // survives the page closing
   else fetch(cfg.form,{method:"POST",mode:"no-cors",keepalive:true,body}).catch(()=>{});
   if(ok){ a.sent=new Date().toISOString(); a.sentHash=hash; save(); if(!beacon) renderSurveys(); if(!quiet) toast("Thank you. Your answers are sent."); } }
-window.addEventListener("pagehide",()=>{ svSend("pre",{beacon:true}); svSend("post",{beacon:true}); });
+window.addEventListener("pagehide",()=>{ svSend("pre",{beacon:true,auto:true}); svSend("post",{beacon:true,auto:true}); });
 function renderConsent(){ keepFocus(renderConsent0); }
 function renderConsent0(){
   const on=!!(EV&&EV.surveys.on); $("#consent-card").hidden=!on;
@@ -2044,7 +2057,7 @@ function go(id, push=true, quiet=false){
   if(!PAGES.includes(id)) id="home";
   const b=blockerFor(id); if(b){ if(cur!==b) go(b,push,true); if(!quiet) showMissing(b); return; }
   const prev=cur; cur=id;
-  if(prev==="s1" && id!=="s1") svSend("pre"); if(prev==="resources" && id!=="resources") svSend("post"); // surveys go out as you move on
+  if(prev==="s1" && id!=="s1") svSend("pre",{auto:true}); if(prev==="resources" && id!=="resources") svSend("post",{auto:true}); // sent once, the first time you move on
   // A finished step's AI box shrinks to one line: re-render the step you're leaving and the one you're entering.
   if(isStep(prev) && prev!==id){ REDO.delete(prev); renderFork(prev); }
   if(isStep(id)){ REDO.delete(id); renderFork(id); }
