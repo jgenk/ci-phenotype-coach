@@ -1748,7 +1748,7 @@ function renderMatches(){
   $("#results-h").textContent = n<8 ? "Your matches" : "Which of these describe your work?"; $("#results").classList.toggle("hi", n>=8);
   if(n<8){ el.innerHTML=`<p class="waiting">Waiting for your answers. Your closest phenotypes appear here once ${modeFor("s2")==="ai"?"you paste the AI's answer above":"you rate at least 8 kinds of work"}${n?` (${n} rated so far)`:""}.</p>`; return; }
   const m=matches();
-  el.innerHTML = `<p class="small">Check up to 2 that fit you. If you check none, your top match is used.</p>`
+  el.innerHTML = `<p class="small">Check up to 2 that describe your work. If you check none, your top match is used.</p>`
    + (S.profile.stage==="Trainee"||S.profile.experience===EXPERIENCE[0] ? `<p class="note small">New to informatics? Your matches mostly reflect your clinical work and teaching for now. That's expected. The goal you choose in step 3 matters more.</p>` : "")
    + `<div class="top3">${m.slice(0,3).map((x,j)=>tcard(x, j, `<label class="pick" for="ch${x.i}"><input type="checkbox" id="ch${x.i}" aria-label="This describes my work: ${esc(PHENO[x.i].n)}" data-choose="${esc(PHENO[x.i].n)}" ${S.chosen.includes(PHENO[x.i].n)?"checked":""}>This describes my work</label>`, "m", S.chosen.includes(PHENO[x.i].n))).join("")}</div>`
    + SCORE_NOTE("match")
