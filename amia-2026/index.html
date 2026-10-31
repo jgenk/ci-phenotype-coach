@@ -878,7 +878,7 @@ sup a{text-decoration:none;font-weight:600;padding:0 1px}
   </div>
 </section>
 <!-- BUILD TAG: bump on every deploy so you can tell which build people are seeing. -->
-<footer class="buildtag">Build v0.10.18 (2026-10-31)</footer>
+<footer class="buildtag">Build v0.10.19 (2026-10-31)</footer>
 </main>
 </div>
 
@@ -992,7 +992,7 @@ const AI_INTRO = {
 //            { our field name: "entry.<id>" } for one question per field. Both come from the form's pre-filled link (drafts/surveys-amia-2026.md).
 //   on:false removes consent and both surveys.
 const EVENTS = {
-  "amia-2026":{name:"AMIA 2026", url:"https://jgenk.github.io/ci-phenotype-coach/amia-2026/", surveys:{on:true, form:"https://docs.google.com/forms/d/e/1FAIpQLSdN5Qa0bIyIei5WhbHv8m2Rs0bjgnV4jl0w0_IRQHqxN4Ro7Q/formResponse", fields:{data:"entry.781970990"}},
+  "amia-2026":{name:"AMIA 2026", url:"https://jgenk.github.io/ci-phenotype-coach/amia-2026/", short:"jgenk.github.io/amia", surveys:{on:true, form:"https://docs.google.com/forms/d/e/1FAIpQLSdN5Qa0bIyIei5WhbHv8m2Rs0bjgnV4jl0w0_IRQHqxN4Ro7Q/formResponse", fields:{data:"entry.781970990"}},
     pace:"I'm doing this in a timed workshop, so keep it brisk: aim to finish this step in about 10 minutes."}
 };
 const EVENT = document.documentElement.dataset.event || "", EV = EVENTS[EVENT] || null;
@@ -1726,7 +1726,7 @@ function renderStatic(){
   // Resources: the jump list is built from the cards in page order (Before you go appears only at an event).
   const tocCards=[...$$("#resources>.card[data-toc]")].filter(c=>!c.classList.contains(EV?"gen-only":"ev-only"));
   $("#res-toc").innerHTML = `<span class="eyebrow">On this page</span>` + tocCards.map(c=>`<a href="#resources" data-sec="${c.id}">${esc(c.dataset.toc)}</a>`).join("");
-  if(EV){ $("#ev-url").textContent=EV.url.replace(/^https:\/\//,""); $("#qr-home").innerHTML=QR_SVG; }
+  if(EV){ $("#ev-url").textContent=EV.short||EV.url.replace(/^https:\/\//,""); $("#qr-home").innerHTML=QR_SVG; }
 }
 // Puts state values into the form controls.
 function fill(){
