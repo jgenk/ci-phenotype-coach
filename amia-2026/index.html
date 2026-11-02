@@ -4,8 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CI Career Phenotype Coach</title>
-    <script type="module" crossorigin src="../assets/index-CtLEkItx.js"></script>
-    <link rel="stylesheet" crossorigin href="../assets/index-DReS4epO.css">
+    <script>
+      /* Light or dark before first paint: the Menu's pick, else the system (same rule as src/lib/theme.ts). */
+      try {
+        var t = localStorage.getItem("ciPhenotypeCoach.theme")
+        if (t === "dark" || (t !== "light" && matchMedia("(prefers-color-scheme: dark)").matches)) document.documentElement.classList.add("dark")
+      } catch (e) {
+        if (matchMedia("(prefers-color-scheme: dark)").matches) document.documentElement.classList.add("dark")
+      }
+    </script>
+    <script type="module" crossorigin src="../assets/index-D6qKEi8Y.js"></script>
+    <link rel="stylesheet" crossorigin href="../assets/index-B1WEnFxl.css">
   </head>
   <body>
     <div id="root"></div>
