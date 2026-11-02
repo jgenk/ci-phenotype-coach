@@ -91,7 +91,7 @@ What this step is for: ${Mm.s4}.
 About me: ${Pm(e)}
 Who I am now: ${e.identity||e.snapshot||`(not written yet)`}
 Phenotypes are patterns of informatics work that the coach page matched to my answers, not job titles.
-My current phenotype: ${Gp(e)||`(not scored yet)`}
+My current phenotype: ${Wp(e).join(` and `)||`(not scored yet)`}
 My goal phenotype: ${e.target.filter(Boolean).join(` and `)||`(not chosen yet)`}${c?`\nWhat that work looks like: ${c}`:``}${e.dream?`\nA project I'd love to lead: ${e.dream}`:``}${e.settings.length?`\nSettings I'd consider: ${e.settings.join(`, `)}`:``}
 ${s?`Biggest differences between my current work and my goal (0 never to 5 daily):\n${s}\n`:``}${u?`Other big changes I said I want (0 never to 5 daily):\n${u}\n`:``}${d.length?`My goal role does more of these than I do now: ${d.join(`; `)}, but I haven't asked for more of them. Don't plan around these as gaps; ask me once whether that's a dealbreaker for this goal or a role I'd shape differently.\n`:``}My workplace: ${e.environment||`(not given)`}
 
